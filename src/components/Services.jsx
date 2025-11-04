@@ -7,15 +7,15 @@ const services = [
   },
   {
     title: "DIVISIÓN DE POTREROS",
-    img: "https://cdn.pixabay.com/photo/2017/06/10/07/18/agriculture-2388693_1280.jpg",
+    img: "../../public/POTREROS.jpg",
   },
   {
     title: "BROMATOLOGÍA DIGITAL",
-    img: "https://cdn.pixabay.com/photo/2021/09/03/08/20/drone-6595961_1280.jpg",
+    img: "../../public/BROMATOLOGÍA.jpg",
   },
   {
     title: "AFORO DIGITAL",
-    img: "https://cdn.pixabay.com/photo/2016/12/07/15/47/drone-1883671_1280.jpg",
+    img: "../../public/aforoDigital.jpg",
   },
 ];
 
