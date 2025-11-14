@@ -1,24 +1,33 @@
 👨‍🌾 TECNYCAMPO | Soluciones Digitales para el Agro
 🚀 Descripción del Proyecto
 
-TecnyCampo es una plataforma web desarrollada con React y Tailwind CSS, enfocada en ofrecer soluciones digitales de alta precisión para el sector agrícola y ganadero.
-Incluye servicios de topografía aérea con drones, análisis de terreno (DEM, NDVI), gestión de activos y herramientas intuitivas para encontrar servicios especializados.
+TecnyCampo es una plataforma web desarrollada con React + Tailwind CSS, enfocada en ofrecer soluciones digitales avanzadas para el sector agrícola y ganadero.
 
-El sistema está diseñado con una interfaz moderna, filtros dinámicos y navegación optimizada para mejorar la experiencia del usuario.
+Incluye:
+
+Servicios de topografía aérea con drones
+
+Análisis avanzado de terreno (DEM, NDVI)
+
+Gestión de activos agropecuarios
+
+Filtros inteligentes
+
+Interfaz moderna y completamente responsive
+
+El sistema está diseñado para ofrecer una experiencia rápida, clara y visualmente llamativa.
 
 ⚙️ Tecnologías Utilizadas
 
-Framework: React + Vite
+React + Vite
 
-Estilos: Tailwind CSS
+Tailwind CSS
 
-Iconografía:
+Heroicons — Navegación, botones y búsqueda
 
-Heroicons (@heroicons/react) — navegación y botones
+React Icons (Font Awesome) — Filtros, footer y elementos visuales
 
-Font Awesome vía React Icons (react-icons/fa) — filtros y footer
-
-Animaciones: transiciones nativas de Tailwind
+Animaciones: Transiciones nativas de Tailwind
 
 📂 Estructura del Código
 public/
@@ -30,39 +39,33 @@ public/
 
 src/
 ├── assets/
-│   └── (imágenes o recursos adicionales)
+│   └── (recursos adicionales)
 │
 ├── components/
 │   ├── FarmTypeFilter.jsx   # Filtro de tipos de finca/activo
 │   ├── Footer.jsx           # Footer moderno con columnas e iconos
 │   ├── Hero.jsx             # Sección principal con barra de búsqueda
 │   ├── Navbar.jsx           # Navbar animada con menú móvil
-│   ├── Services.jsx         # Contenedor general de servicios
-│   └── ServiceCard.jsx      # Tarjeta para cada servicio (si la agregas)
+│   ├── Services.jsx         # Contenedor de servicios
+│   └── ServiceCard.jsx      # Tarjeta individual de servicios
 │
 ├── App.jsx                  # Componente raíz
-├── index.css                # Estilos globales de Tailwind
-├── main.jsx                 # Punto de entrada de la app
+├── index.css                # Estilos globales (Tailwind)
+├── main.jsx                 # Punto de entrada de React
 
 💻 Instalación y Ejecución
-
-Sigue estos pasos para ejecutar el proyecto en tu entorno local:
-
-1. Clonar el Repositorio
+1️⃣ Clonar el repositorio
 git clone https://github.com/tuusuario/TecnyCampo.git
 cd TecnyCampo
 
-2. Instalar Dependencias
-
-Incluye React, Tailwind, Heroicons y React Icons.
-
+2️⃣ Instalar dependencias
 npm install
 
-3. Ejecutar el Servidor de Desarrollo
+3️⃣ Ejecutar el servidor de desarrollo
 npm run dev
 
 
-El proyecto estará disponible en:
+Luego abre:
 
 👉 http://localhost:5173
 
