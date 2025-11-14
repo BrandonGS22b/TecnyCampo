@@ -20,7 +20,7 @@ Font Awesome vía React Icons (react-icons/fa) — filtros y footer
 
 Animaciones: transiciones nativas de Tailwind
 
-📂 Estructura del Código
+📂 Estructura del Código.
 src/
 ├── components/
 │   ├── FarmTypeFilter.jsx   # Nuevo: filtro para tipos de finca/activo
