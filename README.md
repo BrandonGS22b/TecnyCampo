@@ -1,16 +1,69 @@
-# React + Vite
+👨‍🌾 TECNYCAMPO | Soluciones Digitales para el Agro
+🚀 Descripción del Proyecto
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+TecnyCampo es una plataforma web desarrollada con React y Tailwind CSS, enfocada en ofrecer soluciones digitales de alta precisión para el sector agrícola y ganadero.
+Incluye servicios de topografía aérea con drones, análisis de terreno (DEM, NDVI), gestión de activos y herramientas intuitivas para encontrar servicios especializados.
 
-Currently, two official plugins are available:
+El sistema está diseñado con una interfaz moderna, filtros dinámicos y navegación optimizada para mejorar la experiencia del usuario.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+⚙️ Tecnologías Utilizadas
 
-## React Compiler
+Framework: React + Vite
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Estilos: Tailwind CSS
 
-## Expanding the ESLint configuration
+Iconografía:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Heroicons (@heroicons/react) — navegación y botones
+
+Font Awesome vía React Icons (react-icons/fa) — filtros y footer
+
+Animaciones: transiciones nativas de Tailwind
+
+📂 Estructura del Código
+src/
+├── components/
+│   ├── FarmTypeFilter.jsx   # Nuevo: filtro para tipos de finca/activo
+│   ├── Footer.jsx            # Footer moderno con columnas e iconos
+│   ├── Hero.jsx              # Sección principal con barra de búsqueda extendida
+│   ├── Navbar.jsx            # Navbar animada con menú móvil
+│   ├── ServiceCard.jsx       # Tarjeta individual de servicios
+│   └── Services.jsx          # Contenedor que mapea los servicios
+└── App.jsx                   # Punto central de componentes
+
+💻 Instalación y Ejecución
+
+Sigue estos pasos para ejecutar el proyecto en tu entorno local:
+
+1. Clonar el Repositorio
+git clone https://github.com/tuusuario/TecnyCampo.git
+cd TecnyCampo
+
+2. Instalar Dependencias
+
+Incluye React, Tailwind, Heroicons y React Icons.
+
+npm install
+
+3. Ejecutar el Servidor de Desarrollo
+npm run dev
+
+
+El proyecto estará disponible en:
+
+👉 http://localhost:5173
+
+🛠️ Scripts Disponibles
+
+-npm run dev — Ejecuta el servidor de desarrollo
+
+-npm run build — Genera la build de producción
+
+-npm run preview — Previsualiza la build
+
+
+
+⭐ Autor
+
+Desarrollado por Brandon García
+Proyecto orientado al fortalecimiento tecnológico del sector agropecuario.
