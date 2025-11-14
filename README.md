@@ -28,30 +28,33 @@ Heroicons — Navegación, botones y búsqueda
 React Icons (Font Awesome) — Filtros, footer y elementos visuales
 
 Animaciones: Transiciones nativas de Tailwind
-
-📂 Estructura del Código
-public/
-├── aforoDigital.jpg
-├── BROMATOLOGÍA.jpg
-├── POTREROS.jpg
-├── TOPOGRAFIA.jpg
-└── vite.svg
-
-src/
-├── assets/
-│   └── (recursos adicionales)
-│
-├── components/
-│   ├── FarmTypeFilter.jsx   # Filtro de tipos de finca/activo
-│   ├── Footer.jsx           # Footer moderno con columnas e iconos
-│   ├── Hero.jsx             # Sección principal con barra de búsqueda
-│   ├── Navbar.jsx           # Navbar animada con menú móvil
-│   ├── Services.jsx         # Contenedor de servicios
-│   └── ServiceCard.jsx      # Tarjeta individual de servicios
-│
-├── App.jsx                  # Componente raíz
-├── index.css                # Estilos globales (Tailwind)
-├── main.jsx                 # Punto de entrada de React
+📂 Estructura destacada del proyecto
+app/
+ ├── Helpers/
+ │    ├── ContarLetrasHelper.php  # Lógica para análisis de texto (Frecuencia de letras)
+ │    └── ValidationHelper.php    # Validaciones personalizadas (ej: correo válido)
+ ├── Http/
+ │    ├── Controllers/
+ │    │    ├── Auth/             # Controladores de Autenticación
+ │    │    └── ContribuyenteController.php
+ │    └── Requests/
+ │         └── Auth/             # Requests de Autenticación (ej: ProfileUpdateRequest.php)
+ ├── Providers/
+ │    └── AppServiceProvider.php  # Binding de interfaces a implementaciones (Repositorios)
+ ├── Repositories/
+ │    ├── Interfaces/
+ │    │    └── ContribuyenteRepositoryInterface.php
+ │    └── ContribuyenteRepository.php # Implementación del patrón Repositorio
+ ├── Service/                     # Capa de Servicio para lógica de negocio compleja
+ └── Models/                      # Modelos de Eloquent (ej: Contribuyente.php)
+resources/
+ ├── views/
+ │    ├── contribuyentes/
+ │    │    ├── index.blade.php    # (Listado principal DataTables)
+ │    │    └── ... otros blade de gestión
+ │    └── ... otras vistas (layouts, auth)
+ ├── css/                         # Estilos Tailwind (app.css, dashboard.css)
+ └── js/                          # Lógica DataTables + AJAX (app.js, bootstrap.js)
 
 💻 Instalación y Ejecución
 1️⃣ Clonar el repositorio
