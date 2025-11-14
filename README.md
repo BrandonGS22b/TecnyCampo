@@ -20,16 +20,16 @@ Font Awesome vía React Icons (react-icons/fa) — filtros y footer
 
 Animaciones: transiciones nativas de Tailwind
 
-📂 Estructura del Código.
+📂 Estructura del Código
 src/
 ├── components/
 │   ├── FarmTypeFilter.jsx   # Nuevo: filtro para tipos de finca/activo
-│   ├── Footer.jsx            # Footer moderno con columnas e iconos
-│   ├── Hero.jsx              # Sección principal con barra de búsqueda extendida
-│   ├── Navbar.jsx            # Navbar animada con menú móvil
-│   ├── ServiceCard.jsx       # Tarjeta individual de servicios
-│   └── Services.jsx          # Contenedor que mapea los servicios
-└── App.jsx                   # Punto central de componentes
+│   ├── Footer.jsx           # Footer moderno con columnas e iconos
+│   ├── Hero.jsx             # Sección principal con barra de búsqueda extendida
+│   ├── Navbar.jsx           # Navbar animada con menú móvil
+│   ├── ServiceCard.jsx      # Tarjeta individual de servicios
+│   └── Services.jsx         # Contenedor que mapea los servicios
+└── App.jsx                  # Punto central de componentes
 
 💻 Instalación y Ejecución
 
@@ -55,13 +55,11 @@ El proyecto estará disponible en:
 
 🛠️ Scripts Disponibles
 
--npm run dev — Ejecuta el servidor de desarrollo
+npm run dev — Ejecuta el servidor de desarrollo
 
--npm run build — Genera la build de producción
+npm run build — Genera la build de producción
 
--npm run preview — Previsualiza la build
-
-
+npm run preview — Previsualiza la build
 
 ⭐ Autor
 
