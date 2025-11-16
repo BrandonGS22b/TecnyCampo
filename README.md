@@ -1,69 +1,89 @@
-👨‍🌾 TECNYCAMPO | Soluciones Digitales para el Agro
-🚀 Descripción del Proyecto
 
-TecnyCampo es una plataforma web desarrollada con React y Tailwind CSS, enfocada en ofrecer soluciones digitales de alta precisión para el sector agrícola y ganadero.
-Incluye servicios de topografía aérea con drones, análisis de terreno (DEM, NDVI), gestión de activos y herramientas intuitivas para encontrar servicios especializados.
+<p align="center">
+  <a href="#" target="_blank">
+    <img src="https://img.shields.io/badge/React%20%2B%20Vite-2025-646CFF?logo=react&logoColor=61DAFB&labelColor=20232A" width="400" alt="TecnyCampo Logo">
+  </a>
+</p>
 
-El sistema está diseñado con una interfaz moderna, filtros dinámicos y navegación optimizada para mejorar la experiencia del usuario.
+<p align="center">
+<a href="#"><img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Build Status"></a>
+<a href="#"><img src="https://img.shields.io/badge/version-1.0.0-blue" alt="Latest Stable Version"></a>
+<a href="#"><img src="https://img.shields.io/badge/downloads-100%2B-blueviolet" alt="Total Downloads"></a>
+<a href="#"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
 
-⚙️ Tecnologías Utilizadas
+ <!-- LIBRERÍAS -->
+<a href="#"><img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" alt="React"></a>
+<a href="#"><img src="https://img.shields.io/badge/Vite-5.0-646CFF?logo=vite&logoColor=yellow" alt="Vite"></a>
+<a href="#"><img src="https://img.shields.io/badge/TailwindCSS-3.x-38BDF8?logo=tailwindcss&logoColor=white" alt="Tailwind"></a>
+<a href="#"><img src="https://img.shields.io/badge/Heroicons-2.2.0-0EA5E9" alt="Heroicons"></a>
+<a href="#"><img src="https://img.shields.io/badge/React_Icons-5.5.0-E91E63" alt="React Icons"></a>
+<a href="#"><img src="https://img.shields.io/badge/FontAwesome_React-3.1.0-528DD7?logo=fontawesome&logoColor=white" alt="FontAwesome React"></a>
+</p>
 
-Framework: React + Vite
+## About TecnyCampo
 
-Estilos: Tailwind CSS
+# 👨‍🌾 TecnyCampo | Soluciones Digitales para el Agro
 
-Iconografía:
+Aplicación web desarrollada con **React + Vite + TailwindCSS**, enfocada en ofrecer soluciones digitales avanzadas para el sector agrícola y ganadero.
 
-Heroicons (@heroicons/react) — navegación y botones
+Incluye herramientas modernas para:
+- Topografía aérea con drones  
+- Análisis de terreno (DEM y Otros)  
+- Gestión de activos agropecuarios  
+- Filtros inteligentes y dinámicos  
+- Interfaz moderna, rápida y completamente responsive  
 
-Font Awesome vía React Icons (react-icons/fa) — filtros y footer
+---
 
-Animaciones: transiciones nativas de Tailwind
+## 🚀 Tecnologías principales
 
-📂 Estructura del Código
-src/
-├── components/
-│   ├── FarmTypeFilter.jsx   # Nuevo: filtro para tipos de finca/activo
-│   ├── Footer.jsx            # Footer moderno con columnas e iconos
-│   ├── Hero.jsx              # Sección principal con barra de búsqueda extendida
-│   ├── Navbar.jsx            # Navbar animada con menú móvil
-│   ├── ServiceCard.jsx       # Tarjeta individual de servicios
-│   └── Services.jsx          # Contenedor que mapea los servicios
-└── App.jsx                   # Punto central de componentes
+- **React + Vite**
+- **Tailwind CSS**
+- **Heroicons** – Navegación, botones, búsqueda
+- **React Icons (Font Awesome)** – Filtros, footer y elementos visuales
+- **Transiciones animadas con Tailwind**
 
-💻 Instalación y Ejecución
+---
 
-Sigue estos pasos para ejecutar el proyecto en tu entorno local:
+## ⚙️ Instalación y configuración
 
-1. Clonar el Repositorio
+### 1️⃣ Clonar el repositorio
+
+```bash
 git clone https://github.com/tuusuario/TecnyCampo.git
 cd TecnyCampo
 
-2. Instalar Dependencias
-
-Incluye React, Tailwind, Heroicons y React Icons.
-
+2️⃣ Instalar dependencias
 npm install
 
-3. Ejecutar el Servidor de Desarrollo
+3️⃣ Iniciar el servidor de desarrollo
 npm run dev
 
 
-El proyecto estará disponible en:
+Luego abre 👉 http://localhost:5173
 
-👉 http://localhost:5173
+📂 Estructura destacada del proyecto
+src/
+ ├── components/
+ │    ├── Navbar.jsx              # Navbar moderno con menú móvil
+ │    ├── Hero.jsx                # Hero principal con búsqueda avanzada
+ │    ├── FarmTypeFilter.jsx      # Filtros inteligentes por tipo de finca
+ │    ├── Services.jsx            # Lista y contenedor de servicios
+ │    ├── ServiceCard.jsx         # Tarjeta individual de cada servicio
+ │    └── Footer.jsx              # Footer moderno con iconos
+ ├── App.jsx                      # Punto central de la aplicación
+ ├── main.jsx                     # Root rendering de React
+ └── index.css                    # Estilos globales (Tailwind)
 
 🛠️ Scripts Disponibles
+Comando	Descripción
+npm run dev	Ejecuta el servidor de desarrollo
+npm run build	Genera la build de producción
+npm run preview	Previsualiza la build
+🧑‍🏫 Autor
 
--npm run dev — Ejecuta el servidor de desarrollo
-
--npm run build — Genera la build de producción
-
--npm run preview — Previsualiza la build
-
-
-
-⭐ Autor
-
-Desarrollado por Brandon García
+Brandon Suárez
+💼 Desarrollador Backend / Fullstack
+📧 brandondulian36@gmail.com
+🌐 GitHub:https://github.com/BrandonGS22b
 Proyecto orientado al fortalecimiento tecnológico del sector agropecuario.
