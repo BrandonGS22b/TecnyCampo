@@ -57,15 +57,10 @@ export default function App() {
   return (
     <div className="overflow-x-hidden relative font-sans">
       <Navbar />
-
       <div className="h-[70px]"></div>
-
       <Hero />
-
       <FarmTypeFilter onSelectService={setSelectedService} />
-
        {renderService()} 
-
       <Footer />
 
       <FloatingWhatsAppButton />
