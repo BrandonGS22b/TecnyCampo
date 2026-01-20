@@ -1,20 +1,23 @@
-import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
-import Services from "./components/Services"; // Topografía
-import Veterinaria from "./components/Veterinaria";
-import Inmobiliaria from "./components/Inmobiliaria";
+import HomePage from "./pages/HomePage";
+import PropiedadesPage from "./pages/PropiedadesPage";
 import Footer from "./components/Footer";
-import FarmTypeFilter from "./components/FarmTypeFilter";
+import LoginPage from "./pages/LoginPage";
+import DashboardPage from "./pages/DashboardPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
 // Botón flotante WhatsApp
 function FloatingWhatsAppButton() {
+  // ... (same as before)
   const whatsappNumber = "573176677911";
-  const whatsappMessage = "Hola, necesito asesoría sobre TecnyCampo.";
+  const whatsappMessage = "Hola, estoy interesado en los servicios de LP Negocios e Inversiones SAS.";
   const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     whatsappMessage
   )}`;
@@ -26,7 +29,7 @@ function FloatingWhatsAppButton() {
       rel="noopener noreferrer"
       className="fixed bottom-8 right-8 z-50 p-4 bg-green-500 rounded-full 
                  shadow-xl hover:bg-green-600 transition duration-300 
-                 transform hover:scale-105 cursor-pointer"
+                 transform hover:scale-110 cursor-pointer animate-bounce"
       aria-label="Contactar por WhatsApp"
     >
       <FontAwesomeIcon icon={faWhatsapp} className="text-white text-3xl" />
@@ -35,35 +38,33 @@ function FloatingWhatsAppButton() {
 }
 
 export default function App() {
-  type ServiceId = "topografia" | "veterinaria" | "inmobiliaria_animal";
-
-  // Estado global para el servicio elegido
-  const [selectedService, setSelectedService] = useState<ServiceId>("topografia");
-
-  // Función que decide qué componente mostrar
-  const renderService = () => {
-    switch (selectedService) {
-      case "topografia":
-        return <Services />;
-      case "veterinaria":
-        return <Veterinaria />;
-      case "inmobiliaria_animal":
-        return <Inmobiliaria />;
-      default:
-        return <Services />;
-    }
-  };
-
   return (
-    <div className="overflow-x-hidden relative font-sans">
-      <Navbar />
-      <div className="h-[70px]"></div>
-      <Hero />
-      <FarmTypeFilter onSelectService={setSelectedService} />
-       {renderService()} 
-      <Footer />
+    <AuthProvider>
+      <Router>
+        <div className="overflow-x-hidden relative font-sans bg-gray-50">
+          <Navbar />
+          <div className="h-[70px]"></div>
 
-      <FloatingWhatsAppButton />
-    </div>
+          <Routes>
+            <Route path="/" element={
+              <>
+                <Hero />
+                <HomePage />
+              </>
+            } />
+            <Route path="/propiedades" element={<PropiedadesPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            } />
+          </Routes>
+
+          <Footer />
+          <FloatingWhatsAppButton />
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }

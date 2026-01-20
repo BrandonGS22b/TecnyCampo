@@ -1,5 +1,5 @@
 import React from 'react';
-import { MagnifyingGlassIcon, ArrowRightIcon } from '@heroicons/react/24/solid'; 
+import { MagnifyingGlassIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
 
 export default function Hero() {
   return (
@@ -9,21 +9,24 @@ export default function Hero() {
     >
       {/* Overlay oscuro */}
       <div className="absolute inset-0 bg-[#1f2d2c]/75 transition duration-500 hover:bg-[#1f2d2c]/80"></div>
-      
+
       <div className="relative text-center z-10 w-full px-4">
-        {/* Título Principal */}
-        <h2 className="text-3xl md:text-5xl font-light tracking-widest uppercase">
-          DATOS DE PRECISIÓN PARA EL
-        </h2>
-        <h1 className="text-7xl md:text-8xl font-black text-yellow-500 mt-2 mb-10 drop-shadow-xl">
-          AGRO
-        </h1>
+        {/* Título Principal - Split Design */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mb-10">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight">
+            LP NEGOCIOS E INVERSIONES SAS
+          </h1>
+          <div className="hidden md:block w-1 h-16 bg-yellow-500"></div>
+          <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-yellow-500 drop-shadow-xl">
+            TERRENO
+          </h2>
+        </div>
 
         {/* --- Barra de Búsqueda --- */}
         <div className="flex w-full max-w-xl lg:max-w-4xl mx-auto transition-all duration-300">
           <input
             type="text"
-            placeholder="Busca soluciones: Ortomosaico, Aforo Digital, Inmobiliaria Animal..."
+            placeholder="Busca propiedades: Lotes, Parcelas, Fincas en Santander..."
             className="w-full p-4 md:p-5 rounded-l-xl text-lg text-gray-800 focus:outline-none focus:ring-4 focus:ring-green-500 shadow-2xl transition duration-300 placeholder:text-gray-500"
           />
           <button
@@ -39,11 +42,11 @@ export default function Hero() {
         {/* --- Botones de CTA --- */}
         <div className="flex justify-center items-center mt-8 space-x-4 md:space-x-6">
           <a
-            href="#services"
+            href="#properties"
             className="group px-8 py-3 bg-yellow-500 text-gray-900 font-extrabold rounded-full shadow-2xl hover:bg-yellow-400 transition duration-300 transform hover:scale-[1.05]"
           >
             <span className="flex items-center">
-              Descubre Nuestros Servicios
+              Ver Propiedades
               <ArrowRightIcon style={{ width: 20, height: 20, marginLeft: 8 }} />
             </span>
           </a>
@@ -53,3 +56,4 @@ export default function Hero() {
     </section>
   );
 }
+

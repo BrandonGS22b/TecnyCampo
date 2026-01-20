@@ -1,21 +1,8 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import * as HeroIcons from "@heroicons/react/24/solid";
+import { useAuth } from "../context/AuthContext";
 
-// Tipado de iconos dinámicos
-type HeroIconName = keyof typeof HeroIcons;
-
-interface DynamicIconProps {
-  iconName: HeroIconName;
-  className?: string;
-}
-
-interface MenuItem {
-  name: string;
-  href: string;
-  iconName: HeroIconName;
-}
-
-// Extraemos los íconos usados
 const {
   Bars3Icon,
   XMarkIcon,
@@ -25,113 +12,204 @@ const {
   QuestionMarkCircleIcon,
   HomeIcon,
   BuildingOffice2Icon,
+  ArrowRightOnRectangleIcon,
+  Squares2X2Icon
 } = HeroIcons;
-
-// Íconos del menú lateral
-const menuItems: MenuItem[] = [
-  { name: "Topografía Aérea", href: "/servicios/topografia", iconName: "MapPinIcon" },
-  { name: "Veterinaria & Zootecnia", href: "/servicios/veterinaria", iconName: "HeartIcon" },
-  { name: "Inmobiliaria Animal", href: "/servicios/inmobiliaria", iconName: "BuildingOfficeIcon" },
-  { name: "Gestión Agrícola", href: "/gestion/agricola", iconName: "SunIcon" },
-  { name: "Recursos Hídricos", href: "/analisis/agua", iconName: "BeakerIcon" },
-  { name: "Seguimiento Minero", href: "/analisis/minero", iconName: "WrenchScrewdriverIcon" },
-];
-
-// Componente para íconos dinámicos
-const DynamicIcon: React.FC<DynamicIconProps> = ({ iconName, className }) => {
-  const IconComponent = HeroIcons[iconName] ?? HeroIcons["QuestionMarkCircleIcon"];
-  return <IconComponent className={className} aria-hidden="true" />;
-};
-
-// Tipado links principales
-interface PrimaryLink {
-  name: string;
-  href: string;
-  icon: React.ElementType;
-}
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-  const actionIconClass =
-    "w-6 h-6 text-yellow-400 transition duration-300 group-hover:text-white";
-
-  const primaryLinks: PrimaryLink[] = [
-    { name: "Inicio", href: "#home", icon: HomeIcon },
-    { name: "Servicios", href: "#services", icon: PlusCircleIcon },
-    { name: "Unidades", href: "#units", icon: BuildingOffice2Icon },
-    { name: "Contacto", href: "#contact", icon: BellIcon },
-  ];
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setIsMenuOpen(false);
+  };
 
   return (
-    <nav className="bg-[#1f2d2c] text-white py-2 sm:py-3 shadow-2xl fixed top-0 left-0 w-full z-50 border-b-4 border-yellow-500/80">
-  <div className="container mx-auto flex flex-wrap items-center justify-between px-1 sm:px-2 md:px-6">
+    <nav className="bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3 shadow-2xl fixed top-0 left-0 w-full z-50 border-b-4 border-yellow-500">
+      <div className="container mx-auto flex items-center justify-between px-4 md:px-6">
+        {/* Logo */}
+        <div className="flex items-center space-x-2">
+          <button
+            className="p-2 rounded-full hover:bg-gray-700 transition lg:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? (
+              <XMarkIcon className="w-6 h-6 text-yellow-400" />
+            ) : (
+              <Bars3Icon className="w-6 h-6 text-yellow-400" />
+            )}
+          </button>
 
-    {/* Logo + Hamburguesa */}
-    <div className="flex items-center space-x-1 sm:space-x-2">
-      <button
-        className="p-1 sm:p-2 rounded-full hover:bg-green-700 transition lg:hidden"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
+          <Link to="/" className="flex items-center space-x-3 group">
+            <div className="text-4xl group-hover:scale-110 transition-transform">🏡</div>
+            <div>
+              <div className="text-2xl font-black text-white tracking-tight">
+                LP NEGOCIOS
+              </div>
+              <div className="text-xs text-yellow-500 font-semibold tracking-wider">
+                E INVERSIONES SAS
+              </div>
+            </div>
+          </Link>
+        </div>
+
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center space-x-8">
+          <Link
+            to="/"
+            className="text-white hover:text-yellow-500 font-semibold transition-colors duration-300 flex items-center"
+          >
+            <HomeIcon className="w-5 h-5 mr-2" />
+            Inicio
+          </Link>
+          <Link
+            to="/propiedades"
+            className="text-white hover:text-yellow-500 font-semibold transition-colors duration-300 flex items-center"
+          >
+            <BuildingOffice2Icon className="w-5 h-5 mr-2" />
+            Propiedades
+          </Link>
+          <a
+            href="#servicios"
+            className="text-white hover:text-yellow-500 font-semibold transition-colors duration-300"
+          >
+            Servicios
+          </a>
+          <a
+            href="https://wa.me/573176677911"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
+          >
+            Contacto
+          </a>
+
+          {isAuthenticated ? (
+            <div className="flex items-center space-x-4 ml-4 pl-4 border-l border-gray-700">
+              <Link
+                to="/dashboard"
+                className="text-white hover:text-yellow-500 font-semibold transition-colors duration-300 flex items-center"
+              >
+                <Squares2X2Icon className="w-5 h-5 mr-2" />
+                Dashboard
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="text-red-400 hover:text-red-300 font-semibold transition-colors duration-300 flex items-center"
+              >
+                <ArrowRightOnRectangleIcon className="w-5 h-5 mr-2" />
+                Salir
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="ml-4 text-gray-300 hover:text-white font-medium transition-colors duration-300 flex items-center"
+            >
+              <UserCircleIcon className="w-6 h-6 mr-1" />
+              Ingresar
+            </Link>
+          )}
+        </div>
+
+        {/* Mobile Actions */}
+        <div className="flex lg:hidden items-center space-x-2">
+          {isAuthenticated && (
+            <Link
+              to="/dashboard"
+              className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition"
+            >
+              <Squares2X2Icon className="w-5 h-5 text-yellow-500" />
+            </Link>
+          )}
+          <Link
+            to="/propiedades"
+            className="p-2 bg-green-600 rounded-full hover:bg-green-700 transition"
+          >
+            <BuildingOffice2Icon className="w-5 h-5" />
+          </Link>
+        </div>
+      </div>
+
+      {/* Mobile Sidebar */}
+      <div
+        className={`fixed top-[70px] left-0 h-full w-64 bg-gray-900 p-6 overflow-y-auto transition-transform duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
+          } z-40 lg:hidden`}
       >
-        {isMenuOpen ? (
-          <XMarkIcon className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
-        ) : (
-          <Bars3Icon className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
-        )}
-      </button>
-      <h1 className="text-lg sm:text-xl md:text-2xl font-black flex items-center">
-        <a href="#home" className="flex items-center">
-          <span className="text-yellow-500">TECNY</span>
-          <span className="text-sm sm:text-lg md:text-2xl font-light ml-1 text-green-300">CAMPO</span>
-        </a>
-      </h1>
-    </div>
+        <h3 className="text-xl font-bold mb-6 text-yellow-400 border-b pb-2">
+          Menú
+        </h3>
+        <div className="space-y-2">
+          {isAuthenticated && (
+            <div className="mb-4 pb-4 border-b border-gray-700">
+              <div className="text-gray-400 text-sm mb-2">Hola, {user?.name}</div>
+              <Link
+                to="/dashboard"
+                className="flex items-center p-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition mb-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Squares2X2Icon className="w-5 h-5 mr-3 text-yellow-500" />
+                <span className="text-white font-medium">Dashboard</span>
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full p-3 rounded-lg hover:bg-gray-800 transition text-red-400"
+              >
+                <ArrowRightOnRectangleIcon className="w-5 h-5 mr-3" />
+                <span className="font-medium">Cerrar Sesión</span>
+              </button>
+            </div>
+          )}
 
-    {/* Right icons */}
-    <div className="flex flex-wrap items-center space-x-1 sm:space-x-2 md:space-x-4 mt-1 sm:mt-0">
-      <a className="p-1 sm:p-2 group hidden sm:block">
-        <BellIcon className="w-5 h-5 text-yellow-400 transition duration-300 group-hover:text-white" />
-      </a>
-      <a className="p-1 sm:p-2 group hidden sm:block">
-        <QuestionMarkCircleIcon className="w-5 h-5 text-yellow-400 transition duration-300 group-hover:text-white" />
-      </a>
-      <a href="/publicar" className="flex items-center bg-green-600 py-1 px-2 rounded-full text-xs sm:text-sm">
-        <PlusCircleIcon className="w-4 h-4 mr-1" />
-        <span className="hidden sm:inline">Publicar Activo</span>
-      </a>
-      <a href="/login" className="flex items-center bg-yellow-500 py-1 px-2 rounded-full text-xs sm:text-sm">
-        <UserCircleIcon className="w-4 h-4 mr-1" />
-        <span className="hidden sm:inline">Ingresar</span>
-      </a>
-    </div>
-  </div>
+          <Link
+            to="/"
+            className="flex items-center p-3 rounded-lg hover:bg-gray-800 transition"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <HomeIcon className="w-5 h-5 mr-3 text-yellow-400" />
+            <span className="text-white font-medium">Inicio</span>
+          </Link>
+          <Link
+            to="/propiedades"
+            className="flex items-center p-3 rounded-lg hover:bg-gray-800 transition"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <BuildingOffice2Icon className="w-5 h-5 mr-3 text-green-400" />
+            <span className="text-white font-medium">Propiedades</span>
+          </Link>
+          <a
+            href="#servicios"
+            className="flex items-center p-3 rounded-lg hover:bg-gray-800 transition"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <PlusCircleIcon className="w-5 h-5 mr-3 text-blue-400" />
+            <span className="text-white font-medium">Servicios</span>
+          </a>
+          <a
+            href="https://wa.me/573176677911"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center p-3 rounded-lg bg-yellow-500 hover:bg-yellow-600 transition mt-4"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <span className="text-gray-900 font-bold">Contactar</span>
+          </a>
 
-  {/* Sidebar */}
-  <div
-    className={`fixed top-[70px] left-0 h-full w-56 sm:w-64 md:w-72 bg-[#1f2d2c] p-4 sm:p-6 overflow-y-auto transition-transform duration-500 ${
-      isMenuOpen ? "translate-x-0" : "-translate-x-full"
-    } z-40`}
-  >
-    <h3 className="text-lg sm:text-xl font-bold mt-4 mb-4 text-yellow-400 border-b pb-2">
-      Nuestras Soluciones Clave
-    </h3>
-    <div className="space-y-2 text-xs sm:text-sm">
-      {menuItems.map((item, index) => (
-        <a
-          key={index}
-          href={item.href}
-          className="flex items-center p-2 sm:p-3 rounded-lg hover:bg-green-800 transition"
-          onClick={() => setIsMenuOpen(false)}
-        >
-          <DynamicIcon
-            iconName={item.iconName}
-            className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-green-300 group-hover:text-yellow-400"
-          />
-          <span className="text-white font-medium truncate">{item.name}</span>
-        </a>
-      ))}
-    </div>
-  </div>
-</nav>
+          {!isAuthenticated && (
+            <Link
+              to="/login"
+              className="flex items-center p-3 rounded-lg border border-gray-700 hover:bg-gray-800 transition mt-4"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <UserCircleIcon className="w-5 h-5 mr-3 text-gray-400" />
+              <span className="text-gray-300 font-medium">Iniciar Sesión</span>
+            </Link>
+          )}
+        </div>
+      </div>
+    </nav>
   );
 }
