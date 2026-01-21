@@ -46,6 +46,9 @@ export default function PropertyCreateForm() {
             videos: [] as string[],
             images360: [] as string[]
         },
+        legal: {
+        documentation: '' 
+        },
         newPastureType: ''
     });
 
@@ -181,6 +184,33 @@ export default function PropertyCreateForm() {
                         onChange={(e) => handleChange('area', e.target.value)}
                     />
                 </div>
+
+                 <div>
+                    <label className="block text-sm font-semibold text-gray-700">
+                        Estado de documentación
+                    </label>
+                    <select
+                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+                        value={formData.legal.documentation}
+                        onChange={(e) =>
+                        setFormData(prev => ({
+                            ...prev,
+                            legal: {
+                            ...prev.legal,
+                            documentation: e.target.value
+                            }
+                        }))
+                        }
+                    >
+                        <option value="">Selecciona una opción</option>
+                        <option value="completa">Completa</option>
+                        <option value="parcial">Parcial</option>
+                        <option value="sin_documentos">Sin documentos</option>
+                    </select>
+                    </div>
+
+
+
                 <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-gray-700">Descripción Detallada</label>
                     <textarea

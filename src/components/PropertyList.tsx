@@ -36,7 +36,7 @@ export default function PropertyList({ propertyType, filters }: PropertyListProp
                 ...(filters.useTypes?.length && { useTypes: filters.useTypes.join(',') })
             });
 
-            const response = await fetch(`http://localhost:4000/api/terrains?${queryParams}`);
+            const response = await fetch(`http://localhost:5000/api/terrains?${queryParams}`);
             const data = await response.json();
 
             setProperties(data.terrains || []);
