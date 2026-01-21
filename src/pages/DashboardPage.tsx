@@ -10,7 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import UserManagement from '../components/dashboard/UserManagement';
 import KPIDashboard from '../components/dashboard/KPIDashboard';
-import PropertyCreateForm from '../components/dashboard/PropertyCreateForm';
+import AdminPropertyManagement from '../components/dashboard/AdminPropertyManagement';
 
 export default function DashboardPage() {
     const { user, logout } = useAuth();
@@ -29,7 +29,7 @@ export default function DashboardPage() {
             case 'users':
                 return <UserManagement />;
             case 'properties':
-                return <PropertyCreateForm />;
+                return <AdminPropertyManagement />;
             default:
                 return <KPIDashboard />;
         }

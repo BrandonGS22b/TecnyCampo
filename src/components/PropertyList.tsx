@@ -6,9 +6,10 @@ import PropertyCard from './PropertyCard';
 interface PropertyListProps {
     propertyType: string;
     filters: any;
+    onEdit?: (property: any) => void;
 }
 
-export default function PropertyList({ propertyType, filters }: PropertyListProps) {
+export default function PropertyList({ propertyType, filters, onEdit }: PropertyListProps) {
     const [properties, setProperties] = useState([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -92,7 +93,12 @@ export default function PropertyList({ propertyType, filters }: PropertyListProp
             {/* Property Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
                 {properties.map((property: any) => (
-                    <PropertyCard key={property._id} property={property} />
+                    <PropertyCard
+                        key={property._id}
+                        property={property}
+                        onUpdate={fetchProperties}
+                        onEdit={onEdit}
+                    />
                 ))}
             </div>
 
@@ -113,8 +119,8 @@ export default function PropertyList({ propertyType, filters }: PropertyListProp
                                 key={pageNum}
                                 onClick={() => setPage(pageNum)}
                                 className={`px-4 py-2 rounded-lg ${page === pageNum
-                                        ? 'bg-green-600 text-white'
-                                        : 'bg-gray-200 hover:bg-gray-300'
+                                    ? 'bg-green-600 text-white'
+                                    : 'bg-gray-200 hover:bg-gray-300'
                                     }`}
                             >
                                 {pageNum}

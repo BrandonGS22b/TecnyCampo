@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { PROPERTY_TYPES, SOIL_TYPES, WATER_SOURCES, TOPOGRAPHY_TYPES } from '../../constants/filters';
 import { ALL_CROPS } from '../../constants/crops';
 import { uploadImage } from '../../service/upload.service';
+import { DEPARTMENTS, getMunicipalities } from '../../constants/colombia';
 
 
 
@@ -17,7 +18,7 @@ import {
     GlobeAmericasIcon
 } from '@heroicons/react/24/outline';
 
-export default function PropertyCreateForm() {
+export default function PropertyCreateForm({ editMode = false, initialData = null, onSuccess }: any) {
     const { token } = useAuth();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -47,8 +48,9 @@ export default function PropertyCreateForm() {
             images360: [] as string[]
         },
         legal: {
-        documentation: '' 
+            documentation: ''
         },
+        status: 'published',
         newPastureType: ''
     });
 
@@ -57,7 +59,16 @@ export default function PropertyCreateForm() {
 
     useEffect(() => {
         fetchPastureOptions();
-    }, []);
+        if (editMode && initialData) {
+            setFormData({
+                ...initialData,
+                price: initialData.price.toString(),
+                area: initialData.area.toString(),
+                status: initialData.status || 'published',
+                newPastureType: ''
+            });
+        }
+    }, [editMode, initialData]);
 
     const fetchPastureOptions = async () => {
         try {
@@ -185,29 +196,33 @@ export default function PropertyCreateForm() {
                     />
                 </div>
 
-                 <div>
+                <div>
                     <label className="block text-sm font-semibold text-gray-700">
                         Estado de documentación
                     </label>
-                    <select
+                    <input
+                        type="text"
                         className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500"
                         value={formData.legal.documentation}
-                        onChange={(e) =>
-                        setFormData(prev => ({
-                            ...prev,
-                            legal: {
-                            ...prev.legal,
-                            documentation: e.target.value
-                            }
-                        }))
-                        }
+                        onChange={(e) => handleNestedChange('legal', 'documentation', e.target.value)}
+                        placeholder="Ej: Escritura pública al día"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">
+                        Estado de la Publicación
+                    </label>
+                    <select
+                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+                        value={formData.status}
+                        onChange={(e) => handleChange('status', e.target.value)}
                     >
-                        <option value="">Selecciona una opción</option>
-                        <option value="completa">Completa</option>
-                        <option value="parcial">Parcial</option>
-                        <option value="sin_documentos">Sin documentos</option>
+                        <option value="draft">Borrador</option>
+                        <option value="published">Publicada</option>
+                        <option value="archived">Archivada (Inactiva)</option>
                     </select>
-                    </div>
+                </div>
 
 
 
@@ -232,21 +247,31 @@ export default function PropertyCreateForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label className="block text-sm font-semibold text-gray-700">Departamento</label>
-                    <input
-                        type="text"
-                        className="w-full p-2 border rounded-lg bg-gray-100"
-                        value="Santander"
-                        disabled
-                    />
+                    <select
+                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+                        value={formData.location.department}
+                        onChange={(e) => {
+                            handleNestedChange('location', 'department', e.target.value);
+                            handleNestedChange('location', 'municipality', ''); // Reset municipality
+                        }}
+                    >
+                        <option value="">Selecciona un departamento</option>
+                        {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
                 </div>
                 <div>
                     <label className="block text-sm font-semibold text-gray-700">Municipio</label>
-                    <input
-                        type="text"
+                    <select
                         className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500"
                         value={formData.location.municipality}
                         onChange={(e) => handleNestedChange('location', 'municipality', e.target.value)}
-                    />
+                        disabled={!formData.location.department}
+                    >
+                        <option value="">Selecciona un municipio</option>
+                        {getMunicipalities(formData.location.department).map(m => (
+                            <option key={m} value={m}>{m}</option>
+                        ))}
+                    </select>
                 </div>
                 <div>
                     <label className="block text-sm font-semibold text-gray-700">Vereda</label>
@@ -342,61 +367,67 @@ export default function PropertyCreateForm() {
     );
 
     const renderStep4_Media = () => (
-  <div className="space-y-4 animate-fadeIn">
-    <h3 className="text-xl font-bold text-gray-800 flex items-center">
-      <PhotoIcon className="w-6 h-6 mr-2 text-indigo-600" />
-      Multimedia
-    </h3>
+        <div className="space-y-4 animate-fadeIn">
+            <h3 className="text-xl font-bold text-gray-800 flex items-center">
+                <PhotoIcon className="w-6 h-6 mr-2 text-indigo-600" />
+                Multimedia
+            </h3>
 
-    <input
-      type="file"
-      multiple
-      accept="image/*"
-      onChange={async (e) => {
-        if (!e.target.files || !token) return;
+            <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={async (e) => {
+                    if (!e.target.files || !token) return;
 
-        setLoading(true);
-        try {
-          const uploadedUrls: string[] = [];
+                    setLoading(true);
+                    try {
+                        const uploadedUrls: string[] = [];
 
-          for (const file of Array.from(e.target.files)) {
-            const res = await uploadImage(file, token);
-            uploadedUrls.push(res.url);
-          }
+                        for (const file of Array.from(e.target.files)) {
+                            const res = await uploadImage(file, token);
+                            uploadedUrls.push(res.url);
+                        }
 
-          setFormData(prev => ({
-            ...prev,
-            media: {
-              ...prev.media,
-              images: [...prev.media.images, ...uploadedUrls],
-            },
-          }));
-        } catch (error) {
-          setMsg({ text: 'Error subiendo imágenes', type: 'error' });
-        } finally {
-          setLoading(false);
-        }
-      }}
-    />
+                        setFormData(prev => ({
+                            ...prev,
+                            media: {
+                                ...prev.media,
+                                images: [...prev.media.images, ...uploadedUrls],
+                            },
+                        }));
+                    } catch (error) {
+                        setMsg({ text: 'Error subiendo imágenes', type: 'error' });
+                    } finally {
+                        setLoading(false);
+                    }
+                }}
+            />
 
-    {/* Preview */}
-    <div className="grid grid-cols-3 gap-3">
-      {formData.media.images.map((img, i) => (
-        <img
-          key={i}
-          src={img}
-          className="w-full h-32 object-cover rounded-lg"
-        />
-      ))}
-    </div>
-  </div>
-);
+            {/* Preview */}
+            <div className="grid grid-cols-3 gap-3">
+                {formData.media.images.map((img, i) => (
+                    <img
+                        key={i}
+                        src={img}
+                        className="w-full h-32 object-cover rounded-lg"
+                    />
+                ))}
+            </div>
+        </div>
+    );
 
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5000/api/terrains', {
-                method: 'POST',
+            const url = editMode
+                ? `http://localhost:5000/api/terrains/${initialData._id}`
+                : 'http://localhost:5000/api/terrains';
+
+            const method = editMode ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -405,10 +436,13 @@ export default function PropertyCreateForm() {
             });
             const data = await response.json();
             if (response.ok) {
-                setMsg({ text: 'Propiedad publicada exitosamente!', type: 'success' });
-                // Reset or redirect
+                setMsg({
+                    text: editMode ? 'Propiedad actualizada exitosamente!' : 'Propiedad publicada exitosamente!',
+                    type: 'success'
+                });
+                if (onSuccess) onSuccess();
             } else {
-                setMsg({ text: data.message || 'Error al publicar', type: 'error' });
+                setMsg({ text: data.message || 'Error al procesar', type: 'error' });
             }
         } catch (error) {
             setMsg({ text: 'Error de conexión', type: 'error' });
@@ -463,7 +497,7 @@ export default function PropertyCreateForm() {
                             disabled={loading}
                             className="px-8 py-2 rounded-lg font-bold text-white bg-yellow-500 hover:bg-yellow-600 transition shadow-lg hover:shadow-yellow-500/50 flex items-center"
                         >
-                            {loading ? 'Publicando...' : 'Publicar Propiedad'}
+                            {loading ? 'Procesando...' : editMode ? 'Actualizar Propiedad' : 'Publicar Propiedad'}
                         </button>
                     )}
                 </div>
