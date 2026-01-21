@@ -1,6 +1,6 @@
 // src/components/PropertyFilters.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getUseTypesByPropertyType, SOIL_TYPES, WATER_SOURCES, PASTURE_TYPES, TOPOGRAPHY_TYPES } from '../constants/filters';
 import { ALL_CROPS } from '../constants/crops';
 import SANTANDER_MUNICIPALITIES from '../constants/municipalities';
@@ -25,6 +25,37 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
         useTypes: [] as string[],
         hasElectricity: false
     });
+
+    // Dynamic Options State
+    const [dynamicPastureTypes, setDynamicPastureTypes] = useState<any[]>(PASTURE_TYPES);
+
+    useEffect(() => {
+        fetchPastureTypes();
+    }, []);
+
+    const fetchPastureTypes = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/api/configuration/pastureTypes');
+            if (response.ok) {
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    // Map strings to object structure if data is just strings
+                    const formatted = data.map((t: string) => ({ value: t, label: t }));
+                    // Merge with default types to ensure icons/labels exist if needed, or just use new types
+                    // For now, let's append new ones to the default list or replace if we want full dynamic control
+                    // Strategy: Union of defaults + fetched
+
+                    const defaults = PASTURE_TYPES.map(p => p.value);
+                    const newTypes = data.filter((d: string) => !defaults.includes(d));
+                    const newFormatted = newTypes.map((t: string) => ({ value: t, label: t }));
+
+                    setDynamicPastureTypes([...PASTURE_TYPES, ...newFormatted]);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching pasture types:', error);
+        }
+    };
 
     const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -142,8 +173,8 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
                                     key={type.value}
                                     onClick={() => handleMultiSelect('useTypes', type.value)}
                                     className={`p-3 rounded-lg border-2 transition ${filters.useTypes.includes(type.value)
-                                            ? 'bg-green-600 text-white border-green-600'
-                                            : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
+                                        ? 'bg-green-600 text-white border-green-600'
+                                        : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
                                         }`}
                                 >
                                     <span className="mr-2">{type.icon}</span>
@@ -164,8 +195,8 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
                                     key={soil.value}
                                     onClick={() => handleMultiSelect('soilTypes', soil.value)}
                                     className={`p-3 rounded-lg border-2 transition ${filters.soilTypes.includes(soil.value)
-                                            ? 'bg-green-600 text-white border-green-600'
-                                            : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
+                                        ? 'bg-green-600 text-white border-green-600'
+                                        : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
                                         }`}
                                 >
                                     {soil.label}
@@ -185,8 +216,8 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
                                     key={water.value}
                                     onClick={() => handleMultiSelect('waterSources', water.value)}
                                     className={`p-3 rounded-lg border-2 transition ${filters.waterSources.includes(water.value)
-                                            ? 'bg-blue-600 text-white border-blue-600'
-                                            : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
+                                        ? 'bg-blue-600 text-white border-blue-600'
+                                        : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
                                         }`}
                                 >
                                     <span className="mr-2">{water.icon}</span>
@@ -202,13 +233,13 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
                             Tipos de Pasto
                         </label>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {PASTURE_TYPES.map(pasture => (
+                            {dynamicPastureTypes.map(pasture => (
                                 <button
                                     key={pasture.value}
                                     onClick={() => handleMultiSelect('pastureTypes', pasture.value)}
                                     className={`p-3 rounded-lg border-2 transition ${filters.pastureTypes.includes(pasture.value)
-                                            ? 'bg-green-600 text-white border-green-600'
-                                            : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
+                                        ? 'bg-green-600 text-white border-green-600'
+                                        : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
                                         }`}
                                 >
                                     {pasture.label}
@@ -228,8 +259,8 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
                                     key={topo.value}
                                     onClick={() => handleMultiSelect('topographyTypes', topo.value)}
                                     className={`p-3 rounded-lg border-2 transition ${filters.topographyTypes.includes(topo.value)
-                                            ? 'bg-green-600 text-white border-green-600'
-                                            : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
+                                        ? 'bg-green-600 text-white border-green-600'
+                                        : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
                                         }`}
                                 >
                                     <span className="mr-2">{topo.icon}</span>

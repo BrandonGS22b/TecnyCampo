@@ -10,6 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import UserManagement from '../components/dashboard/UserManagement';
 import KPIDashboard from '../components/dashboard/KPIDashboard';
+import PropertyCreateForm from '../components/dashboard/PropertyCreateForm';
 
 export default function DashboardPage() {
     const { user, logout } = useAuth();
@@ -28,15 +29,7 @@ export default function DashboardPage() {
             case 'users':
                 return <UserManagement />;
             case 'properties':
-                return (
-                    <div className="bg-white p-6 rounded-xl shadow-lg">
-                        <h2 className="text-2xl font-bold mb-4">Gestión de Propiedades</h2>
-                        <p className="text-gray-600">
-                            Aquí se integrará el formulario de creación de propiedades.
-                            (Funcionalidad existente a integrar)
-                        </p>
-                    </div>
-                );
+                return <PropertyCreateForm />;
             default:
                 return <KPIDashboard />;
         }
