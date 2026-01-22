@@ -1,84 +1,174 @@
-import { useEffect, useState } from 'react';
-import { ChatBubbleLeftRightIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { useState, useRef, useEffect } from 'react';
+import {
+  ChatBubbleLeftRightIcon,
+  XMarkIcon,
+  PaperAirplaneIcon,
+} from '@heroicons/react/24/outline';
 
-interface ChatbotWidgetProps {
-    webhookUrl?: string;
-    title?: string;
-    subtitle?: string;
-    primaryColor?: string;
-    backgroundColor?: string;
+interface Message {
+  from: 'user' | 'bot';
+  text: string;
+  timestamp: Date;
 }
 
-export default function ChatbotWidget({
-    webhookUrl = 'https://unwisely-unlumpy-cammie.ngrok-free.dev/webhook/bf34cc2f-f4d9-4ad7-934b-098ef285cac9',
-    title = 'Asistente IA - LP Negocios',
-    subtitle = 'Bienvenido, ¿en qué podemos ayudarte?',
-    primaryColor = '#16a34a',
-    backgroundColor = '#ffffff',
-}: ChatbotWidgetProps) {
-    const [isOpen, setIsOpen] = useState(false);
-    const [isLoaded, setIsLoaded] = useState(false);
+export default function ChatbotWidget() {
+  const [open, setOpen] = useState(false);
+  const [input, setInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  // Generamos un ID de sesión único para que n8n/MongoDB guarden la memoria correctamente
+  const [sessionId] = useState(`session-${Math.random().toString(36).substr(2, 9)}`);
+  
+  const [messages, setMessages] = useState<Message[]>([
+    { from: 'bot', text: '¡Hola! 👋 Soy tu asistente IA de TecnyCampo. ¿En qué puedo ayudarte hoy?', timestamp: new Date() },
+  ]);
 
-    useEffect(() => {
-        // Load n8n Chat Widget Script
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/@n8n/chat-widget@0.2.1/dist/chat-widget.bundle.es.js';
-        script.type = 'module';
-        script.async = true;
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-        script.onload = () => {
-            setIsLoaded(true);
-            // @ts-ignore - n8n ChatWidget is loaded dynamically
-            if (window.ChatWidget) {
-                // @ts-ignore
-                new window.ChatWidget({
-                    webhookUrl,
-                    title,
-                    subtitle,
-                    primaryColor,
-                    backgroundColor,
-                });
-            }
-        };
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-        document.body.appendChild(script);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
 
-        return () => {
-            // Cleanup script on unmount
-            if (script.parentNode) {
-                script.parentNode.removeChild(script);
-            }
-        };
-    }, [webhookUrl, title, subtitle, primaryColor, backgroundColor]);
+  const sendMessage = async () => {
+    if (!input.trim()) return;
 
-    return (
-        <div className="chatbot-widget-container">
-            {/* Custom Floating Button */}
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="fixed bottom-32 right-8 z-[1400] p-4 bg-gradient-to-br from-purple-600 to-purple-700 
-                   rounded-full shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 
-                   transform hover:scale-110 active:scale-95 group animate-pulse-glow"
-                aria-label="Abrir chatbot"
-                title="Chatea con nuestro asistente IA"
-            >
-                {isOpen ? (
-                    <XMarkIcon className="w-7 h-7 text-white transition-transform duration-300 group-hover:rotate-90" />
-                ) : (
-                    <ChatBubbleLeftRightIcon className="w-7 h-7 text-white transition-transform duration-300 group-hover:scale-110" />
-                )}
+    const userText = input;
+    const userMessage: Message = { from: 'user', text: userText, timestamp: new Date() };
+    
+    setMessages((prev) => [...prev, userMessage]);
+    setInput('');
+    setIsTyping(true);
 
-                {/* Pulse Ring Effect */}
-                <span className="absolute inset-0 rounded-full bg-purple-600 opacity-75 animate-ping"></span>
-            </button>
+    try {
+      // URL de tu n8n local (asegúrate que n8n esté corriendo)
+      const response = await fetch(
+        'http://localhost:5678/webhook/aa3bca14-9231-4fe6-a032-12a883a682a1/chat',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            chatInput: userText, // n8n espera 'chatInput'
+            sessionId: sessionId // Importante para la memoria MongoDB
+          }),
+        }
+      );
 
-            {/* Badge Indicator */}
-            {!isOpen && (
-                <div className="fixed bottom-[140px] right-[72px] z-[1400] bg-red-500 text-white text-xs font-bold 
-                        rounded-full w-6 h-6 flex items-center justify-center animate-bounce">
-                    IA
-                </div>
-            )}
+      if (!response.ok) throw new Error('Error en la respuesta del servidor');
+
+      const data = await response.json();
+
+      setMessages((prev) => [
+        ...prev,
+        { 
+          from: 'bot', 
+          // El nodo AI Agent de n8n devuelve la respuesta en 'output'
+          text: data.output || data.text || 'He recibido tu mensaje, pero no tengo una respuesta clara.', 
+          timestamp: new Date() 
+        },
+      ]);
+    } catch (error) {
+      console.error("Error conectando con n8n:", error);
+      setMessages((prev) => [
+        ...prev,
+        { from: 'bot', text: 'Lo siento, tengo problemas para conectarme. ¿Está n8n activo? 😢', timestamp: new Date() },
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  return (
+    <div className="fixed bottom-6 right-6 z-[2000] flex flex-col items-end pointer-events-none">
+      {/* VENTANA DE CHAT */}
+      <div
+        className={`pointer-events-auto transition-all duration-500 ease-in-out transform origin-bottom-right mb-4
+          ${open ? 'scale-100 opacity-100 translate-y-0' : 'scale-0 opacity-0 translate-y-10'}
+          w-[calc(100vw-3rem)] sm:w-[380px] h-[500px] sm:h-[600px] max-h-[80vh]
+          bg-[#1a1c1e] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden`}
+      >
+        {/* CABECERA */}
+        <div className="p-4 bg-gradient-to-r from-purple-700 to-indigo-800 flex justify-between items-center">
+          <div className="flex items-center gap-3 text-white">
+            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md">
+              <ChatBubbleLeftRightIcon className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-bold text-sm">Asistente TecnyCampo</h3>
+              <p className="text-[10px] opacity-70 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> En línea
+              </p>
+            </div>
+          </div>
+          <button onClick={() => setOpen(false)} className="text-white/80 hover:text-white">
+            <XMarkIcon className="w-6 h-6" />
+          </button>
         </div>
-    );
+
+        {/* MENSAJES */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#121416]">
+          {messages.map((msg, index) => (
+            <div key={index} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm ${
+                msg.from === 'user' 
+                ? 'bg-purple-600 text-white rounded-tr-none' 
+                : 'bg-white/10 text-gray-200 border border-white/5 rounded-tl-none'
+              }`}>
+                {msg.text}
+                <div className="text-[9px] opacity-40 mt-1">
+                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
+            </div>
+          ))}
+          {isTyping && (
+            <div className="flex justify-start">
+              <div className="bg-white/10 px-4 py-3 rounded-2xl rounded-tl-none flex gap-1">
+                <span className="w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce"></span>
+                <span className="w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                <span className="w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* INPUT */}
+        <div className="p-4 bg-[#1a1c1e] border-t border-white/5">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+              placeholder="Escribe tu duda técnica..."
+              className="flex-1 bg-white/5 border border-white/10 rounded-full py-2 px-4 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+            />
+            <button
+              onClick={sendMessage}
+              disabled={!input.trim() || isTyping}
+              className="p-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-full disabled:opacity-50 transition-all"
+            >
+              <PaperAirplaneIcon className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* BOTÓN FLOTANTE */}
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          className="pointer-events-auto p-4 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center relative"
+        >
+          <ChatBubbleLeftRightIcon className="w-8 h-8 text-white" />
+          <span className="absolute -top-1 -right-1 bg-red-500 text-[10px] text-white font-bold px-1.5 py-0.5 rounded-full border-2 border-[#121416]">
+            IA
+          </span>
+        </button>
+      )}
+    </div>
+  );
 }

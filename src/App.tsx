@@ -5,9 +5,12 @@ import Navbar from './shared/components/layout/Navbar';
 import Hero from './shared/components/layout/Hero';
 import Footer from './shared/components/layout/Footer';
 
+
 // UI Components
 import FloatingContactButtons from './shared/components/ui/FloatingContactButtons';
 import ChatbotWidget from './shared/components/ui/ChatbotWidget';
+
+// 👈 chatbot n8n
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -58,6 +61,7 @@ export default function App() {
           {/* Floating Contact & Chatbot */}
           <FloatingContactButtons />
           <ChatbotWidget />
+           
         </div>
       </Router>
     </AuthProvider>
