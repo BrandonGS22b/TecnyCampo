@@ -1,7 +1,7 @@
 // src/components/PropertyTypeSelector.tsx
 
 import React from 'react';
-import { PROPERTY_TYPES } from '../constants/filters';
+import { PROPERTY_TYPES } from '../../../shared/constants/filters';
 
 interface PropertyTypeSelectorProps {
     selectedType: string;
@@ -47,3 +47,4 @@ export default function PropertyTypeSelector({ selectedType, onSelectType }: Pro
         </div>
     );
 }
+

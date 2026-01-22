@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../auth/auth.context';
 import { useNavigate } from 'react-router-dom';
 import { PencilIcon, TrashIcon, EyeIcon, ArchiveBoxIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { MapPinIcon as MapPinIconSolid } from '@heroicons/react/24/solid';
-import PropertyCreateForm from './dashboard/PropertyCreateForm';
+
 
 interface PropertyCardProps {
     property: any;
@@ -230,3 +230,4 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
         </>
     );
 }
+

@@ -1,7 +1,7 @@
 // src/components/dashboard/AdminPropertyManagement.tsx
 
 import React, { useState } from 'react';
-import PropertyList from '../PropertyList';
+import PropertyList from '../../property/components/PropertyList';
 import PropertyCreateForm from './PropertyCreateForm';
 import { PlusIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 
@@ -73,3 +73,4 @@ export default function AdminPropertyManagement() {
         </div>
     );
 }
+

@@ -1,9 +1,9 @@
 // src/components/PropertyFilters.tsx
 
 import React, { useState, useEffect } from 'react';
-import { getUseTypesByPropertyType, SOIL_TYPES, WATER_SOURCES, PASTURE_TYPES, TOPOGRAPHY_TYPES } from '../constants/filters';
-import { ALL_CROPS } from '../constants/crops';
-import SANTANDER_MUNICIPALITIES from '../constants/municipalities';
+import { getUseTypesByPropertyType, SOIL_TYPES, WATER_SOURCES, PASTURE_TYPES, TOPOGRAPHY_TYPES } from '../../../shared/constants/filters';
+import { ALL_CROPS } from '../../../shared/constants/crops';
+import SANTANDER_MUNICIPALITIES from '../../../shared/constants/municipalities';
 
 interface PropertyFiltersProps {
     propertyType: string;
@@ -339,3 +339,4 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
         </div>
     );
 }
+

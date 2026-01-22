@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { PROPERTY_TYPES, SOIL_TYPES, WATER_SOURCES, TOPOGRAPHY_TYPES } from '../../constants/filters';
-import { ALL_CROPS } from '../../constants/crops';
-import { uploadImage } from '../../service/upload.service';
-import { DEPARTMENTS, getMunicipalities } from '../../constants/colombia';
+import { useAuth } from '../../auth/auth.context';
+import { PROPERTY_TYPES, SOIL_TYPES, WATER_SOURCES, TOPOGRAPHY_TYPES } from '../../../shared/constants/filters';
+import { ALL_CROPS } from '../../../shared/constants/crops';
+import { uploadImage } from '../../../shared/services/upload.service';
+import { DEPARTMENTS, getMunicipalities } from '../../../shared/constants/colombia';
 
 
 
@@ -505,3 +505,4 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
         </div>
     );
 }
+

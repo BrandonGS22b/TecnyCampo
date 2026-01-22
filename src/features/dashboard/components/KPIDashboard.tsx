@@ -5,7 +5,7 @@ import {
     UsersIcon,
     CurrencyDollarIcon
 } from '@heroicons/react/24/solid';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../auth/auth.context';
 
 const StatCard = ({ title, value, icon, color }: any) => (
     <div className="bg-white p-6 rounded-xl shadow-lg flex items-center transition-transform hover:scale-105">
@@ -97,3 +97,4 @@ export default function KPIDashboard() {
         </div>
     );
 }
+

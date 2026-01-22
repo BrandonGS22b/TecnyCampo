@@ -231,3 +231,4 @@ function Badge({ color, text }: { color: string, text: string }) {
         </span>
     );
 }
+

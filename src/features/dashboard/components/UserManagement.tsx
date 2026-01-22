@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../auth/auth.context';
 import { TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
 
 interface User {
@@ -161,3 +161,4 @@ export default function UserManagement() {
         </div>
     );
 }
+

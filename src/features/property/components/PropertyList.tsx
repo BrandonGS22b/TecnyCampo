@@ -140,3 +140,4 @@ export default function PropertyList({ propertyType, filters, onEdit }: Property
         </div>
     );
 }
+

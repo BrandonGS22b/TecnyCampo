@@ -89,3 +89,4 @@ export default function FarmTypeFilter({ onSelectService }: FarmTypeFilterProps)
         </div>
     );
 }
+

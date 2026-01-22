@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../auth.context';
 import { BuildingOffice2Icon } from '@heroicons/react/24/solid';
 
 export default function LoginPage() {
@@ -110,3 +110,4 @@ export default function LoginPage() {
         </div>
     );
 }
+

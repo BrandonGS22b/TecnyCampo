@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../auth/auth.context';
 import {
     Squares2X2Icon,
     UsersIcon,
@@ -8,9 +8,9 @@ import {
     ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
-import UserManagement from '../components/dashboard/UserManagement';
-import KPIDashboard from '../components/dashboard/KPIDashboard';
-import AdminPropertyManagement from '../components/dashboard/AdminPropertyManagement';
+import UserManagement from '../components/UserManagement';
+import KPIDashboard from '../components/KPIDashboard';
+import AdminPropertyManagement from '../components/AdminPropertyManagement';
 
 export default function DashboardPage() {
     const { user, logout } = useAuth();
@@ -107,3 +107,4 @@ export default function DashboardPage() {
         </div>
     );
 }
+
