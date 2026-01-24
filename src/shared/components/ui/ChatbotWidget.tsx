@@ -45,7 +45,7 @@ export default function ChatbotWidget() {
     try {
       // URL de tu n8n local (asegúrate que n8n esté corriendo)
       const response = await fetch(
-        'http://localhost:5678/webhook/aa3bca14-9231-4fe6-a032-12a883a682a1/chat',
+        'https://tecnycampo-backend.onrender.com/webhook/aa3bca14-9231-4fe6-a032-12a883a682a1/chat',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
