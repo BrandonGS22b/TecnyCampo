@@ -35,7 +35,7 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
 
     const fetchPastureTypes = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/configuration/pastureTypes');
+            const response = await fetch('https://tecnycampo-backend.onrender.com/api/configuration/pastureTypes');
             if (response.ok) {
                 const data = await response.json();
                 if (data && data.length > 0) {

@@ -23,7 +23,7 @@ export default function UserManagement() {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/users', {
+            const response = await fetch('https://tecnycampo-backend.onrender.com/api/users', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -42,7 +42,7 @@ export default function UserManagement() {
     const handleCreateUser = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:5000/api/users', {
+            const response = await fetch('https://tecnycampo-backend.onrender.com/api/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

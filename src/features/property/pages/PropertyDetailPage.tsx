@@ -24,7 +24,7 @@ export default function PropertyDetailPage() {
     useEffect(() => {
         const fetchProperty = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/terrains/${id}`);
+                const response = await fetch(`https://tecnycampo-backend.onrender.com/api/terrains/${id}`);
                 if (response.ok) {
                     const data = await response.json();
                     setProperty(data);

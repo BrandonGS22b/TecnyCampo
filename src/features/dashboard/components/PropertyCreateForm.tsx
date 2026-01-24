@@ -74,7 +74,7 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
         try {
             // First load defaults from constants if needed, then fetch backend
             // For this implementation we will fetch from backend and merge with hardcoded defaults to ensure icons/consistency
-            const response = await fetch('http://localhost:5000/api/configuration/pastureTypes');
+            const response = await fetch('https://tecnycampo-backend.onrender.com/api/configuration/pastureTypes');
             let fetched = [];
             if (response.ok) fetched = await response.json();
 

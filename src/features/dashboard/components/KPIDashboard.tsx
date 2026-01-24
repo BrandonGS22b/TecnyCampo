@@ -27,7 +27,7 @@ export default function KPIDashboard() {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/kpis/dashboard', {
+                const response = await fetch('https://tecnycampo-backend.onrender.com/api/kpis/dashboard', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

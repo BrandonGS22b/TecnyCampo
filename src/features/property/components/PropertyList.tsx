@@ -37,7 +37,7 @@ export default function PropertyList({ propertyType, filters, onEdit }: Property
                 ...(filters.useTypes?.length && { useTypes: filters.useTypes.join(',') })
             });
 
-            const response = await fetch(`http://localhost:5000/api/terrains?${queryParams}`);
+            const response = await fetch(`https://tecnycampo-backend.onrender.com/api/terrains?${queryParams}`);
             const data = await response.json();
 
             setProperties(data.terrains || []);
