@@ -45,16 +45,17 @@ export default function ChatbotWidget() {
     try {
       // URL de tu n8n local (asegúrate que n8n esté corriendo)
       const response = await fetch(
-        'https://n8n-latest-vnb9.onrender.com:5678/webhook/chat',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            chatInput: userText, // n8n espera 'chatInput'
-            sessionId: sessionId // Importante para la memoria MongoDB
-          }),
-        }
-      );
+      'https://n8n-latest-vnb9.onrender.com/webhook-test/chat',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chatInput: userText,
+          sessionId
+        }),
+      }
+    );
+
 
       if (!response.ok) throw new Error('Error en la respuesta del servidor');
 
