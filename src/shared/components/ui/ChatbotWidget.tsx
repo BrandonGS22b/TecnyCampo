@@ -45,7 +45,7 @@ export default function ChatbotWidget() {
     try {
       // URL de tu n8n local (asegúrate que n8n esté corriendo)
       const response = await fetch(
-      'https://n8n-latest-vnb9.onrender.com:5678/webhook/chat',
+      'https://n8n-production-9k36.onrender.com/webhook/67ffc543-a206-43a3-ac65-0ce76496a7e4',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
