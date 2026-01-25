@@ -45,29 +45,32 @@ export default function ChatbotWidget() {
     try {
       // URL de tu n8n local (asegúrate que n8n esté corriendo)
       const response = await fetch(
-      'https://n8n-production-9k36.onrender.com/webhook/67ffc543-a206-43a3-ac65-0ce76496a7e4',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chatInput: userText,
-          sessionId
-        }),
-      }
-    );
-
+        'https://n8n-production-9k36.onrender.com/webhook/67ffc543-a206-43a3-ac65-0ce76496a7e4',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chatInput: userText,
+            sessionId,
+          }),
+        }
+      );
 
       if (!response.ok) throw new Error('Error en la respuesta del servidor');
 
       const data = await response.json();
 
+      const botReply =
+        data?.output ??
+        data?.text ??
+        'He recibido tu mensaje, pero no tengo una respuesta clara.';
+
       setMessages((prev) => [
         ...prev,
-        { 
-          from: 'bot', 
-          // El nodo AI Agent de n8n devuelve la respuesta en 'output'
-          text: data.output || data.text || 'He recibido tu mensaje, pero no tengo una respuesta clara.', 
-          timestamp: new Date() 
+        {
+          from: 'bot',
+          text: botReply,
+          timestamp: new Date(),
         },
       ]);
     } catch (error) {
