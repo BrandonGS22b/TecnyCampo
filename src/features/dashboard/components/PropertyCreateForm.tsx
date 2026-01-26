@@ -421,8 +421,8 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
         setLoading(true);
         try {
             const url = editMode
-                ? `http://localhost:5000/api/terrains/${initialData._id}`
-                : 'http://localhost:5000/api/terrains';
+                ? `https://tecnycampo-backend.onrender.com/api/terrains/${initialData._id}`
+                : 'https://tecnycampo-backend.onrender.com/api/terrains';
 
             const method = editMode ? 'PUT' : 'POST';
 
