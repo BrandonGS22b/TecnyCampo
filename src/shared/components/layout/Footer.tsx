@@ -36,7 +36,7 @@ export default function Footer() {
                         </div>
 
                         <p className="text-gray-300 text-sm leading-relaxed max-w-md">
-                            Liderando el mercado inmobiliario rural en Santander. Conectamos compradores y vendedores
+                            Liderando el mercado inmobiliario rural en Colombia. Conectamos compradores y vendedores
                             con tecnología de punta y servicio personalizado.
                         </p>
 

@@ -15,7 +15,7 @@ export default function PropiedadesPage() {
             <div className="bg-gradient-to-r from-green-600 to-green-800 py-16">
                 <div className="max-w-7xl mx-auto px-4">
                     <h1 className="text-5xl font-black text-white mb-4 text-center">
-                        Propiedades Rurales en Santander
+                        Propiedades Rurales en Colombia
                     </h1>
                     <p className="text-xl text-green-100 text-center max-w-3xl mx-auto">
                         Encuentra la propiedad ideal para tu proyecto agropecuario o inversión rural

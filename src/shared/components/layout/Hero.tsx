@@ -46,7 +46,7 @@ export default function Hero() {
                     <div className="relative w-full">
                         <input
                             type="text"
-                            placeholder="Busca propiedades: Lotes, Parcelas, Fincas en Santander..."
+                            placeholder="Busca propiedades: Lotes, Parcelas, Fincas en Colombia..."
                             className="w-full p-5 md:p-6 rounded-l-2xl text-lg text-gray-800 
                          focus:outline-none focus:ring-4 focus:ring-green-500/50 
                          shadow-2xl transition-all duration-300 placeholder:text-gray-500

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/auth.context';
-import { PROPERTY_TYPES, SOIL_TYPES, WATER_SOURCES, TOPOGRAPHY_TYPES } from '../../../shared/constants/filters';
+import { PROPERTY_TYPES, SOIL_TYPES, WATER_SOURCES, TOPOGRAPHY_TYPES, getUseTypesByPropertyType } from '../../../shared/constants/filters';
 import { ALL_CROPS } from '../../../shared/constants/crops';
 import { uploadMedia } from '../../../shared/services/upload.service';
 import { DEPARTMENTS, getMunicipalities } from '../../../shared/constants/colombia';
@@ -32,11 +32,13 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
         area: '',
         propertyType: 'finca',
         location: {
-            department: 'Santander',
+            department: '',
             municipality: '',
             vereda: '',
-            distanceToTown: ''
+            distanceToTown: '',
+            roadAccess: ''
         },
+        useTypes: [] as string[],
         soil: { types: [] as string[] },
         water: { sources: [] as string[] },
         pasture: { types: [] as string[] },
@@ -48,8 +50,23 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
             images360: [] as string[]
         },
         legal: {
-            documentation: ''
+            documentation: 'completa',
+            permits: [] as string[],
+            restrictions: [] as string[]
         },
+        installations: {
+            electricity: false,
+            buildings: [] as string[],
+            fences: [] as string[],
+            infrastructure: [] as string[]
+        },
+        productivity: {
+            currentUse: '',
+            production: '',
+            potential: ''
+        },
+        forestPercentage: '',
+        reservePercentage: '',
         status: 'published',
         newPastureType: ''
     });
@@ -196,17 +213,45 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                     />
                 </div>
 
+
                 <div>
                     <label className="block text-sm font-semibold text-gray-700">
-                        Estado de documentación
+                        Tipos de Uso
                     </label>
-                    <input
-                        type="text"
+                    <div className="border rounded-lg p-3 max-h-32 overflow-y-auto">
+                        {getUseTypesByPropertyType(formData.propertyType).map((use: any) => (
+                            <label key={use.value} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                                <input
+                                    type="checkbox"
+                                    checked={formData.useTypes.includes(use.value)}
+                                    onChange={() => {
+                                        const current = formData.useTypes;
+                                        const newTypes = current.includes(use.value)
+                                            ? current.filter((t: string) => t !== use.value)
+                                            : [...current, use.value];
+                                        setFormData(prev => ({ ...prev, useTypes: newTypes }));
+                                    }}
+                                    className="rounded text-green-600"
+                                />
+                                <span className="text-sm">{use.icon} {use.label}</span>
+                            </label>
+                        ))}
+                    </div>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">
+                        Estado de documentación <span className="text-red-500">*</span>
+                    </label>
+                    <select
                         className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500"
                         value={formData.legal.documentation}
                         onChange={(e) => handleNestedChange('legal', 'documentation', e.target.value)}
-                        placeholder="Ej: Escritura pública al día"
-                    />
+                    >
+                        <option value="completa">Completa</option>
+                        <option value="parcial">Parcial</option>
+                        <option value="sin_documentos">Sin Documentos</option>
+                    </select>
                 </div>
 
                 <div>
@@ -367,52 +412,130 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
     );
 
     const renderStep4_Media = () => (
-        <div className="space-y-4 animate-fadeIn">
+        <div className="space-y-6 animate-fadeIn">
             <h3 className="text-xl font-bold text-gray-800 flex items-center">
                 <PhotoIcon className="w-6 h-6 mr-2 text-indigo-600" />
                 Multimedia
             </h3>
 
-            <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={async (e) => {
-                    if (!e.target.files || !token) return;
-
-                    setLoading(true);
-                    try {
-                        const uploadedUrls: string[] = [];
-
-                        for (const file of Array.from(e.target.files)) {
-                            const res = await uploadMedia(file, token);
-                            uploadedUrls.push(res.url);
+            {/* Images Upload */}
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    📷 Imágenes de la propiedad
+                </label>
+                <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    className="w-full p-2 border rounded-lg text-sm"
+                    onChange={async (e) => {
+                        if (!e.target.files || !token) return;
+                        setLoading(true);
+                        setMsg({ text: `Subiendo ${e.target.files.length} imágenes...`, type: '' });
+                        try {
+                            const uploadedUrls: string[] = [];
+                            for (const file of Array.from(e.target.files)) {
+                                const res = await uploadMedia(file, token);
+                                uploadedUrls.push(res.url);
+                            }
+                            setFormData(prev => ({
+                                ...prev,
+                                media: {
+                                    ...prev.media,
+                                    images: [...prev.media.images, ...uploadedUrls],
+                                },
+                            }));
+                            setMsg({ text: `✅ ${uploadedUrls.length} imágenes subidas exitosamente`, type: 'success' });
+                        } catch (error) {
+                            setMsg({ text: 'Error subiendo imágenes: ' + error, type: 'error' });
+                        } finally {
+                            setLoading(false);
                         }
+                    }}
+                />
+                <div className="grid grid-cols-3 gap-3 mt-3">
+                    {formData.media.images.map((img, i) => (
+                        <div key={i} className="relative">
+                            <img src={img} className="w-full h-24 object-cover rounded-lg" alt={`Imagen ${i + 1}`} />
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        media: {
+                                            ...prev.media,
+                                            images: prev.media.images.filter((_, idx) => idx !== i)
+                                        }
+                                    }));
+                                }}
+                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                            >
+                                ×
+                            </button>
+                        </div>
+                    ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-2">{formData.media.images.length} imagen(es) cargada(s)</p>
+            </div>
 
-                        setFormData(prev => ({
-                            ...prev,
-                            media: {
-                                ...prev.media,
-                                images: [...prev.media.images, ...uploadedUrls],
-                            },
-                        }));
-                    } catch (error) {
-                        setMsg({ text: 'Error subiendo imágenes', type: 'error' });
-                    } finally {
-                        setLoading(false);
-                    }
-                }}
-            />
-
-            {/* Preview */}
-            <div className="grid grid-cols-3 gap-3">
-                {formData.media.images.map((img, i) => (
-                    <img
-                        key={i}
-                        src={img}
-                        className="w-full h-32 object-cover rounded-lg"
-                    />
-                ))}
+            {/* Videos Upload */}
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    🎥 Videos de la propiedad
+                </label>
+                <input
+                    type="file"
+                    multiple
+                    accept="video/*"
+                    className="w-full p-2 border rounded-lg text-sm"
+                    onChange={async (e) => {
+                        if (!e.target.files || !token) return;
+                        setLoading(true);
+                        setMsg({ text: `Subiendo ${e.target.files.length} videos...`, type: '' });
+                        try {
+                            const uploadedUrls: string[] = [];
+                            for (const file of Array.from(e.target.files)) {
+                                const res = await uploadMedia(file, token);
+                                uploadedUrls.push(res.url);
+                            }
+                            setFormData(prev => ({
+                                ...prev,
+                                media: {
+                                    ...prev.media,
+                                    videos: [...prev.media.videos, ...uploadedUrls],
+                                },
+                            }));
+                            setMsg({ text: `✅ ${uploadedUrls.length} videos subidos exitosamente`, type: 'success' });
+                        } catch (error) {
+                            setMsg({ text: 'Error subiendo videos: ' + error, type: 'error' });
+                        } finally {
+                            setLoading(false);
+                        }
+                    }}
+                />
+                <div className="space-y-2 mt-3">
+                    {formData.media.videos.map((vid, i) => (
+                        <div key={i} className="flex items-center justify-between bg-white p-2 rounded border">
+                            <span className="text-sm truncate flex-1">🎥 Video {i + 1}</span>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        media: {
+                                            ...prev.media,
+                                            videos: prev.media.videos.filter((_, idx) => idx !== i)
+                                        }
+                                    }));
+                                }}
+                                className="bg-red-500 text-white rounded px-2 py-1 text-xs hover:bg-red-600"
+                            >
+                                Eliminar
+                            </button>
+                        </div>
+                    ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-2">{formData.media.videos.length} video(s) cargado(s)</p>
             </div>
         </div>
     );

@@ -26,9 +26,9 @@ export default function HomePage() {
             id: 'propiedades',
             title: 'Inmobiliaria Rural',
             icon: '🏡',
-            description: 'Plataforma especializada en compra y venta de propiedades rurales en Santander. Lotes, parcelas y fincas con información detallada y verificada.',
+            description: 'Plataforma especializada en compra y venta de propiedades rurales en Colombia. Lotes, parcelas y fincas con información detallada y verificada.',
             features: [
-                'Propiedades verificadas en Santander',
+                'Propiedades verificadas en Colombia',
                 'Filtros avanzados por tipo de suelo',
                 'Información de fuentes de agua',
                 'Análisis de cultivos aptos',
@@ -64,7 +64,7 @@ export default function HomePage() {
                         Nuestros Servicios
                     </h2>
                     <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                        Soluciones integrales para el sector agropecuario e inmobiliario rural en Santander
+                        Soluciones integrales para el sector agropecuario e inmobiliario rural en Colombia
                     </p>
                 </div>
 
