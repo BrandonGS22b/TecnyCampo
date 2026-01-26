@@ -32,7 +32,7 @@ export default function Hero() {
 
                     {/* Subtitle */}
                     <p className="text-lg md:text-xl text-gray-200 font-medium max-w-3xl mx-auto mb-2 drop-shadow-lg">
-                        Encuentra tu propiedad ideal en Santander
+                        Encuentra tu propiedad ideal en Colombia
                     </p>
                     <div className="flex items-center justify-center gap-2 text-yellow-400">
                         <SparklesIcon className="w-5 h-5 animate-pulse" />
