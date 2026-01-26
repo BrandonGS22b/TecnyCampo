@@ -41,42 +41,39 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
-            {/* Animated Gradient Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-blue-600 to-green-500 animate-gradient-shift"></div>
-
-            {/* Animated Shapes */}
-            <div className="absolute top-10 left-10 w-72 h-72 bg-yellow-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-            <div className="absolute top-20 right-10 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-            <div className="absolute bottom-10 left-1/3 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+        <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4 bg-gradient-to-br from-gray-900 via-blue-900 to-green-900">
+            {/* Animated Shapes - matching homepage */}
+            <div className="absolute top-10 left-10 w-72 h-72 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
+            <div className="absolute top-20 right-10 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
+            <div className="absolute bottom-10 left-1/3 w-72 h-72 bg-yellow-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-4000"></div>
 
             {/* Login Card with Glassmorphism */}
-            <div className="relative w-full max-w-md">
-                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-green-500 to-blue-500 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000"></div>
-                <div className="relative bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/20">
+            <div className="relative w-full max-w-md z-10">
+                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-green-500 to-blue-500 rounded-2xl blur opacity-40 group-hover:opacity-60 transition duration-1000"></div>
+                <div className="relative bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/20">
                     {/* Logo Section */}
                     <div className="text-center mb-8">
                         <div className="mx-auto h-20 w-20 bg-gradient-to-br from-yellow-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300">
                             <BuildingOffice2Icon className="h-12 w-12 text-white" />
                         </div>
-                        <h2 className="mt-6 text-4xl font-extrabold bg-gradient-to-r from-gray-900 via-green-800 to-blue-900 bg-clip-text text-transparent">
+                        <h2 className="mt-6 text-4xl font-extrabold text-white">
                             Iniciar Sesión
                         </h2>
-                        <p className="mt-3 text-sm text-gray-600 font-medium">
+                        <p className="mt-3 text-sm text-gray-300 font-medium">
                             ✨ Acceso exclusivo para personal autorizado
                         </p>
                     </div>
 
                     {/* Error Alert */}
                     {error && (
-                        <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg animate-shake">
+                        <div className="mb-6 bg-red-500/20 border-l-4 border-red-500 p-4 rounded-lg animate-shake backdrop-blur-sm">
                             <div className="flex items-center">
                                 <div className="flex-shrink-0">
-                                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <svg className="h-5 w-5 text-red-300" viewBox="0 0 20 20" fill="currentColor">
                                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                                     </svg>
                                 </div>
-                                <p className="ml-3 text-sm text-red-700 font-medium">{error}</p>
+                                <p className="ml-3 text-sm text-red-200 font-medium">{error}</p>
                             </div>
                         </div>
                     )}
@@ -85,12 +82,12 @@ export default function LoginPage() {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Email Field */}
                         <div className="group">
-                            <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-2">
+                            <label htmlFor="email" className="block text-sm font-bold text-white mb-2">
                                 Correo Electrónico
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <EnvelopeIcon className="h-5 w-5 text-gray-400 group-hover:text-green-500 transition-colors" />
+                                    <EnvelopeIcon className="h-5 w-5 text-gray-400 group-hover:text-green-400 transition-colors" />
                                 </div>
                                 <input
                                     id="email"
@@ -98,7 +95,7 @@ export default function LoginPage() {
                                     type="email"
                                     autoComplete="email"
                                     required
-                                    className="block w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 hover:border-green-300"
+                                    className="block w-full pl-10 pr-3 py-3 bg-white/20 backdrop-blur-sm border-2 border-white/30 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 hover:bg-white/30"
                                     placeholder="tu@email.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -108,12 +105,12 @@ export default function LoginPage() {
 
                         {/* Password Field */}
                         <div className="group">
-                            <label htmlFor="password" className="block text-sm font-bold text-gray-700 mb-2">
+                            <label htmlFor="password" className="block text-sm font-bold text-white mb-2">
                                 Contraseña
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <LockClosedIcon className="h-5 w-5 text-gray-400 group-hover:text-green-500 transition-colors" />
+                                    <LockClosedIcon className="h-5 w-5 text-gray-400 group-hover:text-green-400 transition-colors" />
                                 </div>
                                 <input
                                     id="password"
@@ -121,7 +118,7 @@ export default function LoginPage() {
                                     type="password"
                                     autoComplete="current-password"
                                     required
-                                    className="block w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 hover:border-green-300"
+                                    className="block w-full pl-10 pr-3 py-3 bg-white/20 backdrop-blur-sm border-2 border-white/30 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 hover:bg-white/30"
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -153,7 +150,7 @@ export default function LoginPage() {
                     </form>
 
                     {/* Footer Text */}
-                    <p className="mt-6 text-center text-xs text-gray-500">
+                    <p className="mt-6 text-center text-xs text-gray-300">
                         🔒 Conexión segura y cifrada
                     </p>
                 </div>
@@ -162,10 +159,6 @@ export default function LoginPage() {
             {/* Custom Animations CSS */}
             <style dangerouslySetInnerHTML={{
                 __html: `
-                @keyframes gradient-shift {
-                    0%, 100% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
-                }
                 @keyframes blob {
                     0%, 100% { transform: translate(0px, 0px) scale(1); }
                     33% { transform: translate(30px, -50px) scale(1.1); }
@@ -175,10 +168,6 @@ export default function LoginPage() {
                     0%, 100% { transform: translateX(0); }
                     10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
                     20%, 40%, 60%, 80% { transform: translateX(5px); }
-                }
-                .animate-gradient-shift {
-                    background-size: 200% 200%;
-                    animation: gradient-shift 15s ease infinite;
                 }
                 .animate-blob {
                     animation: blob 7s infinite;
