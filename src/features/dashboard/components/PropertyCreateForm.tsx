@@ -613,26 +613,43 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
 
             const method = editMode ? 'PUT' : 'POST';
 
+            // Normalize data: convert numeric fields to numbers
+            const preparedData = {
+                ...formData,
+                price: parseFloat(formData.price) || 0,
+                area: parseFloat(formData.area) || 0,
+                forestPercentage: formData.forestPercentage ? parseFloat(formData.forestPercentage) : undefined,
+                reservePercentage: formData.reservePercentage ? parseFloat(formData.reservePercentage) : undefined,
+                location: {
+                    ...formData.location,
+                    distanceToTown: formData.location.distanceToTown ? parseFloat(formData.location.distanceToTown) : 0
+                }
+            };
+
             const response = await fetch(url, {
                 method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(preparedData)
             });
             const data = await response.json();
             if (response.ok) {
                 setMsg({
-                    text: editMode ? 'Propiedad actualizada exitosamente!' : 'Propiedad publicada exitosamente!',
+                    text: editMode ? '✅ Propiedad actualizada exitosamente!' : '✅ Propiedad publicada exitosamente!',
                     type: 'success'
                 });
-                if (onSuccess) onSuccess();
+                if (onSuccess) {
+                    // Give a small delay for the user to see success message
+                    setTimeout(() => onSuccess(), 1500);
+                }
             } else {
-                setMsg({ text: data.message || 'Error al procesar', type: 'error' });
+                setMsg({ text: '⚠️ ' + (data.message || 'Error al procesar'), type: 'error' });
             }
         } catch (error) {
-            setMsg({ text: 'Error de conexión', type: 'error' });
+            console.error('Submit error:', error);
+            setMsg({ text: '❌ Error de conexión', type: 'error' });
         } finally {
             setLoading(false);
         }
