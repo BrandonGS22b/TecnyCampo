@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/auth.context';
 import { PROPERTY_TYPES, SOIL_TYPES, WATER_SOURCES, TOPOGRAPHY_TYPES } from '../../../shared/constants/filters';
 import { ALL_CROPS } from '../../../shared/constants/crops';
-import { uploadImage } from '../../../shared/services/upload.service';
+import { uploadMedia } from '../../../shared/services/upload.service';
 import { DEPARTMENTS, getMunicipalities } from '../../../shared/constants/colombia';
 
 
@@ -385,7 +385,7 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                         const uploadedUrls: string[] = [];
 
                         for (const file of Array.from(e.target.files)) {
-                            const res = await uploadImage(file, token);
+                            const res = await uploadMedia(file, token);
                             uploadedUrls.push(res.url);
                         }
 
