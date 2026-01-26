@@ -45,7 +45,7 @@ export default function ChatbotWidget() {
     try {
       // URL de tu n8n local (asegúrate que n8n esté corriendo)
       const response = await fetch(
-        'https://n8nstable.onrender.com/webhook/3552a105-2078-4259-af86-9936244af9f7',
+        'https://n8nstable.onrender.com/webhook/c40bffeb-352d-4fb0-8e93-c78baf68d50c',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -77,7 +77,7 @@ export default function ChatbotWidget() {
       console.error("Error conectando con n8n:", error);
       setMessages((prev) => [
         ...prev,
-        { from: 'bot', text: 'Lo siento, tengo problemas para conectarme. ¿Está n8n activo? 😢', timestamp: new Date() },
+        { from: 'bot', text: 'Lo siento, tengo problemas para conectarme. Contactate con el Administrador', timestamp: new Date() },
       ]);
     } finally {
       setIsTyping(false);
