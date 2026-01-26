@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../auth/auth.context';
 import { useNavigate } from 'react-router-dom';
-import { PencilIcon, TrashIcon, EyeIcon, ArchiveBoxIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon, EyeIcon, ArchiveBoxIcon, MapPinIcon, PlayIcon } from '@heroicons/react/24/outline';
 import { MapPinIcon as MapPinIconSolid } from '@heroicons/react/24/solid';
 
 
@@ -16,8 +16,10 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
-    const mainImage = property.media.images[0] || '/placeholder-property.jpg';
-    const has360 = property.media.images360?.length > 0;
+    const images = property.media?.images || [];
+    const mainImage = images.length > 0 ? images[0] : '/placeholder-property.jpg';
+    const has360 = property.media?.images360?.length > 0;
+    const hasVideo = property.media?.videos?.length > 0;
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('es-CO', {
@@ -154,11 +156,21 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                         </div>
                     )}
 
-                    {/* 360° Badge */}
-                    {has360 && !((user?.role === 'admin' || user?.role === 'auxiliar')) && (
-                        <div className="absolute top-4 right-4 bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center shadow-lg">
-                            <span className="mr-1">360°</span>
-                            <EyeIcon className="w-4 h-4" />
+                    {/* 360° / Video Badge */}
+                    {!((user?.role === 'admin' || user?.role === 'auxiliar')) && (
+                        <div className="absolute top-4 right-4 flex flex-col gap-2">
+                            {has360 && (
+                                <div className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center shadow-lg">
+                                    <span className="mr-1">360°</span>
+                                    <EyeIcon className="w-4 h-4" />
+                                </div>
+                            )}
+                            {hasVideo && (
+                                <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center shadow-lg">
+                                    <span className="mr-1">VIDEO</span>
+                                    <PlayIcon className="w-4 h-4" />
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

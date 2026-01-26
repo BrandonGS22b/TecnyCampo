@@ -14,7 +14,9 @@ import {
     CalendarIcon,
     InformationCircleIcon,
     CheckBadgeIcon,
-    UserCircleIcon
+    UserCircleIcon,
+    GlobeAmericasIcon,
+    PlayIcon
 } from '@heroicons/react/24/solid';
 import { useAuth } from '../../auth/auth.context';
 
@@ -24,7 +26,7 @@ export default function PropertyDetailPage() {
     const { token } = useAuth();
     const [property, setProperty] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [selectedImage, setSelectedImage] = useState(0);
+    const [selectedMedia, setSelectedMedia] = useState(0);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState(0);
 
@@ -76,16 +78,20 @@ export default function PropertyDetailPage() {
         );
     }
 
-    const allImages = [...(property.media?.images || []), ...(property.media?.images360 || [])];
-    const has360Images = property.media?.images360?.length > 0;
+    // Combine all media types for the gallery
+    const allMedia = [
+        ...(property.media?.images || []).map((url: string) => ({ url, type: 'image' })),
+        ...(property.media?.images360 || []).map((url: string) => ({ url, type: 'image360' })),
+        ...(property.media?.videos || []).map((url: string) => ({ url, type: 'video' }))
+    ];
 
     // Lightbox Navigation
-    const nextImage = () => {
-        setLightboxIndex((prev) => (prev + 1) % allImages.length);
+    const nextMedia = () => {
+        setLightboxIndex((prev) => (prev + 1) % allMedia.length);
     };
 
-    const prevImage = () => {
-        setLightboxIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+    const prevMedia = () => {
+        setLightboxIndex((prev) => (prev - 1 + allMedia.length) % allMedia.length);
     };
 
     const formatPrice = (price: number) => {
@@ -109,16 +115,16 @@ export default function PropertyDetailPage() {
                     </button>
 
                     {/* Navigation Arrows */}
-                    {allImages.length > 1 && (
+                    {allMedia.length > 1 && (
                         <>
                             <button
-                                onClick={prevImage}
+                                onClick={prevMedia}
                                 className="absolute left-6 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full transition z-10 text-white shadow-2xl backdrop-blur-md"
                             >
                                 <ChevronLeftIcon className="w-10 h-10" />
                             </button>
                             <button
-                                onClick={nextImage}
+                                onClick={nextMedia}
                                 className="absolute right-6 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full transition z-10 text-white shadow-2xl backdrop-blur-md"
                             >
                                 <ChevronRightIcon className="w-10 h-10" />
@@ -126,23 +132,40 @@ export default function PropertyDetailPage() {
                         </>
                     )}
 
-                    {/* Image with zoom simulation */}
+                    {/* Content View */}
                     <div className="relative max-w-full max-h-[85vh] overflow-hidden rounded-xl shadow-2xl">
-                        <img
-                            src={allImages[lightboxIndex]}
-                            alt="Imagen ampliada"
-                            className="w-full h-auto max-h-[85vh] object-contain transition-transform duration-500 hover:scale-150 cursor-zoom-in"
-                        />
-                        {lightboxIndex >= property.media?.images?.length && (
-                            <div className="absolute top-4 left-4 bg-purple-600 text-white px-4 py-2 rounded-full text-lg font-black shadow-2xl animate-pulse">
+                        {allMedia[lightboxIndex].type === 'video' ? (
+                            <video
+                                src={allMedia[lightboxIndex].url}
+                                controls
+                                className="w-full h-auto max-h-[85vh]"
+                                autoPlay
+                            />
+                        ) : (
+                            <img
+                                src={allMedia[lightboxIndex].url}
+                                alt="Imagen ampliada"
+                                className="w-full h-auto max-h-[85vh] object-contain transition-transform duration-500 hover:scale-150 cursor-zoom-in"
+                                style={{ transformOrigin: 'center center' }}
+                            />
+                        )}
+
+                        {allMedia[lightboxIndex].type === 'image360' && (
+                            <div className="absolute top-4 left-4 bg-purple-600 text-white px-4 py-2 rounded-full text-lg font-black shadow-2xl animate-pulse flex items-center gap-2">
+                                <GlobeAmericasIcon className="w-6 h-6" />
                                 🌐 VISTA 360°
+                            </div>
+                        )}
+                        {allMedia[lightboxIndex].type === 'video' && (
+                            <div className="absolute top-4 left-4 bg-blue-600 text-white px-4 py-2 rounded-full text-lg font-black shadow-2xl">
+                                📹 VIDEO TOUR
                             </div>
                         )}
                     </div>
 
-                    {/* Image Counter */}
+                    {/* Media Counter */}
                     <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md text-white px-6 py-2 rounded-full text-lg font-bold border border-white/20">
-                        {lightboxIndex + 1} / {allImages.length}
+                        {lightboxIndex + 1} / {allMedia.length}
                     </div>
                 </div>
             )}
@@ -174,45 +197,71 @@ export default function PropertyDetailPage() {
                         <div className="relative group">
                             <div className="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border-4 border-white transition-all transform group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
                                 <div
-                                    className="relative aspect-video cursor-zoom-in overflow-hidden"
-                                    onClick={() => { setLightboxIndex(selectedImage); setLightboxOpen(true); }}
+                                    className="relative aspect-video overflow-hidden bg-gray-900"
                                 >
-                                    <img
-                                        src={allImages[selectedImage] || '/placeholder-property.jpg'}
-                                        alt={property.title}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                                        <MagnifyingGlassPlusIcon className="w-20 h-20 text-white opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100" />
-                                    </div>
+                                    {allMedia[selectedMedia]?.type === 'video' ? (
+                                        <video
+                                            src={allMedia[selectedMedia].url}
+                                            controls
+                                            className="w-full h-full object-contain"
+                                        />
+                                    ) : (
+                                        <div
+                                            className="w-full h-full relative cursor-zoom-in group/main"
+                                            onClick={() => { setLightboxIndex(selectedMedia); setLightboxOpen(true); }}
+                                        >
+                                            <img
+                                                src={allMedia[selectedMedia]?.url || '/placeholder-property.jpg'}
+                                                alt={property.title}
+                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                            />
+                                            <div className="absolute inset-0 bg-black/0 group-hover/main:bg-black/10 transition-colors flex items-center justify-center">
+                                                <MagnifyingGlassPlusIcon className="w-20 h-20 text-white opacity-0 group-hover/main:opacity-100 transition-all transform scale-50 group-hover/main:scale-100" />
+                                            </div>
+                                        </div>
+                                    )}
 
-                                    {/* 360 Overlay Icon */}
-                                    {selectedImage >= property.media?.images?.length && (
+                                    {/* Overlay Badge */}
+                                    {allMedia[selectedMedia]?.type === 'image360' && (
                                         <div className="absolute top-6 left-6 flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-2xl text-sm font-black shadow-2xl animate-pulse">
                                             <GlobeAmericasIcon className="w-5 h-5" />
                                             VISTA 360° PANORÁMICA
                                         </div>
                                     )}
+                                    {allMedia[selectedMedia]?.type === 'video' && (
+                                        <div className="absolute top-6 left-6 flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-2xl text-sm font-black shadow-2xl">
+                                            <PlayIcon className="w-5 h-5" />
+                                            VIDEO TOUR ACTIVO
+                                        </div>
+                                    )}
 
                                     {/* Price and Title Overlay (Mobile only) */}
-                                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent md:hidden">
+                                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent md:hidden pointer-events-none">
                                         <h1 className="text-white text-2xl font-black mb-1 leading-tight">{property.title}</h1>
                                         <p className="text-yellow-400 font-black text-xl">{formatPrice(property.price)}</p>
                                     </div>
                                 </div>
 
                                 {/* Thumbnails Strip */}
-                                {allImages.length > 1 && (
+                                {allMedia.length > 1 && (
                                     <div className="flex gap-3 p-4 bg-gray-50/50 backdrop-blur-md overflow-x-auto scrollbar-hide">
-                                        {allImages.map((img, idx) => (
+                                        {allMedia.map((m, idx) => (
                                             <div
                                                 key={idx}
-                                                onClick={() => setSelectedImage(idx)}
-                                                className={`relative flex-shrink-0 w-24 h-24 rounded-2xl overflow-hidden cursor-pointer border-4 transition-all transform ${selectedImage === idx ? 'border-green-600 scale-105 shadow-xl rotate-1' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-95'
+                                                onClick={() => setSelectedMedia(idx)}
+                                                className={`relative flex-shrink-0 w-24 h-24 rounded-2xl overflow-hidden cursor-pointer border-4 transition-all transform ${selectedMedia === idx ? 'border-green-600 scale-105 shadow-xl rotate-1' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-95'
                                                     }`}
                                             >
-                                                <img src={img} alt={`Vista ${idx + 1}`} className="w-full h-full object-cover" />
-                                                {idx >= property.media?.images?.length && (
+                                                {m.type === 'video' ? (
+                                                    <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                                                        <PlayIcon className="w-10 h-10 text-white opacity-80" />
+                                                        <div className="absolute bottom-1 right-1 bg-blue-600 text-white text-[8px] px-1 rounded">VID</div>
+                                                    </div>
+                                                ) : (
+                                                    <img src={m.url} alt={`Vista ${idx + 1}`} className="w-full h-full object-cover" />
+                                                )}
+
+                                                {m.type === 'image360' && (
                                                     <div className="absolute inset-0 bg-purple-600/30 flex items-center justify-center">
                                                         <span className="text-white font-black text-[10px]">360°</span>
                                                     </div>
@@ -246,7 +295,7 @@ export default function PropertyDetailPage() {
                             </p>
                         </div>
 
-                        {/* 3. Technical Sections Grid (Inspired by Reference App) */}
+                        {/* 3. Technical Sections Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
                             {/* Terrain Characteristics Section */}
@@ -264,6 +313,8 @@ export default function PropertyDetailPage() {
                                 <TechItem label="Tipo de Suelo" value={property.soil?.types?.join(', ')} capitalize />
                                 <TechItem label="Topografía" value={property.topography?.types?.join(', ')} capitalize />
                                 <TechItem label="Uso de Suelos" value={property.useTypes?.join(', ')} capitalize />
+                                <TechItem label="Calidad Pastos" value={property.pasture?.quality} capitalize />
+                                <TechItem label="Tipos Pastos" value={property.pasture?.types?.join(', ')} capitalize />
                                 <TechItem label="Altura (msnm)" value={property.topography?.elevation?.min ? `${property.topography.elevation.min}m - ${property.topography.elevation.max}m` : 'Consultar'} />
                             </TechnicalCard>
 
@@ -393,8 +444,6 @@ export default function PropertyDetailPage() {
                         </div>
                     </div>
                 </div>
-
-                {/* Similar Properties or Recommendations could go here */}
 
             </div>
 
