@@ -426,7 +426,7 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                 <input
                     type="file"
                     multiple
-                    accept="image/*"
+                    accept="image/png,image/jpg,image/jpeg,image/webp,image/gif"
                     className="w-full p-2 border rounded-lg text-sm"
                     onChange={async (e) => {
                         if (!e.target.files || !token) return;
@@ -486,7 +486,7 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                 <input
                     type="file"
                     multiple
-                    accept="video/*"
+                    accept="video/mp4,video/mkv,video/avi,video/mov,video/webm"
                     className="w-full p-2 border rounded-lg text-sm"
                     onChange={async (e) => {
                         if (!e.target.files || !token) return;
