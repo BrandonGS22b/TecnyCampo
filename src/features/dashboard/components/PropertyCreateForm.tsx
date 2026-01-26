@@ -537,6 +537,70 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                 </div>
                 <p className="text-xs text-gray-500 mt-2">{formData.media.videos.length} video(s) cargado(s)</p>
             </div>
+
+            {/* 360 Images Upload */}
+            <div className="border-2 border-dashed border-purple-300 rounded-lg p-6 bg-purple-50">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    📷 Imágenes 360° (Panorámicas)
+                </label>
+                <p className="text-xs text-gray-600 mb-3">
+                    🌐 Sube fotos panorámicas para vista interactiva - Los usuarios podrán hacer zoom y mover la vista
+                </p>
+                <input
+                    type="file"
+                    multiple
+                    accept="image/png,image/jpg,image/jpeg"
+                    className="w-full p-2 border rounded-lg text-sm"
+                    onChange={async (e) => {
+                        if (!e.target.files || !token) return;
+                        setLoading(true);
+                        setMsg({ text: `Subiendo ${e.target.files.length} imágenes 360°...`, type: '' });
+                        try {
+                            const uploadedUrls: string[] = [];
+                            for (const file of Array.from(e.target.files)) {
+                                const res = await uploadMedia(file, token);
+                                uploadedUrls.push(res.url);
+                            }
+                            setFormData(prev => ({
+                                ...prev,
+                                media: {
+                                    ...prev.media,
+                                    images360: [...prev.media.images360, ...uploadedUrls],
+                                },
+                            }));
+                            setMsg({ text: `✅ ${uploadedUrls.length} imágenes 360° subidas exitosamente`, type: 'success' });
+                        } catch (error) {
+                            setMsg({ text: 'Error subiendo imágenes 360°: ' + error, type: 'error' });
+                        } finally {
+                            setLoading(false);
+                        }
+                    }}
+                />
+                <div className="grid grid-cols-3 gap-3 mt-3">
+                    {formData.media.images360.map((img, i) => (
+                        <div key={i} className="relative">
+                            <img src={img} className="w-full h-24 object-cover rounded-lg border-2 border-purple-400" alt={`360° ${i + 1}`} />
+                            <div className="absolute top-1 left-1 bg-purple-600 text-white text-xs px-2 py-1 rounded">360°</div>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        media: {
+                                            ...prev.media,
+                                            images360: prev.media.images360.filter((_, idx) => idx !== i)
+                                        }
+                                    }));
+                                }}
+                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                            >
+                                ×
+                            </button>
+                        </div>
+                    ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-2">{formData.media.images360.length} imagen(es) 360° cargada(s)</p>
+            </div>
         </div>
     );
 
