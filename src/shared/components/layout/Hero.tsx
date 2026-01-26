@@ -22,11 +22,11 @@ export default function Hero() {
                 <div className="mb-8 animate-fade-in-up">
                     <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 mb-4">
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-2xl">
-                            LP NEGOCIOS E INVERSIONES SAS
+                            LP NEGOCIOS E INVERSIONES
                         </h1>
                         <div className="hidden md:block w-1 h-16 bg-gradient-to-b from-yellow-400 to-yellow-600 rounded-full shadow-glow"></div>
                         <h2 className="text-5xl md:text-6xl lg:text-7xl font-black gradient-text-secondary drop-shadow-2xl animate-pulse-glow">
-                            TERRENO
+                            SAS
                         </h2>
                     </div>
 
