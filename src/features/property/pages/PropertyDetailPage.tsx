@@ -119,13 +119,13 @@ export default function PropertyDetailPage() {
                         <>
                             <button
                                 onClick={prevMedia}
-                                className="absolute left-6 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full transition z-10 text-white shadow-2xl backdrop-blur-md"
+                                className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full transition z-10 text-white shadow-2xl backdrop-blur-md"
                             >
                                 <ChevronLeftIcon className="w-10 h-10" />
                             </button>
                             <button
                                 onClick={nextMedia}
-                                className="absolute right-6 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full transition z-10 text-white shadow-2xl backdrop-blur-md"
+                                className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full transition z-10 text-white shadow-2xl backdrop-blur-md"
                             >
                                 <ChevronRightIcon className="w-10 h-10" />
                             </button>
