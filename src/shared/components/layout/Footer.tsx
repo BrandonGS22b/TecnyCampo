@@ -12,7 +12,7 @@ import { BuildingOffice2Icon, HomeIcon, SparklesIcon } from '@heroicons/react/24
 
 export default function Footer() {
     return (
-        <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white pt-16 pb-6 mt-20 shadow-2xl overflow-hidden">
+        <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white pt-16 pb-6 shadow-2xl overflow-hidden">
             {/* Decorative Background Elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
                 <div className="absolute -top-20 -right-20 w-96 h-96 bg-green-500 rounded-full blur-3xl"></div>
