@@ -41,7 +41,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="fixed inset-0 w-full h-full overflow-auto bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center p-4">
+        <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center p-4 sm:p-6 md:p-8">
             {/* Animated Shapes - matching homepage */}
             <div className="absolute top-10 left-10 w-72 h-72 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
             <div className="absolute top-20 right-10 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
@@ -50,16 +50,16 @@ export default function LoginPage() {
             {/* Login Card with Glassmorphism */}
             <div className="relative w-full max-w-md z-10">
                 <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-green-500 to-blue-500 rounded-2xl blur opacity-40 group-hover:opacity-60 transition duration-1000"></div>
-                <div className="relative bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/20">
+                <div className="relative bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-6 sm:p-8 border border-white/20">
                     {/* Logo Section */}
-                    <div className="text-center mb-8">
-                        <div className="mx-auto h-20 w-20 bg-gradient-to-br from-yellow-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300">
-                            <BuildingOffice2Icon className="h-12 w-12 text-white" />
+                    <div className="text-center mb-6 sm:mb-8">
+                        <div className="mx-auto h-16 w-16 sm:h-20 sm:w-20 bg-gradient-to-br from-yellow-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300">
+                            <BuildingOffice2Icon className="h-10 w-10 sm:h-12 sm:w-12 text-white" />
                         </div>
-                        <h2 className="mt-6 text-4xl font-extrabold text-white">
+                        <h2 className="mt-4 sm:mt-6 text-3xl sm:text-4xl font-extrabold text-white">
                             Iniciar Sesión
                         </h2>
-                        <p className="mt-3 text-sm text-gray-300 font-medium">
+                        <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-300 font-medium">
                             ✨ Acceso exclusivo para personal autorizado
                         </p>
                     </div>
@@ -79,7 +79,7 @@ export default function LoginPage() {
                     )}
 
                     {/* Login Form */}
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                         {/* Email Field */}
                         <div className="group">
                             <label htmlFor="email" className="block text-sm font-bold text-white mb-2">
