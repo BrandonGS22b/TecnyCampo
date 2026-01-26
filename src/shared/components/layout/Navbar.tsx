@@ -38,8 +38,8 @@ export default function Navbar() {
     return (
         <nav
             className={`fixed top-0 left-0 w-full z-[1200] transition-all duration-300 ${scrolled
-                    ? 'glass-dark shadow-2xl py-2'
-                    : 'bg-gradient-to-r from-gray-900 to-gray-800 py-3 shadow-xl'
+                ? 'glass-dark shadow-2xl py-2'
+                : 'bg-gradient-to-r from-gray-900 to-gray-800 py-3 shadow-xl'
                 } text-white border-b-4 border-yellow-500`}
         >
             <div className="container mx-auto flex items-center justify-between px-4 md:px-6">
@@ -155,7 +155,7 @@ export default function Navbar() {
             <div
                 className={`fixed top-[70px] left-0 h-full w-64 glass-dark backdrop-blur-xl p-6 overflow-y-auto 
                     transition-transform duration-500 ${isMenuOpen ? 'translate-x-0 animate-slide-in-left' : '-translate-x-full'
-                    } z-40 lg:hidden border-r border-white/10`}
+                    } z-[1100] lg:hidden border-r border-white/10`}
             >
                 <h3 className="text-xl font-bold mb-6 text-yellow-400 border-b border-white/20 pb-2">
                     Menú
@@ -233,7 +233,7 @@ export default function Navbar() {
             {/* Overlay for mobile menu */}
             {isMenuOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 lg:hidden"
+                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[1090] lg:hidden"
                     onClick={() => setIsMenuOpen(false)}
                 />
             )}

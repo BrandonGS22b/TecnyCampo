@@ -41,7 +41,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="h-screen w-full overflow-hidden relative flex items-center justify-center p-4 bg-gradient-to-br from-gray-900 via-blue-900 to-green-900">
+        <div className="fixed inset-0 w-full h-full overflow-auto bg-gradient-to-br from-gray-900 via-blue-900 to-green-900 flex items-center justify-center p-4">
             {/* Animated Shapes - matching homepage */}
             <div className="absolute top-10 left-10 w-72 h-72 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
             <div className="absolute top-20 right-10 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
