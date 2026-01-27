@@ -528,16 +528,54 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                         <div className="mb-3">
                             <p className="text-xs text-gray-500 mb-2 font-semibold">Opciones disponibles (Click para agregar):</p>
                             <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                                {allOptions.filter(opt => !currentSelected.includes(opt)).map((opt: string) => (
-                                    <button
-                                        key={opt}
-                                        type="button"
-                                        onClick={() => toggleOption(opt)}
-                                        className="px-3 py-1 rounded-full text-xs border border-green-300 bg-white text-green-700 hover:bg-green-100 hover:border-green-400 transition-all shadow-sm"
-                                    >
-                                        + {opt}
-                                    </button>
-                                ))}
+                                {allOptions.filter(opt => !currentSelected.includes(opt)).map((opt: string) => {
+                                    // Check if it is a system constant (predefined)
+                                    const isPredefined = predefinedOptions.some(p => (p.label || p.value) === opt);
+
+                                    return (
+                                        <div key={opt} className="relative group inline-block">
+                                            <button
+                                                type="button"
+                                                onClick={() => toggleOption(opt)}
+                                                className={`px-3 py-1 rounded-full text-xs border transition-all shadow-sm flex items-center gap-1
+                                                    ${isPredefined
+                                                        ? 'border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100'
+                                                        : 'border-green-300 bg-white text-green-700 hover:bg-green-100'
+                                                    }`}
+                                            >
+                                                <span>+ {opt}</span>
+                                            </button>
+
+                                            {!isPredefined && (
+                                                <div className="absolute -top-2 -right-4 hidden group-hover:flex gap-0.5 bg-white shadow-md rounded-lg p-0.5 z-10 border border-gray-100">
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            const n = prompt('Editar nombre:', opt);
+                                                            if (n && n !== opt) handleManageOption(listKey, 'update', { old: opt, new: n });
+                                                        }}
+                                                        className="text-blue-500 hover:text-blue-700 p-1 hover:bg-blue-50 rounded"
+                                                        title="Editar"
+                                                    >
+                                                        ✎
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            if (confirm(`¿Eliminar "${opt}" de la lista global?`)) handleManageOption(listKey, 'delete', opt);
+                                                        }}
+                                                        className="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded"
+                                                        title="Eliminar"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
 
