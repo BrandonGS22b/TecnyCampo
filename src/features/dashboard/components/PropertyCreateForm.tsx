@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/auth.context';
-import { PROPERTY_TYPES } from '../../../shared/constants/filters';
+import { PROPERTY_TYPES, SOIL_TYPES, WATER_SOURCES, PASTURE_TYPES, TOPOGRAPHY_TYPES } from '../../../shared/constants/filters';
 import { uploadMedia } from '../../../shared/services/upload.service';
 import { DEPARTMENTS, getMunicipalities } from '../../../shared/constants/colombia';
 
@@ -73,7 +73,8 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
             waterSources: '',
             topographyTypes: '',
             soilTypes: '',
-            useTypes: ''
+            useTypes: '',
+            crops: ''
         }
     });
 
@@ -83,13 +84,14 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
         waterSources: [] as string[],
         topographyTypes: [] as string[],
         soilTypes: [] as string[],
-        useTypes: [] as string[]
+        useTypes: [] as string[],
+        crops: [] as string[]
     });
 
     // Load initial options
     useEffect(() => {
         const loadAllOptions = async () => {
-            const endpoints = ['pastureTypes', 'waterSources', 'topographyTypes', 'soilTypes', 'useTypes'];
+            const endpoints = ['pastureTypes', 'waterSources', 'topographyTypes', 'soilTypes', 'useTypes', 'crops'];
             const newOptions: any = {};
 
             for (const ep of endpoints) {
@@ -170,7 +172,8 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                     waterSources: '',
                     topographyTypes: '',
                     soilTypes: '',
-                    useTypes: ''
+                    useTypes: '',
+                    crops: ''
                 }
             });
         }
@@ -437,57 +440,130 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
             </h3>
 
             {/* Dynamic Managers Helper */}
-            {['pastureTypes', 'waterSources', 'topographyTypes', 'soilTypes'].map((listKey) => {
+            {['pastureTypes', 'waterSources', 'topographyTypes', 'soilTypes', 'crops'].map((listKey) => {
                 let label = '';
                 let formFieldParent = '';
                 let formFieldKey = '';
+                let predefinedOptions: any[] = [];
 
-                if (listKey === 'pastureTypes') { label = 'Tipos de Pasto'; formFieldParent = 'pasture'; formFieldKey = 'types'; }
-                if (listKey === 'waterSources') { label = 'Fuentes de Agua'; formFieldParent = 'water'; formFieldKey = 'sources'; }
-                if (listKey === 'topographyTypes') { label = 'Topografía'; formFieldParent = 'topography'; formFieldKey = 'types'; }
-                if (listKey === 'soilTypes') { label = 'Tipos de Suelo'; formFieldParent = 'soil'; formFieldKey = 'types'; }
+                if (listKey === 'pastureTypes') {
+                    label = 'Tipos de Pasto';
+                    formFieldParent = 'pasture';
+                    formFieldKey = 'types';
+                    predefinedOptions = PASTURE_TYPES;
+                }
+                if (listKey === 'waterSources') {
+                    label = 'Fuentes de Agua';
+                    formFieldParent = 'water';
+                    formFieldKey = 'sources';
+                    predefinedOptions = WATER_SOURCES;
+                }
+                if (listKey === 'topographyTypes') {
+                    label = 'Topografía';
+                    formFieldParent = 'topography';
+                    formFieldKey = 'types';
+                    predefinedOptions = TOPOGRAPHY_TYPES;
+                }
+                if (listKey === 'soilTypes') {
+                    label = 'Tipos de Suelo';
+                    formFieldParent = 'soil';
+                    formFieldKey = 'types';
+                    predefinedOptions = SOIL_TYPES;
+                }
+                if (listKey === 'crops') {
+                    label = 'Cultivos Aptos';
+                    formFieldParent = null as any; // Special case, root level array
+                    formFieldKey = 'crops';
+                    predefinedOptions = []; // No predefined constants for crops yet
+                }
+
+                // Helper to get current selected array
+                const currentSelected = listKey === 'crops'
+                    ? formData.crops
+                    // @ts-ignore
+                    : formData[formFieldParent][formFieldKey];
+
+                const toggleOption = (optValue: string) => {
+                    if (listKey === 'crops') {
+                        setFormData(prev => ({
+                            ...prev,
+                            crops: prev.crops.includes(optValue)
+                                ? prev.crops.filter(c => c !== optValue)
+                                : [...prev.crops, optValue]
+                        }));
+                    } else {
+                        handleArrayToggle(formFieldParent, formFieldKey, optValue);
+                    }
+                };
+
+                // Merge predefined with dynamic (avoid duplicates)
+                // @ts-ignore
+                const dynamicList = dynamicOptions[listKey] || [];
+                const allOptionsSet = new Set([...predefinedOptions.map(o => o.label || o.value), ...dynamicList]);
+                const allOptions = Array.from(allOptionsSet);
 
                 return (
                     <div key={listKey} className="border p-4 rounded-lg bg-green-50 mb-4">
                         <label className="block text-sm font-bold text-gray-700 mb-2">{label}</label>
+
+                        {/* Selected Chips */}
                         <div className="flex flex-wrap gap-2 mb-3">
-                            {/* @ts-ignore */}
-                            {dynamicOptions[listKey]?.map((opt: string) => (
+                            {currentSelected.map((opt: string) => (
                                 <div key={opt} className="relative group">
-                                    <button
-                                        type="button"
-                                        onClick={() => handleArrayToggle(formFieldParent, formFieldKey, opt)}
-                                        className={`px-3 py-1 rounded-full text-sm font-medium transition flex items-center gap-2 ${
-                                            // @ts-ignore
-                                            formData[formFieldParent][formFieldKey].includes(opt)
-                                                ? 'bg-green-600 text-white'
-                                                : 'bg-white text-green-700 border border-green-300'
-                                            }`}
-                                    >
+                                    <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-600 text-white flex items-center gap-2 shadow-sm">
                                         {opt}
-                                    </button>
-                                    <div className="absolute -top-2 -right-2 hidden group-hover:flex gap-1 bg-white shadow-lg rounded-full p-1 z-10">
-                                        <button type="button" onClick={(e) => { e.stopPropagation(); const n = prompt('Edit', opt); if (n && n !== opt) handleManageOption(listKey, 'update', { old: opt, new: n }); }} className="text-blue-500 text-xs">✏️</button>
-                                        <button type="button" onClick={(e) => { e.stopPropagation(); if (confirm('Del?')) handleManageOption(listKey, 'delete', opt); }} className="text-red-500 text-xs">❌</button>
-                                    </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleOption(opt)}
+                                            className="hover:text-red-200 transition-colors bg-green-700 rounded-full w-4 h-4 flex items-center justify-center font-bold"
+                                        >
+                                            ×
+                                        </button>
+                                    </span>
                                 </div>
                             ))}
                         </div>
-                        <div className="flex gap-2">
+
+                        {/* Suggestions / Options to Add */}
+                        <div className="mb-3">
+                            <p className="text-xs text-gray-500 mb-2 font-semibold">Opciones disponibles (Click para agregar):</p>
+                            <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                                {allOptions.filter(opt => !currentSelected.includes(opt)).map((opt: string) => (
+                                    <button
+                                        key={opt}
+                                        type="button"
+                                        onClick={() => toggleOption(opt)}
+                                        className="px-3 py-1 rounded-full text-xs border border-green-300 bg-white text-green-700 hover:bg-green-100 hover:border-green-400 transition-all shadow-sm"
+                                    >
+                                        + {opt}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Add Custom */}
+                        <div className="flex gap-2 border-t pt-3 mt-2 border-green-200">
                             {/* @ts-ignore */}
                             <input
                                 type="text"
-                                placeholder={`Agregar ${label}...`}
-                                className="flex-1 p-2 border rounded-lg text-sm"
+                                placeholder={`Otro ${label} (Escribir y agregar)...`}
+                                className="flex-1 p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
                                 value={(formData.newOption as any)[listKey]}
+
                                 onChange={(e) => setFormData(p => ({ ...p, newOption: { ...p.newOption, [listKey]: e.target.value } }))}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        handleManageOption(listKey, 'add', (formData.newOption as any)[listKey]);
+                                    }
+                                }}
                             />
                             <button
                                 type="button"
                                 onClick={() => handleManageOption(listKey, 'add', (formData.newOption as any)[listKey])}
-                                className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700"
+                                className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-900 shadow-md transition-transform active:scale-95"
                             >
-                                Agregar
+                                Agregar Personalizado
                             </button>
                         </div>
                     </div>
