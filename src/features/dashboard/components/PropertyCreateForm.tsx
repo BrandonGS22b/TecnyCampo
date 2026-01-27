@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/auth.context';
-import { PROPERTY_TYPES, SOIL_TYPES, WATER_SOURCES, PASTURE_TYPES, TOPOGRAPHY_TYPES } from '../../../shared/constants/filters';
+import { PROPERTY_TYPES } from '../../../shared/constants/filters';
 import { uploadMedia } from '../../../shared/services/upload.service';
 import { DEPARTMENTS, getMunicipalities } from '../../../shared/constants/colombia';
 
@@ -444,37 +444,30 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                 let label = '';
                 let formFieldParent = '';
                 let formFieldKey = '';
-                let predefinedOptions: any[] = [];
-
                 if (listKey === 'pastureTypes') {
                     label = 'Tipos de Pasto';
                     formFieldParent = 'pasture';
                     formFieldKey = 'types';
-                    predefinedOptions = PASTURE_TYPES;
                 }
                 if (listKey === 'waterSources') {
                     label = 'Fuentes de Agua';
                     formFieldParent = 'water';
                     formFieldKey = 'sources';
-                    predefinedOptions = WATER_SOURCES;
                 }
                 if (listKey === 'topographyTypes') {
                     label = 'Topografía';
                     formFieldParent = 'topography';
                     formFieldKey = 'types';
-                    predefinedOptions = TOPOGRAPHY_TYPES;
                 }
                 if (listKey === 'soilTypes') {
                     label = 'Tipos de Suelo';
                     formFieldParent = 'soil';
                     formFieldKey = 'types';
-                    predefinedOptions = SOIL_TYPES;
                 }
                 if (listKey === 'crops') {
                     label = 'Cultivos Aptos';
                     formFieldParent = null as any; // Special case, root level array
                     formFieldKey = 'crops';
-                    predefinedOptions = []; // No predefined constants for crops yet
                 }
 
                 // Helper to get current selected array
@@ -495,12 +488,10 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                         handleArrayToggle(formFieldParent, formFieldKey, optValue);
                     }
                 };
-
-                // Merge predefined with dynamic (avoid duplicates)
+                // Get dynamic list directly
                 // @ts-ignore
                 const dynamicList = dynamicOptions[listKey] || [];
-                const allOptionsSet = new Set([...predefinedOptions.map(o => o.label || o.value), ...dynamicList]);
-                const allOptions = Array.from(allOptionsSet);
+                const allOptions = dynamicList;
 
                 return (
                     <div key={listKey} className="border p-4 rounded-lg bg-green-50 mb-4">
@@ -528,51 +519,42 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                         <div className="mb-3">
                             <p className="text-xs text-gray-500 mb-2 font-semibold">Opciones disponibles (Click para agregar):</p>
                             <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                                {allOptions.filter(opt => !currentSelected.includes(opt)).map((opt: string) => {
-                                    // Check if it is a system constant (predefined)
-                                    const isPredefined = predefinedOptions.some(p => (p.label || p.value) === opt);
-
+                                {allOptions.filter((opt: string) => !currentSelected.includes(opt)).map((opt: string) => {
                                     return (
                                         <div key={opt} className="relative group inline-block">
                                             <button
                                                 type="button"
                                                 onClick={() => toggleOption(opt)}
-                                                className={`px-3 py-1 rounded-full text-xs border transition-all shadow-sm flex items-center gap-1
-                                                    ${isPredefined
-                                                        ? 'border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100'
-                                                        : 'border-green-300 bg-white text-green-700 hover:bg-green-100'
-                                                    }`}
+                                                className="px-3 py-1 rounded-full text-xs border border-green-300 bg-white text-green-700 hover:bg-green-100 transition-all shadow-sm flex items-center gap-1"
                                             >
                                                 <span>+ {opt}</span>
                                             </button>
 
-                                            {!isPredefined && (
-                                                <div className="absolute -top-2 -right-4 hidden group-hover:flex gap-0.5 bg-white shadow-md rounded-lg p-0.5 z-10 border border-gray-100">
-                                                    <button
-                                                        type="button"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            const n = prompt('Editar nombre:', opt);
-                                                            if (n && n !== opt) handleManageOption(listKey, 'update', { old: opt, new: n });
-                                                        }}
-                                                        className="text-blue-500 hover:text-blue-700 p-1 hover:bg-blue-50 rounded"
-                                                        title="Editar"
-                                                    >
-                                                        ✎
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            if (confirm(`¿Eliminar "${opt}" de la lista global?`)) handleManageOption(listKey, 'delete', opt);
-                                                        }}
-                                                        className="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded"
-                                                        title="Eliminar"
-                                                    >
-                                                        ×
-                                                    </button>
-                                                </div>
-                                            )}
+                                            <div className="absolute -top-2 -right-4 hidden group-hover:flex gap-0.5 bg-white shadow-md rounded-lg p-0.5 z-10 border border-gray-100">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        const n = prompt('Editar nombre:', opt);
+                                                        if (n && n !== opt) handleManageOption(listKey, 'update', { old: opt, new: n });
+                                                    }}
+                                                    className="text-blue-500 hover:text-blue-700 p-1 hover:bg-blue-50 rounded"
+                                                    title="Editar"
+                                                >
+                                                    ✎
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (confirm(`¿Eliminar "${opt}" de la lista global?`)) handleManageOption(listKey, 'delete', opt);
+                                                    }}
+                                                    className="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded"
+                                                    title="Eliminar"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
                                         </div>
                                     );
                                 })}

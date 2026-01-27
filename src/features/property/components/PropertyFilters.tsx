@@ -1,7 +1,7 @@
 // src/components/PropertyFilters.tsx
 
 import React, { useState, useEffect } from 'react';
-import { getUseTypesByPropertyType, SOIL_TYPES, WATER_SOURCES, PASTURE_TYPES, TOPOGRAPHY_TYPES } from '../../../shared/constants/filters';
+import { getUseTypesByPropertyType } from '../../../shared/constants/filters';
 import { ALL_CROPS } from '../../../shared/constants/crops';
 import SANTANDER_MUNICIPALITIES from '../../../shared/constants/municipalities';
 
@@ -27,34 +27,37 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
     });
 
     // Dynamic Options State
-    const [dynamicPastureTypes, setDynamicPastureTypes] = useState<any[]>(PASTURE_TYPES);
+    const [dynamicOptions, setDynamicOptions] = useState({
+        pastureTypes: [] as any[],
+        waterSources: [] as any[],
+        topographyTypes: [] as any[],
+        soilTypes: [] as any[],
+        useTypes: [] as any[]
+    });
 
     useEffect(() => {
-        fetchPastureTypes();
+        fetchAllOptions();
     }, []);
 
-    const fetchPastureTypes = async () => {
-        try {
-            const response = await fetch('https://tecnycampo-backend.onrender.com/api/configuration/pastureTypes');
-            if (response.ok) {
-                const data = await response.json();
-                if (data && data.length > 0) {
-                    // Map strings to object structure if data is just strings
-                    const formatted = data.map((t: string) => ({ value: t, label: t }));
-                    // Merge with default types to ensure icons/labels exist if needed, or just use new types
-                    // For now, let's append new ones to the default list or replace if we want full dynamic control
-                    // Strategy: Union of defaults + fetched
+    const fetchAllOptions = async () => {
+        const endpoints = ['pastureTypes', 'waterSources', 'topographyTypes', 'soilTypes', 'useTypes'];
+        const newOptions: any = {};
 
-                    const defaults = PASTURE_TYPES.map(p => p.value);
-                    const newTypes = data.filter((d: string) => !defaults.includes(d));
-                    const newFormatted = newTypes.map((t: string) => ({ value: t, label: t }));
-
-                    setDynamicPastureTypes([...PASTURE_TYPES, ...newFormatted]);
+        for (const ep of endpoints) {
+            try {
+                const response = await fetch(`https://tecnycampo-backend.onrender.com/api/configuration/${ep}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    // Assuming data is array of strings. Convert to object for UI consistency if needed, 
+                    // or just use strings. The UI below expects objects with {value, label}.
+                    // Let's normalize:
+                    newOptions[ep] = data.map((item: string) => ({ value: item, label: item, icon: '•' }));
                 }
+            } catch (error) {
+                console.error(`Error fetching ${ep}:`, error);
             }
-        } catch (error) {
-            console.error('Error fetching pasture types:', error);
         }
+        setDynamicOptions(prev => ({ ...prev, ...newOptions }));
     };
 
     const [showAdvanced, setShowAdvanced] = useState(false);
@@ -190,7 +193,7 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
                             Tipo de Suelo
                         </label>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {SOIL_TYPES.map(soil => (
+                            {dynamicOptions.soilTypes.map(soil => (
                                 <button
                                     key={soil.value}
                                     onClick={() => handleMultiSelect('soilTypes', soil.value)}
@@ -211,7 +214,7 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
                             Fuentes de Agua
                         </label>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {WATER_SOURCES.map(water => (
+                            {dynamicOptions.waterSources.map(water => (
                                 <button
                                     key={water.value}
                                     onClick={() => handleMultiSelect('waterSources', water.value)}
@@ -233,7 +236,7 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
                             Tipos de Pasto
                         </label>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {dynamicPastureTypes.map(pasture => (
+                            {dynamicOptions.pastureTypes.map(pasture => (
                                 <button
                                     key={pasture.value}
                                     onClick={() => handleMultiSelect('pastureTypes', pasture.value)}
@@ -254,7 +257,7 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
                             Topografía
                         </label>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                            {TOPOGRAPHY_TYPES.map(topo => (
+                            {dynamicOptions.topographyTypes.map(topo => (
                                 <button
                                     key={topo.value}
                                     onClick={() => handleMultiSelect('topographyTypes', topo.value)}
