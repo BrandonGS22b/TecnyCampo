@@ -91,7 +91,7 @@ export default function PropertyList({ propertyType, filters, onEdit }: Property
             </div>
 
             {/* Property Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-8">
                 {properties.map((property: any) => (
                     <PropertyCard
                         key={property._id}

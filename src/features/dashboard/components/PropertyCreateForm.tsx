@@ -1,20 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/auth.context';
-import { PROPERTY_TYPES, SOIL_TYPES, WATER_SOURCES, TOPOGRAPHY_TYPES, getUseTypesByPropertyType } from '../../../shared/constants/filters';
-import { ALL_CROPS } from '../../../shared/constants/crops';
+import { PROPERTY_TYPES } from '../../../shared/constants/filters';
 import { uploadMedia } from '../../../shared/services/upload.service';
 import { DEPARTMENTS, getMunicipalities } from '../../../shared/constants/colombia';
-
-
-
-
 
 import {
     PhotoIcon,
     MapPinIcon,
     ClipboardDocumentCheckIcon,
-    CurrencyDollarIcon,
     GlobeAmericasIcon
 } from '@heroicons/react/24/outline';
 
@@ -36,14 +30,15 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
             municipality: '',
             vereda: '',
             distanceToTown: '',
-            roadAccess: ''
+            roadAccess: '',
+            closestPavedRoad: ''
         },
         useTypes: [] as string[],
         soil: { types: [] as string[] },
         water: { sources: [] as string[] },
         pasture: { types: [] as string[] },
         crops: [] as string[],
-        topography: { types: [] as string[] },
+        topography: { types: [] as string[], elevation: { min: '', max: '' } },
         media: {
             images: [] as string[],
             videos: [] as string[],
@@ -63,48 +58,123 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
         productivity: {
             currentUse: '',
             production: '',
-            potential: ''
+            potential: '',
+            animalCapacity: ''
         },
         forestPercentage: '',
         reservePercentage: '',
+        rastrojoBajoPercentage: '',
+        rastrojoAltoPercentage: '',
         status: 'published',
-        newPastureType: ''
+
+        // Temp states for adding new options
+        newOption: {
+            pastureTypes: '',
+            waterSources: '',
+            topographyTypes: '',
+            soilTypes: '',
+            useTypes: ''
+        }
     });
 
-    // Dynamic Pasture Types State
-    const [pastureOptions, setPastureOptions] = useState<{ value: string, label: string }[]>([]);
+    // Dynamic Options State
+    const [dynamicOptions, setDynamicOptions] = useState({
+        pastureTypes: [] as string[],
+        waterSources: [] as string[],
+        topographyTypes: [] as string[],
+        soilTypes: [] as string[],
+        useTypes: [] as string[]
+    });
+
+    // Load initial options
+    useEffect(() => {
+        const loadAllOptions = async () => {
+            const endpoints = ['pastureTypes', 'waterSources', 'topographyTypes', 'soilTypes', 'useTypes'];
+            const newOptions: any = {};
+
+            for (const ep of endpoints) {
+                try {
+                    const res = await fetch(`https://tecnycampo-backend.onrender.com/api/configuration/${ep}`);
+                    if (res.ok) {
+                        newOptions[ep] = await res.json();
+                    }
+                } catch (e) {
+                    console.error(`Error loading ${ep}`, e);
+                }
+            }
+            setDynamicOptions(prev => ({ ...prev, ...newOptions }));
+        };
+        loadAllOptions();
+    }, []);
+
+    const handleManageOption = async (listName: string, action: 'add' | 'delete' | 'update', payload: any) => {
+        try {
+            const url = `https://tecnycampo-backend.onrender.com/api/configuration/${listName}`;
+            let method = 'POST';
+            let body = {};
+
+            if (action === 'add') {
+                method = 'POST';
+                body = { option: payload };
+            } else if (action === 'delete') {
+                method = 'DELETE'; // DELETE usually requires body or query? Our backend expects body.
+                // Standard fetch DELETE with body might be tricky in some browsers/proxies, but let's try.
+                // If backend uses body for DELETE, we need to send headers.
+            } else if (action === 'update') {
+                method = 'PUT';
+                body = { oldOption: payload.old, newOption: payload.new };
+            }
+
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    // 'Authorization': `Bearer ${token}` // If backend requires auth for settings
+                },
+                body: JSON.stringify(action === 'delete' ? { option: payload } : body)
+            });
+
+            if (res.ok) {
+                const updatedList = await res.json();
+                // @ts-ignore
+                setDynamicOptions(prev => ({ ...prev, [listName]: updatedList }));
+
+                // Clear temp input
+                if (action === 'add') {
+                    // @ts-ignore
+                    setFormData(prev => ({ ...prev, newOption: { ...prev.newOption, [listName]: '' } }));
+                }
+            } else {
+                alert('Error al gestionar la opción');
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    };
 
     useEffect(() => {
-        fetchPastureOptions();
         if (editMode && initialData) {
             setFormData({
                 ...initialData,
                 price: initialData.price.toString(),
                 area: initialData.area.toString(),
                 status: initialData.status || 'published',
-                newPastureType: ''
+                // Initialize nested objects if they are missing in initialData to avoid crashes
+                location: initialData.location || {},
+                productivity: initialData.productivity || {},
+                installations: initialData.installations || {},
+                topography: initialData.topography || { elevation: {} },
+                media: initialData.media || { images: [], videos: [], images360: [] },
+                newOption: {
+                    pastureTypes: '',
+                    waterSources: '',
+                    topographyTypes: '',
+                    soilTypes: '',
+                    useTypes: ''
+                }
             });
         }
     }, [editMode, initialData]);
-
-    const fetchPastureOptions = async () => {
-        try {
-            // First load defaults from constants if needed, then fetch backend
-            // For this implementation we will fetch from backend and merge with hardcoded defaults to ensure icons/consistency
-            const response = await fetch('https://tecnycampo-backend.onrender.com/api/configuration/pastureTypes');
-            let fetched = [];
-            if (response.ok) fetched = await response.json();
-
-            // Initial defaults could be imported from constants, but here we'll just use the fetched ones + user added
-            // effectively modifying the options list.
-            // For simplicity, let's assume the user starts with an empty list or the ones already in the system.
-            const formatted = fetched.map((s: string) => ({ value: s, label: s }));
-            setPastureOptions(formatted);
-
-        } catch (error) {
-            console.error("Error fetching pasture types", error);
-        }
-    };
 
     const handleChange = (field: string, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }));
@@ -138,33 +208,6 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                 }
             };
         });
-    };
-
-    const handleCropToggle = (value: string) => {
-        const current = formData.crops;
-        const newCrops = current.includes(value)
-            ? current.filter(c => c !== value)
-            : [...current, value];
-        setFormData(prev => ({ ...prev, crops: newCrops }));
-    };
-
-    const handleAddPastureType = () => {
-        if (formData.newPastureType.trim()) {
-            const newVal = formData.newPastureType.trim();
-            // Add to local selection
-            setFormData(prev => ({
-                ...prev,
-                pasture: {
-                    ...prev.pasture,
-                    types: [...prev.pasture.types, newVal]
-                },
-                newPastureType: ''
-            }));
-            // Add to options view permanently? It will be saved on backend submission
-            if (!pastureOptions.find(p => p.value === newVal)) {
-                setPastureOptions([...pastureOptions, { value: newVal, label: newVal }]);
-            }
-        }
     };
 
     // Subcomponents for steps
@@ -216,26 +259,62 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
 
                 <div>
                     <label className="block text-sm font-semibold text-gray-700">
-                        Tipos de Uso
+                        Tipos de Uso (Dinámico)
                     </label>
-                    <div className="border rounded-lg p-3 max-h-32 overflow-y-auto">
-                        {getUseTypesByPropertyType(formData.propertyType).map((use: any) => (
-                            <label key={use.value} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                                <input
-                                    type="checkbox"
-                                    checked={formData.useTypes.includes(use.value)}
-                                    onChange={() => {
-                                        const current = formData.useTypes;
-                                        const newTypes = current.includes(use.value)
-                                            ? current.filter((t: string) => t !== use.value)
-                                            : [...current, use.value];
-                                        setFormData(prev => ({ ...prev, useTypes: newTypes }));
-                                    }}
-                                    className="rounded text-green-600"
-                                />
-                                <span className="text-sm">{use.icon} {use.label}</span>
-                            </label>
+                    <div className="border rounded-lg p-3 max-h-48 overflow-y-auto bg-gray-50">
+                        {/* List */}
+                        {dynamicOptions.useTypes.map((use: string) => (
+                            <div key={use} className="flex items-center justify-between gap-2 p-1 hover:bg-gray-100 rounded group">
+                                <label className="flex items-center gap-2 cursor-pointer flex-1">
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.useTypes.includes(use)}
+                                        onChange={() => {
+                                            const current = formData.useTypes;
+                                            const newTypes = current.includes(use)
+                                                ? current.filter((t: string) => t !== use)
+                                                : [...current, use];
+                                            setFormData(prev => ({ ...prev, useTypes: newTypes }));
+                                        }}
+                                        className="rounded text-green-600 focus:ring-green-500"
+                                    />
+                                    <span className="text-sm">{use}</span>
+                                </label>
+                                <div className="hidden group-hover:flex gap-1">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const newName = prompt('Editar nombre:', use);
+                                            if (newName && newName !== use) handleManageOption('useTypes', 'update', { old: use, new: newName });
+                                        }}
+                                        className="text-blue-500 hover:text-blue-700 p-1"
+                                    >✎</button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            if (confirm('¿Eliminar?')) handleManageOption('useTypes', 'delete', use);
+                                        }}
+                                        className="text-red-500 hover:text-red-700 p-1"
+                                    >×</button>
+                                </div>
+                            </div>
                         ))}
+                        {/* Add New */}
+                        <div className="flex gap-2 mt-2 pt-2 border-t">
+                            {/* @ts-ignore */}
+                            <input
+                                type="text"
+                                placeholder="Nuevo uso..."
+                                className="flex-1 p-1 text-sm border rounded"
+                                value={formData.newOption.useTypes}
+                                onChange={(e) => setFormData(p => ({ ...p, newOption: { ...p.newOption, useTypes: e.target.value } }))}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => handleManageOption('useTypes', 'add', formData.newOption.useTypes)}
+                                className="bg-green-600 text-white px-3 py-1 rounded text-xs"
+                            >Agregar</button>
+                        </div>
                     </div>
                 </div>
 
@@ -336,6 +415,16 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                         onChange={(e) => handleNestedChange('location', 'distanceToTown', e.target.value)}
                     />
                 </div>
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">Vía Pavimentada más cercana</label>
+                    <input
+                        type="text"
+                        placeholder="Ej: Mamonal a Gambote"
+                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+                        value={formData.location.closestPavedRoad}
+                        onChange={(e) => handleNestedChange('location', 'closestPavedRoad', e.target.value)}
+                    />
+                </div>
             </div>
         </div>
     );
@@ -347,65 +436,147 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                 Características del Terreno
             </h3>
 
-            {/* PASTURE TYPES - DYNAMIC */}
-            <div className="border p-4 rounded-lg bg-green-50">
-                <label className="block text-sm font-bold text-gray-700 mb-2">Tipos de Pasto (Dinámico)</label>
-                <div className="flex flex-wrap gap-2 mb-3">
-                    {pastureOptions.map(opt => (
-                        <button
-                            key={opt.value}
-                            type="button"
-                            onClick={() => handleArrayToggle('pasture', 'types', opt.value)}
-                            className={`px-3 py-1 rounded-full text-sm font-medium transition ${formData.pasture.types.includes(opt.value)
-                                ? 'bg-green-600 text-white'
-                                : 'bg-white text-green-700 border border-green-300'
-                                }`}
-                        >
-                            {opt.label}
-                        </button>
-                    ))}
-                </div>
-                <div className="flex gap-2">
-                    <input
-                        type="text"
-                        placeholder="Agregar otro tipo de pasto..."
-                        className="flex-1 p-2 border rounded-lg text-sm"
-                        value={formData.newPastureType}
-                        onChange={(e) => handleChange('newPastureType', e.target.value)}
+            {/* Dynamic Managers Helper */}
+            {['pastureTypes', 'waterSources', 'topographyTypes', 'soilTypes'].map((listKey) => {
+                let label = '';
+                let formFieldParent = '';
+                let formFieldKey = '';
+
+                if (listKey === 'pastureTypes') { label = 'Tipos de Pasto'; formFieldParent = 'pasture'; formFieldKey = 'types'; }
+                if (listKey === 'waterSources') { label = 'Fuentes de Agua'; formFieldParent = 'water'; formFieldKey = 'sources'; }
+                if (listKey === 'topographyTypes') { label = 'Topografía'; formFieldParent = 'topography'; formFieldKey = 'types'; }
+                if (listKey === 'soilTypes') { label = 'Tipos de Suelo'; formFieldParent = 'soil'; formFieldKey = 'types'; }
+
+                return (
+                    <div key={listKey} className="border p-4 rounded-lg bg-green-50 mb-4">
+                        <label className="block text-sm font-bold text-gray-700 mb-2">{label}</label>
+                        <div className="flex flex-wrap gap-2 mb-3">
+                            {/* @ts-ignore */}
+                            {dynamicOptions[listKey]?.map((opt: string) => (
+                                <div key={opt} className="relative group">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleArrayToggle(formFieldParent, formFieldKey, opt)}
+                                        className={`px-3 py-1 rounded-full text-sm font-medium transition flex items-center gap-2 ${
+                                            // @ts-ignore
+                                            formData[formFieldParent][formFieldKey].includes(opt)
+                                                ? 'bg-green-600 text-white'
+                                                : 'bg-white text-green-700 border border-green-300'
+                                            }`}
+                                    >
+                                        {opt}
+                                    </button>
+                                    <div className="absolute -top-2 -right-2 hidden group-hover:flex gap-1 bg-white shadow-lg rounded-full p-1 z-10">
+                                        <button type="button" onClick={(e) => { e.stopPropagation(); const n = prompt('Edit', opt); if (n && n !== opt) handleManageOption(listKey, 'update', { old: opt, new: n }); }} className="text-blue-500 text-xs">✏️</button>
+                                        <button type="button" onClick={(e) => { e.stopPropagation(); if (confirm('Del?')) handleManageOption(listKey, 'delete', opt); }} className="text-red-500 text-xs">❌</button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="flex gap-2">
+                            {/* @ts-ignore */}
+                            <input
+                                type="text"
+                                placeholder={`Agregar ${label}...`}
+                                className="flex-1 p-2 border rounded-lg text-sm"
+                                value={(formData.newOption as any)[listKey]}
+                                onChange={(e) => setFormData(p => ({ ...p, newOption: { ...p.newOption, [listKey]: e.target.value } }))}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => handleManageOption(listKey, 'add', (formData.newOption as any)[listKey])}
+                                className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700"
+                            >
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                );
+            })}
+
+            {/* Additional Percentages, Capacity & Elevation */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">Altura Min (msnm)</label>
+                    <input type="number" className="w-full p-2 border rounded"
+                        value={formData.topography?.elevation?.min || ''}
+                        onChange={(e) => handleNestedChange('topography', 'elevation', { ...formData.topography.elevation, min: e.target.value })}
                     />
-                    <button
-                        type="button"
-                        onClick={handleAddPastureType}
-                        className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700"
-                    >
-                        Agregar
-                    </button>
+                </div>
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">Altura Max (msnm)</label>
+                    <input type="number" className="w-full p-2 border rounded"
+                        value={formData.topography?.elevation?.max || ''}
+                        onChange={(e) => handleNestedChange('topography', 'elevation', { ...formData.topography.elevation, max: e.target.value })}
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">% Bosques</label>
+                    <input type="number" className="w-full p-2 border rounded" value={formData.forestPercentage} onChange={(e) => handleChange('forestPercentage', e.target.value)} />
+                </div>
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">% Reserva</label>
+                    <input type="number" className="w-full p-2 border rounded" value={formData.reservePercentage} onChange={(e) => handleChange('reservePercentage', e.target.value)} />
+                </div>
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">% Rastrojo Bajo</label>
+                    <input type="number" className="w-full p-2 border rounded" value={formData.rastrojoBajoPercentage} onChange={(e) => handleChange('rastrojoBajoPercentage', e.target.value)} />
+                </div>
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">% Rastrojo Alto</label>
+                    <input type="number" className="w-full p-2 border rounded" value={formData.rastrojoAltoPercentage} onChange={(e) => handleChange('rastrojoAltoPercentage', e.target.value)} />
+                </div>
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">Carga Animal (Unidades)</label>
+                    <input type="number" className="w-full p-2 border rounded" value={formData.productivity.animalCapacity} onChange={(e) => handleNestedChange('productivity', 'animalCapacity', e.target.value)} />
                 </div>
             </div>
 
-            {/* Other details simplified for brevity but fully functional */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Fuentes de Agua</label>
-                    <select multiple className="w-full p-2 border rounded h-32"
-                        onChange={(e) => {
-                            const selected = Array.from(e.target.selectedOptions, o => o.value);
-                            setFormData(prev => ({ ...prev, water: { ...prev.water, sources: selected } }));
-                        }}
-                    >
-                        {WATER_SOURCES.map(w => <option key={w.value} value={w.value}>{w.label}</option>)}
-                    </select>
-                </div>
-                <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Topografía</label>
-                    <select multiple className="w-full p-2 border rounded h-32"
-                        onChange={(e) => {
-                            const selected = Array.from(e.target.selectedOptions, o => o.value);
-                            setFormData(prev => ({ ...prev, topography: { ...prev.topography, types: selected } }));
-                        }}
-                    >
-                        {TOPOGRAPHY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                    </select>
+            {/* Installations */}
+            <div className="mt-6 border-t pt-4">
+                <h4 className="text-lg font-bold text-gray-800 mb-3">Instalaciones y Estructuras</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1">Edificaciones (Separar por comas)</label>
+                        <input
+                            type="text"
+                            placeholder="Ej: Casa principal, Casa encargado, Bodega"
+                            className="w-full p-2 border rounded"
+                            value={formData.installations?.buildings?.join(', ') || ''}
+                            onChange={(e) => handleNestedChange('installations', 'buildings', e.target.value.split(',').map(s => s.trim()))}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1">Cercas (Separar por comas)</label>
+                        <input
+                            type="text"
+                            placeholder="Ej: Eléctrica, Púas, Viva"
+                            className="w-full p-2 border rounded"
+                            value={formData.installations?.fences?.join(', ') || ''}
+                            onChange={(e) => handleNestedChange('installations', 'fences', e.target.value.split(',').map(s => s.trim()))}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1">Otras Infraestructuras</label>
+                        <input
+                            type="text"
+                            placeholder="Ej: Corral, Ordeño mecánico, Báscula"
+                            className="w-full p-2 border rounded"
+                            value={formData.installations?.infrastructure?.join(', ') || ''}
+                            onChange={(e) => handleNestedChange('installations', 'infrastructure', e.target.value.split(',').map(s => s.trim()))}
+                        />
+                    </div>
+                    <div className="flex items-center mt-6">
+                        <label className="flex items-center cursor-pointer">
+                            <input
+                                type="checkbox"
+                                className="w-5 h-5 text-green-600 rounded"
+                                checked={formData.installations?.electricity || false}
+                                onChange={(e) => handleNestedChange('installations', 'electricity', e.target.checked)}
+                            />
+                            <span className="ml-2 text-gray-700 font-semibold">¿Tiene Electricidad?</span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -622,7 +793,14 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                 reservePercentage: formData.reservePercentage ? parseFloat(formData.reservePercentage) : undefined,
                 location: {
                     ...formData.location,
-                    distanceToTown: formData.location.distanceToTown ? parseFloat(formData.location.distanceToTown) : 0
+                    distanceToTown: formData.location.distanceToTown ? parseFloat(formData.location.distanceToTown) : 0,
+                    closestPavedRoad: formData.location.closestPavedRoad
+                },
+                rastrojoBajoPercentage: formData.rastrojoBajoPercentage ? parseFloat(formData.rastrojoBajoPercentage) : undefined,
+                rastrojoAltoPercentage: formData.rastrojoAltoPercentage ? parseFloat(formData.rastrojoAltoPercentage) : undefined,
+                productivity: {
+                    ...formData.productivity,
+                    animalCapacity: formData.productivity.animalCapacity ? parseFloat(formData.productivity.animalCapacity) : undefined
                 }
             };
 
@@ -709,4 +887,3 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
         </div>
     );
 }
-
