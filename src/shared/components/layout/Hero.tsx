@@ -40,7 +40,7 @@ export default function Hero() {
                 {/* Search Bar with Modern Design */}
 
 
-                {/* CTA Buttons */}
+                {/* CTA Buttons 
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
                     <Link
                         to="/propiedades"
@@ -63,7 +63,7 @@ export default function Hero() {
                         Nuestros Servicios
                     </a>
                 </div>
-
+                    */}
                 {/* Stats or Features */}
 
             </div>
