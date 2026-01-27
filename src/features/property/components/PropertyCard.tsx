@@ -100,7 +100,7 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
         <>
             <div className={`bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 group relative ${property.status === 'archived' ? 'opacity-75 grayscale-[0.5]' : ''}`}>
                 {/* Image */}
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-40 md:h-64 overflow-hidden">
                     <img
                         src={mainImage}
                         alt={property.title}
@@ -112,7 +112,7 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
 
                     {/* Property Type Badge */}
                     <div className="absolute top-4 left-4 flex flex-col gap-2">
-                        <div className={`${getPropertyTypeColor(property.propertyType)} text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg text-center`}>
+                        <div className={`${getPropertyTypeColor(property.propertyType)} text-white px-2 py-0.5 md:px-3 md:py-1 rounded-full text-xs md:text-sm font-bold shadow-lg text-center`}>
                             {getPropertyTypeLabel(property.propertyType)}
                         </div>
                         {property.status === 'archived' && (
@@ -176,32 +176,32 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                 </div>
 
                 {/* Content */}
-                <div className="p-6">
+                <div className="p-3 md:p-6">
                     {/* Location */}
-                    <div className="flex items-center text-sm text-gray-600 mb-2">
+                    <div className="flex items-center text-xs md:text-sm text-gray-600 mb-1 md:mb-2">
                         <MapPinIconSolid className="w-4 h-4 mr-1 text-green-600" />
                         {property.location.municipality}, {property.location.department}
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-green-600 transition min-h-[3.5rem]">
+                    <h3 className="text-sm md:text-xl font-bold text-gray-900 mb-1 md:mb-2 line-clamp-2 group-hover:text-green-600 transition min-h-[2.5rem] md:min-h-[3.5rem]">
                         {property.title}
                     </h3>
 
                     {/* Description */}
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2 h-10">
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2 h-10 hidden md:block">
                         {property.description}
                     </p>
 
                     {/* Features */}
-                    <div className="flex flex-wrap gap-2 mb-4">
+                    <div className="flex flex-wrap gap-1 md:gap-2 mb-2 md:mb-4">
                         {property.soil?.types?.slice(0, 1).map((s: string) => (
-                            <div key={s} className="flex items-center bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
+                            <div key={s} className="flex items-center bg-green-50 text-green-700 px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-semibold">
                                 <span className="mr-1">🌱</span> {s}
                             </div>
                         ))}
                         {property.water?.sources?.slice(0, 1).map((w: string) => (
-                            <div key={w} className="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
+                            <div key={w} className="flex items-center bg-blue-50 text-blue-700 px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-semibold">
                                 <span className="mr-1">💧</span> {w}
                             </div>
                         ))}
@@ -210,7 +210,7 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                     {/* Price and Area */}
                     <div className="border-t pt-4 flex justify-between items-end">
                         <div>
-                            <div className="text-2xl font-black text-green-600">
+                            <div className="text-lg md:text-2xl font-black text-green-600">
                                 {formatPrice(property.price)}
                             </div>
                             {property.pricePerHectare && (
@@ -220,7 +220,7 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                             )}
                         </div>
                         <div className="text-right">
-                            <div className="text-lg font-bold text-gray-900">
+                            <div className="text-sm md:text-lg font-bold text-gray-900">
                                 {property.area} ha
                             </div>
                             <div className="text-xs text-gray-500 font-medium">
@@ -232,7 +232,7 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                     {/* View Button */}
                     <button
                         onClick={() => navigate(`/propiedades/${property._id}`)}
-                        className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 rounded-lg transition transform hover:scale-[1.02] active:scale-95 shadow-md flex justify-center items-center gap-2"
+                        className="mt-2 md:mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 md:py-3 text-sm md:text-base rounded-lg transition transform hover:scale-[1.02] active:scale-95 shadow-md flex justify-center items-center gap-2"
                     >
                         Ver Detalles
                         <EyeIcon className="w-5 h-5" />
