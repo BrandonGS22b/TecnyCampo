@@ -155,18 +155,18 @@ export default function Footer() {
                             <h3 className="text-xl font-bold text-white mb-1">Suscríbete a nuestro boletín</h3>
                             <p className="text-sm text-gray-300">Recibe las mejores ofertas directamente en tu correo</p>
                         </div>
-                        <div className="flex w-full md:w-auto gap-2">
+                        <div className="flex flex-col sm:flex-row w-full md:w-auto gap-2">
                             <input
                                 type="email"
                                 placeholder="tu@email.com"
                                 className="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white 
                            placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 
-                           transition-all flex-1 md:w-64"
+                           transition-all w-full md:w-64"
                             />
                             <button className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 
                                  hover:from-green-600 hover:to-green-700 rounded-lg font-bold 
                                  transition-all duration-300 transform hover:scale-105 
-                                 shadow-lg hover:shadow-green-500/50">
+                                 shadow-lg hover:shadow-green-500/50 w-full sm:w-auto">
                                 Suscribir
                             </button>
                         </div>
