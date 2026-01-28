@@ -9,8 +9,62 @@ import {
 } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { BuildingOffice2Icon, HomeIcon, SparklesIcon } from '@heroicons/react/24/solid';
+import { useState } from 'react';
 
 export default function Footer() {
+    const [email, setEmail] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEmail(e.target.value);
+        // Clear message when user starts typing
+        if (message) setMessage(null);
+    };
+
+    const handleSubscribe = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // Validate email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.trim()) {
+            setMessage({ type: 'error', text: 'Por favor ingresa tu correo electrónico' });
+            return;
+        }
+
+        if (!emailRegex.test(email)) {
+            setMessage({ type: 'error', text: 'Por favor ingresa un correo electrónico válido' });
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            // TODO: Replace with your actual API endpoint
+            // const response = await fetch('/api/newsletter/subscribe', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({ email }),
+            // });
+
+            // if (!response.ok) {
+            //     throw new Error('Error al suscribirse');
+            // }
+
+            // Simulate API call for now
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            setMessage({ type: 'success', text: '¡Gracias por suscribirte! Recibirás nuestras mejores ofertas.' });
+            setEmail('');
+        } catch (error) {
+            setMessage({ type: 'error', text: 'Hubo un error al procesar tu suscripción. Intenta nuevamente.' });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white pt-16 pb-6 shadow-2xl overflow-hidden">
             {/* Decorative Background Elements */}
@@ -150,27 +204,45 @@ export default function Footer() {
 
                 {/* Newsletter Section */}
                 <div className="mb-8 p-6 glass rounded-2xl border border-white/10 backdrop-blur-md">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div>
-                            <h3 className="text-xl font-bold text-white mb-1">Suscríbete a nuestro boletín</h3>
-                            <p className="text-sm text-gray-300">Recibe las mejores ofertas directamente en tu correo</p>
+                    <form onSubmit={handleSubscribe}>
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                            <div>
+                                <h3 className="text-xl font-bold text-white mb-1">Suscríbete a nuestro boletín</h3>
+                                <p className="text-sm text-gray-300">Recibe las mejores ofertas directamente en tu correo</p>
+                            </div>
+                            <div className="flex flex-col sm:flex-row w-full md:w-auto gap-2">
+                                <input
+                                    type="email"
+                                    placeholder="tu@email.com"
+                                    value={email}
+                                    onChange={handleEmailChange}
+                                    disabled={isSubmitting}
+                                    className="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white 
+                               placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 
+                               transition-all w-full md:w-64 disabled:opacity-50 disabled:cursor-not-allowed"
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 
+                                     hover:from-green-600 hover:to-green-700 rounded-lg font-bold 
+                                     transition-all duration-300 transform hover:scale-105 
+                                     shadow-lg hover:shadow-green-500/50 w-full sm:w-auto
+                                     disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                                    {isSubmitting ? 'Enviando...' : 'Suscribir'}
+                                </button>
+                            </div>
                         </div>
-                        <div className="flex flex-col sm:flex-row w-full md:w-auto gap-2">
-                            <input
-                                type="email"
-                                placeholder="tu@email.com"
-                                className="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white 
-                           placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 
-                           transition-all w-full md:w-64"
-                            />
-                            <button className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 
-                                 hover:from-green-600 hover:to-green-700 rounded-lg font-bold 
-                                 transition-all duration-300 transform hover:scale-105 
-                                 shadow-lg hover:shadow-green-500/50 w-full sm:w-auto">
-                                Suscribir
-                            </button>
-                        </div>
-                    </div>
+                        {/* Feedback Message */}
+                        {message && (
+                            <div className={`mt-4 p-3 rounded-lg text-sm ${message.type === 'success'
+                                    ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                                    : 'bg-red-500/20 text-red-300 border border-red-500/30'
+                                }`}>
+                                {message.text}
+                            </div>
+                        )}
+                    </form>
                 </div>
 
                 {/* Copyright */}
