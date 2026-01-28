@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 export default function Hero() {
     return (
         <section
-            className="relative bg-cover bg-center min-h-[600px] flex flex-col justify-center items-center text-white p-4 pt-24 overflow-hidden"
+            className="relative bg-cover bg-center min-h-[500px] flex flex-col justify-center items-center text-white p-4 pt-22 overflow-hidden"
             style={{ backgroundImage: 'url(/fondo-agro.jpg)' }}
         >
             {/* Animated Gradient Overlay */}
