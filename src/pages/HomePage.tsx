@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Newsletter from '../shared/components/Newsletter';
 
 export default function HomePage() {
     const navigate = useNavigate();
@@ -156,6 +157,13 @@ export default function HomePage() {
                             </div>
                         ))}
                     </div>
+                </div>
+            </div>
+
+            {/* Newsletter Section */}
+            <div className="bg-gray-900 pt-16 px-4">
+                <div className="max-w-4xl mx-auto">
+                    <Newsletter />
                 </div>
             </div>
 
