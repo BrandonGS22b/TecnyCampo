@@ -78,26 +78,7 @@ Luego abre 👉 http://localhost:5173
 ```
 📂 Estructura del proyecto
 ```bash
-Copiar código
-TecnyCampo/
-├── public/
-│   ├── Favicon.png
-│   └── vite.svg
-├── src/
-│   ├── components/
-│   │   ├── Navbar.tsx
-│   │   ├── Hero.tsx
-│   │   ├── FarmTypeFilter.tsx
-│   │   ├── Services.tsx
-│   │   ├── Topografia.tsx
-│   │   ├── Veterinaria.tsx
-│   │   ├── Inmobiliaria.tsx
-│   │   └── Footer.tsx
-│   ├── App.tsx
-│   ├── main.tsx
-│   └── index.css
-├── index.html
-└── package.json
+
 ```
 🛠️ Scripts disponibles
 Comando	Descripción
