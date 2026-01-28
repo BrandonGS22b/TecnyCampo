@@ -40,26 +40,32 @@ export default function Footer() {
         setIsSubmitting(true);
 
         try {
-            // TODO: Replace with your actual API endpoint
-            // const response = await fetch('/api/newsletter/subscribe', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({ email }),
-            // });
+            const API_URL = import.meta.env.VITE_API_URL || 'https://tecnycampo-backend.onrender.com/api';
+            const response = await fetch(`${API_URL}/newsletter/subscribe`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
 
-            // if (!response.ok) {
-            //     throw new Error('Error al suscribirse');
-            // }
+            const data = await response.json();
 
-            // Simulate API call for now
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            if (!response.ok) {
+                // Handle specific error cases from backend
+                if (response.status === 400 && data.message?.includes('ya está suscrito')) {
+                    setMessage({ type: 'error', text: 'Este correo ya está suscrito a nuestro boletín' });
+                } else {
+                    setMessage({ type: 'error', text: data.message || 'Hubo un error al procesar tu suscripción' });
+                }
+                return;
+            }
 
             setMessage({ type: 'success', text: '¡Gracias por suscribirte! Recibirás nuestras mejores ofertas.' });
             setEmail('');
         } catch (error) {
-            setMessage({ type: 'error', text: 'Hubo un error al procesar tu suscripción. Intenta nuevamente.' });
+            console.error('Newsletter subscription error:', error);
+            setMessage({ type: 'error', text: 'Error de conexión. Por favor intenta nuevamente.' });
         } finally {
             setIsSubmitting(false);
         }
@@ -236,8 +242,8 @@ export default function Footer() {
                         {/* Feedback Message */}
                         {message && (
                             <div className={`mt-4 p-3 rounded-lg text-sm ${message.type === 'success'
-                                    ? 'bg-green-500/20 text-green-300 border border-green-500/30'
-                                    : 'bg-red-500/20 text-red-300 border border-red-500/30'
+                                ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                                : 'bg-red-500/20 text-red-300 border border-red-500/30'
                                 }`}>
                                 {message.text}
                             </div>
