@@ -18,7 +18,11 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
 
     const images = property.media?.images || [];
     const mainImage = images.length > 0 ? images[0] : '/placeholder-property.jpg';
+
+
     const has360 = property.media?.images360?.length > 0;
+
+
     const hasVideo = property.media?.videos?.length > 0;
 
     const formatPrice = (price: number) => {
@@ -165,7 +169,7 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                                     <EyeIcon className="w-4 h-4" />
                                 </div>
                             )}
-                            {hasVideo && (
+                            { hasVideo && (
                                 <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center shadow-lg">
                                     <span className="mr-1">VIDEO</span>
                                     <PlayIcon className="w-4 h-4" />

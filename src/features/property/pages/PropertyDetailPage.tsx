@@ -19,6 +19,7 @@ import {
     PlayIcon
 } from '@heroicons/react/24/solid';
 import { useAuth } from '../../auth/auth.context';
+import PhotoSphere360Viewer from '../../../shared/components/PhotoSphere360Viewer';
 
 export default function PropertyDetailPage() {
     const { id } = useParams();
@@ -29,6 +30,7 @@ export default function PropertyDetailPage() {
     const [selectedMedia, setSelectedMedia] = useState(0);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState(0);
+    const [selected360Index, setSelected360Index] = useState(0);
 
     useEffect(() => {
         const fetchProperty = async () => {
@@ -352,6 +354,69 @@ export default function PropertyDetailPage() {
                                         </div>
                                     ))}
                                 </div>
+                            </div>
+                        )}
+
+                        {/* 360° Images Section */}
+                        {property.media?.images360?.length > 0 && (
+                            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-[2.5rem] shadow-2xl p-8 lg:p-10 border-2 border-purple-200">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="bg-purple-600 w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg">
+                                        <GlobeAmericasIcon className="w-8 h-8 text-white" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-black text-gray-900">
+                                            Vista Panorámica 360°
+                                        </h3>
+                                        <p className="text-sm text-purple-600 font-semibold">
+                                            Explora la propiedad de forma interactiva
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Photo Sphere Viewer */}
+                                <PhotoSphere360Viewer
+                                    imageUrl={property.media.images360[selected360Index]}
+                                    height="600px"
+                                    className="mb-6"
+                                />
+
+                                {/* Thumbnail Selector for Multiple 360 Images */}
+                                {property.media.images360.length > 1 && (
+                                    <div className="mt-6">
+                                        <p className="text-sm font-bold text-gray-700 mb-3">
+                                            📸 Selecciona otra vista 360° ({property.media.images360.length} disponibles):
+                                        </p>
+                                        <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+                                            {property.media.images360.map((img: string, idx: number) => (
+                                                <div
+                                                    key={idx}
+                                                    onClick={() => setSelected360Index(idx)}
+                                                    className={`relative flex-shrink-0 w-32 h-32 rounded-2xl overflow-hidden cursor-pointer border-4 transition-all transform ${selected360Index === idx
+                                                            ? 'border-purple-600 scale-105 shadow-2xl shadow-purple-500/50'
+                                                            : 'border-transparent opacity-60 hover:opacity-100 hover:scale-95'
+                                                        }`}
+                                                >
+                                                    <img
+                                                        src={img}
+                                                        alt={`Vista 360° ${idx + 1}`}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                    <div className="absolute inset-0 bg-purple-600/30 flex items-center justify-center">
+                                                        <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
+                                                            <span className="text-purple-700 font-black text-sm">360° #{idx + 1}</span>
+                                                        </div>
+                                                    </div>
+                                                    {selected360Index === idx && (
+                                                        <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                                                            ✓
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
 

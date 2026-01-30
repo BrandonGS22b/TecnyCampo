@@ -1,6 +1,6 @@
 // src/components/PropertyTypeSelector.tsx
 
-import React from 'react';
+//import React from 'react';
 import { PROPERTY_TYPES } from '../../../shared/constants/filters';
 
 interface PropertyTypeSelectorProps {
