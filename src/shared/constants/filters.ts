@@ -1,7 +1,11 @@
 // src/constants/filters.ts
 
-// These will be populated dynamically from the database/admin form
-export const PROPERTY_TYPES: Array<{ value: string; label: string; icon: string }> = [];
+// Core property types - these are fundamental to the application structure
+export const PROPERTY_TYPES = [
+    { value: 'lote', label: 'Lote', icon: '🏞️' },
+    { value: 'parcela', label: 'Parcela', icon: '🌾' },
+    { value: 'finca', label: 'Finca', icon: '🏡' }
+];
 
 // Property use types - conditional based on property type
 export const PROPERTY_USE_TYPES: {
