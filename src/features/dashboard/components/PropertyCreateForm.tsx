@@ -825,7 +825,7 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                         try {
                             const uploadedUrls: string[] = [];
                             for (const file of Array.from(e.target.files)) {
-                                const res = await uploadMedia(file, token);
+                                const res = await uploadMedia(file, token, true);
                                 uploadedUrls.push(res.url);
                             }
                             setFormData(prev => ({

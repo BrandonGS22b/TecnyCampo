@@ -1,12 +1,17 @@
-export const uploadMedia = async (file: File, token: string) => {
+export const uploadMedia = async (file: File, token: string, is360: boolean = false) => {
   try {
     const formData = new FormData();
     formData.append('file', file);
 
     const isVideo = file.type.startsWith('video');
-    const endpoint = isVideo ? 'video' : 'image';
+    let endpoint = isVideo ? 'video' : 'image';
 
-    console.log(`Uploading ${isVideo ? 'video' : 'image'}: ${file.name}, size: ${file.size} bytes`);
+    // If it's a 360 image, use the dedicated endpoint
+    if (is360 && !isVideo) {
+      endpoint = 'image360';
+    }
+
+    console.log(`Uploading ${endpoint}: ${file.name}, size: ${file.size} bytes`);
 
     const res = await fetch(
       `https://tecnycampo-backend.onrender.com/api/media/${endpoint}`,
