@@ -28,6 +28,7 @@ export default function PropertyDetailPage() {
     const [selected360Index, setSelected360Index] = useState(0);
     const scrollRef = useRef<HTMLDivElement>(null);
     const isScrollingRef = useRef(false);
+    const touchStartLB = useRef<number | null>(null);
 
     useEffect(() => {
         const fetchProperty = async () => {
@@ -135,11 +136,34 @@ export default function PropertyDetailPage() {
         }).format(price);
     };
 
+    const handleTouchStartLB = (e: React.TouchEvent) => {
+        touchStartLB.current = e.targetTouches[0].clientX;
+    };
+
+    const handleTouchEndLB = (e: React.TouchEvent) => {
+        if (touchStartLB.current === null) return;
+        const touchEnd = e.changedTouches[0].clientX;
+        const diff = touchStartLB.current - touchEnd;
+
+        if (Math.abs(diff) > 50) {
+            if (diff > 0) {
+                nextLightboxMedia();
+            } else {
+                prevLightboxMedia();
+            }
+        }
+        touchStartLB.current = null;
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 pt-24 pb-20">
             {/* Lightbox Modal with Zoom Effect */}
             {lightboxOpen && (
-                <div className="fixed inset-0 z-[5000] bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm">
+                <div
+                    className="fixed inset-0 z-[5000] bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm"
+                    onTouchStart={handleTouchStartLB}
+                    onTouchEnd={handleTouchEndLB}
+                >
                     <button
                         onClick={() => setLightboxOpen(false)}
                         className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 rounded-full transition z-10 text-white shadow-2xl"
