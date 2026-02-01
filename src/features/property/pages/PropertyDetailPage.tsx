@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     ArrowLeftIcon,
     MapPinIcon,
-    CurrencyDollarIcon,
-    HomeIcon,
     XMarkIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
@@ -14,23 +12,22 @@ import {
     CalendarIcon,
     InformationCircleIcon,
     CheckBadgeIcon,
-    UserCircleIcon,
     GlobeAmericasIcon,
     PlayIcon
 } from '@heroicons/react/24/solid';
-import { useAuth } from '../../auth/auth.context';
 import PhotoSphere360Viewer from '../../../shared/components/PhotoSphere360Viewer';
 
 export default function PropertyDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { token } = useAuth();
     const [property, setProperty] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [selectedMedia, setSelectedMedia] = useState(0);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxIndex, setLightboxIndex] = useState(0);
     const [selected360Index, setSelected360Index] = useState(0);
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const isScrollingRef = useRef(false);
 
     useEffect(() => {
         const fetchProperty = async () => {
@@ -88,12 +85,46 @@ export default function PropertyDetailPage() {
     ];
 
     // Lightbox Navigation
-    const nextMedia = () => {
+    const nextLightboxMedia = () => {
         setLightboxIndex((prev) => (prev + 1) % allMedia.length);
     };
 
-    const prevMedia = () => {
+    const prevLightboxMedia = () => {
         setLightboxIndex((prev) => (prev - 1 + allMedia.length) % allMedia.length);
+    };
+
+    // Slider Navigation
+    const prevSliderMedia = () => {
+        const index = (selectedMedia - 1 + allMedia.length) % allMedia.length;
+        handleMediaChange(index);
+    };
+
+    const nextSliderMedia = () => {
+        const index = (selectedMedia + 1) % allMedia.length;
+        handleMediaChange(index);
+    };
+
+    const handleMediaChange = (index: number) => {
+        setSelectedMedia(index);
+        if (scrollRef.current) {
+            isScrollingRef.current = true;
+            scrollRef.current.scrollTo({
+                left: scrollRef.current.clientWidth * index,
+                behavior: 'smooth'
+            });
+            setTimeout(() => {
+                isScrollingRef.current = false;
+            }, 500);
+        }
+    };
+
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        if (isScrollingRef.current) return;
+        const container = e.currentTarget;
+        const index = Math.round(container.scrollLeft / container.clientWidth);
+        if (index !== selectedMedia) {
+            setSelectedMedia(index);
+        }
     };
 
     const formatPrice = (price: number) => {
@@ -120,13 +151,13 @@ export default function PropertyDetailPage() {
                     {allMedia.length > 1 && (
                         <>
                             <button
-                                onClick={prevMedia}
+                                onClick={prevLightboxMedia}
                                 className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full transition z-10 text-white shadow-2xl backdrop-blur-md"
                             >
                                 <ChevronLeftIcon className="w-10 h-10" />
                             </button>
                             <button
-                                onClick={nextMedia}
+                                onClick={nextLightboxMedia}
                                 className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 rounded-full transition z-10 text-white shadow-2xl backdrop-blur-md"
                             >
                                 <ChevronRightIcon className="w-10 h-10" />
@@ -197,82 +228,120 @@ export default function PropertyDetailPage() {
 
                         {/* 1. Main Media Gallery */}
                         <div className="relative group">
-                            <div className="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border-4 border-white transition-all transform group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
-                                <div
-                                    className="relative aspect-video overflow-hidden bg-gray-900"
-                                >
-                                    {allMedia[selectedMedia]?.type === 'video' ? (
-                                        <video
-                                            src={allMedia[selectedMedia].url}
-                                            controls
-                                            className="w-full h-full object-contain"
-                                        />
-                                    ) : (
-                                        <div
-                                            className="w-full h-full relative cursor-zoom-in group/main"
-                                            onClick={() => { setLightboxIndex(selectedMedia); setLightboxOpen(true); }}
+                            <div className="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border-4 border-white transition-all transform group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.15)] relative">
+
+                                {/* Desktop Arrows */}
+                                {allMedia.length > 1 && (
+                                    <>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); prevSliderMedia(); }}
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 bg-black/30 hover:bg-black/50 text-white rounded-full transition-all opacity-0 group-hover:opacity-100 hidden md:flex"
                                         >
-                                            <img
-                                                src={allMedia[selectedMedia]?.url || '/placeholder-property.jpg'}
-                                                alt={property.title}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                            />
-                                            <div className="absolute inset-0 bg-black/0 group-hover/main:bg-black/10 transition-colors flex items-center justify-center">
-                                                <MagnifyingGlassPlusIcon className="w-20 h-20 text-white opacity-0 group-hover/main:opacity-100 transition-all transform scale-50 group-hover/main:scale-100" />
-                                            </div>
-                                        </div>
-                                    )}
+                                            <ChevronLeftIcon className="w-8 h-8" />
+                                        </button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); nextSliderMedia(); }}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 bg-black/30 hover:bg-black/50 text-white rounded-full transition-all opacity-0 group-hover:opacity-100 hidden md:flex"
+                                        >
+                                            <ChevronRightIcon className="w-8 h-8" />
+                                        </button>
+                                    </>
+                                )}
 
-                                    {/* Overlay Badge */}
-                                    {allMedia[selectedMedia]?.type === 'image360' && (
-                                        <div className="absolute top-6 left-6 flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-2xl text-sm font-black shadow-2xl animate-pulse">
-                                            <GlobeAmericasIcon className="w-5 h-5" />
-                                            VISTA 360° PANORÁMICA
-                                        </div>
-                                    )}
-                                    {allMedia[selectedMedia]?.type === 'video' && (
-                                        <div className="absolute top-6 left-6 flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-2xl text-sm font-black shadow-2xl">
-                                            <PlayIcon className="w-5 h-5" />
-                                            VIDEO TOUR ACTIVO
-                                        </div>
-                                    )}
+                                <div
+                                    ref={scrollRef}
+                                    onScroll={handleScroll}
+                                    className="relative aspect-video overflow-x-auto overflow-y-hidden flex snap-x snap-mandatory scroll-smooth scrollbar-hide bg-gray-900"
+                                >
+                                    {allMedia.map((media, idx) => (
+                                        <div key={idx} className="flex-shrink-0 w-full h-full snap-center relative">
+                                            {media.type === 'video' ? (
+                                                <video
+                                                    src={media.url}
+                                                    controls
+                                                    className="w-full h-full object-contain"
+                                                />
+                                            ) : (
+                                                <div
+                                                    className="w-full h-full relative cursor-zoom-in group/main"
+                                                    onClick={() => { setLightboxIndex(idx); setLightboxOpen(true); }}
+                                                >
+                                                    <img
+                                                        src={media.url || '/placeholder-property.jpg'}
+                                                        alt={`${property.title} - ${idx + 1}`}
+                                                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                                                        loading="lazy"
+                                                    />
+                                                    <div className="absolute inset-0 bg-black/0 group-hover/main:bg-black/10 transition-colors flex items-center justify-center">
+                                                        <MagnifyingGlassPlusIcon className="w-20 h-20 text-white opacity-0 group-hover/main:opacity-100 transition-all transform scale-50 group-hover/main:scale-100" />
+                                                    </div>
+                                                </div>
+                                            )}
 
-                                    {/* Price and Title Overlay (Mobile only) */}
-                                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent md:hidden pointer-events-none">
-                                        <h1 className="text-white text-2xl font-black mb-1 leading-tight">{property.title}</h1>
-                                        <p className="text-yellow-400 font-black text-xl">{formatPrice(property.price)}</p>
-                                    </div>
+                                            {/* Overlay Badges */}
+                                            {media.type === 'image360' && (
+                                                <div className="absolute top-6 left-6 flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-2xl text-xs font-black shadow-2xl animate-pulse z-10">
+                                                    <GlobeAmericasIcon className="w-5 h-5" />
+                                                    VISTA 360°
+                                                </div>
+                                            )}
+                                            {media.type === 'video' && (
+                                                <div className="absolute top-6 left-6 flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-2xl text-xs font-black shadow-2xl z-10">
+                                                    <PlayIcon className="w-5 h-5" />
+                                                    VIDEO
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
                                 </div>
 
-                                {/* Thumbnails Strip */}
+                                {/* Price and Title Overlay (Mobile only) */}
+                                <div className="absolute bottom-4 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent md:hidden pointer-events-none z-10">
+                                    <h1 className="text-white text-2xl font-black mb-1 leading-tight">{property.title}</h1>
+                                    <p className="text-yellow-400 font-black text-xl">{formatPrice(property.price)}</p>
+                                </div>
+
+                                {/* Slide Counter dots */}
                                 {allMedia.length > 1 && (
-                                    <div className="flex gap-3 p-4 bg-gray-50/50 backdrop-blur-md overflow-x-auto scrollbar-hide">
-                                        {allMedia.map((m, idx) => (
+                                    <div className="absolute bottom-4 right-6 z-20 flex gap-1.5 md:hidden">
+                                        {allMedia.map((_, idx) => (
                                             <div
                                                 key={idx}
-                                                onClick={() => setSelectedMedia(idx)}
-                                                className={`relative flex-shrink-0 w-24 h-24 rounded-2xl overflow-hidden cursor-pointer border-4 transition-all transform ${selectedMedia === idx ? 'border-green-600 scale-105 shadow-xl rotate-1' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-95'
-                                                    }`}
-                                            >
-                                                {m.type === 'video' ? (
-                                                    <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                                                        <PlayIcon className="w-10 h-10 text-white opacity-80" />
-                                                        <div className="absolute bottom-1 right-1 bg-blue-600 text-white text-[8px] px-1 rounded">VID</div>
-                                                    </div>
-                                                ) : (
-                                                    <img src={m.url} alt={`Vista ${idx + 1}`} className="w-full h-full object-cover" />
-                                                )}
-
-                                                {m.type === 'image360' && (
-                                                    <div className="absolute inset-0 bg-purple-600/30 flex items-center justify-center">
-                                                        <span className="text-white font-black text-[10px]">360°</span>
-                                                    </div>
-                                                )}
-                                            </div>
+                                                className={`w-2 h-2 rounded-full transition-all ${selectedMedia === idx ? 'bg-yellow-400 w-4' : 'bg-white/50'}`}
+                                            />
                                         ))}
                                     </div>
                                 )}
                             </div>
+
+                            {/* Thumbnails Strip */}
+                            {allMedia.length > 1 && (
+                                <div className="flex gap-3 p-4 bg-gray-50/50 backdrop-blur-md overflow-x-auto scrollbar-hide">
+                                    {allMedia.map((media, idx) => (
+                                        <div
+                                            key={idx}
+                                            onClick={() => handleMediaChange(idx)}
+                                            className={`relative flex-shrink-0 w-24 h-24 rounded-2xl overflow-hidden cursor-pointer border-4 transition-all transform ${selectedMedia === idx ? 'border-green-600 scale-105 shadow-xl rotate-1' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-95'
+                                                }`}
+                                        >
+                                            {media.type === 'video' ? (
+                                                <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                                                    <PlayIcon className="w-10 h-10 text-white opacity-80" />
+                                                    <div className="absolute bottom-1 right-1 bg-blue-600 text-white text-[8px] px-1 rounded">VID</div>
+                                                </div>
+                                            ) : (
+                                                <img src={media.url} alt={`Vista ${idx + 1}`} className="w-full h-full object-cover" />
+                                            )}
+
+                                            {media.type === 'image360' && (
+                                                <div className="absolute inset-0 bg-purple-600/30 flex items-center justify-center">
+                                                    <span className="text-white font-black text-[10px]">360°</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         {/* 2. Title & Basic Info Section */}
@@ -393,8 +462,8 @@ export default function PropertyDetailPage() {
                                                     key={idx}
                                                     onClick={() => setSelected360Index(idx)}
                                                     className={`relative flex-shrink-0 w-32 h-32 rounded-2xl overflow-hidden cursor-pointer border-4 transition-all transform ${selected360Index === idx
-                                                            ? 'border-purple-600 scale-105 shadow-2xl shadow-purple-500/50'
-                                                            : 'border-transparent opacity-60 hover:opacity-100 hover:scale-95'
+                                                        ? 'border-purple-600 scale-105 shadow-2xl shadow-purple-500/50'
+                                                        : 'border-transparent opacity-60 hover:opacity-100 hover:scale-95'
                                                         }`}
                                                 >
                                                     <img
