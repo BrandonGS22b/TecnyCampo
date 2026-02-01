@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import * as HeroIcons from '@heroicons/react/24/solid';
 import { useAuth } from '../../../features/auth/auth.context';
@@ -21,13 +21,14 @@ export default function Navbar() {
     const navigate = useNavigate();
 
     // Handle scroll effect
-    useState(() => {
+    useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
         };
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll(); // Check initial position
         return () => window.removeEventListener('scroll', handleScroll);
-    });
+    }, []);
 
     const handleLogout = () => {
         logout();
@@ -38,9 +39,9 @@ export default function Navbar() {
     return (
         <nav
             className={`fixed top-0 left-0 w-full z-[1200] transition-all duration-300 ${scrolled
-                ? 'glass-dark shadow-2xl py-2'
-                : 'bg-gradient-to-r from-gray-900 to-gray-800 py-3 shadow-xl'
-                } text-white border-b-4 border-yellow-500`}
+                ? 'glass-dark shadow-2xl py-2 md:py-3'
+                : 'bg-gradient-to-r from-gray-900 to-gray-800 py-3 md:py-4 shadow-xl'
+                } text-white border-b-2 md:border-b-4 border-yellow-500`}
         >
             <div className="container mx-auto flex items-center justify-between px-4 md:px-6">
                 {/* Logo */}
@@ -56,15 +57,15 @@ export default function Navbar() {
                         )}
                     </button>
 
-                    <Link to="/" className="flex items-center space-x-3 group">
-                        <div className="text-4xl group-hover:scale-110 transition-transform duration-300 animate-float">
+                    <Link to="/" className="flex items-center space-x-2 md:space-x-3 group">
+                        <div className="text-3xl md:text-4xl group-hover:scale-110 transition-transform duration-300 animate-float">
                             🏡
                         </div>
                         <div>
-                            <div className="text-2xl font-black text-white tracking-tight">
+                            <div className="text-xl md:text-2xl font-black text-white tracking-tight leading-tight">
                                 LP NEGOCIOS
                             </div>
-                            <div className="text-xs text-yellow-500 font-semibold tracking-wider">
+                            <div className="text-[10px] md:text-xs text-yellow-500 font-semibold tracking-wider">
                                 E INVERSIONES SAS
                             </div>
                         </div>

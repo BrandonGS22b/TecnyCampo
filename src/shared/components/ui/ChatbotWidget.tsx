@@ -17,7 +17,7 @@ export default function ChatbotWidget() {
   const [isTyping, setIsTyping] = useState(false);
   // Generamos un ID de sesión único para que n8n/MongoDB guarden la memoria correctamente
   const [sessionId] = useState(`session-${Math.random().toString(36).substr(2, 9)}`);
-  
+
   const [messages, setMessages] = useState<Message[]>([
     { from: 'bot', text: '¡Hola! 👋 Soy tu asistente IA de TecnyCampo. ¿En qué puedo ayudarte hoy?', timestamp: new Date() },
   ]);
@@ -37,7 +37,7 @@ export default function ChatbotWidget() {
 
     const userText = input;
     const userMessage: Message = { from: 'user', text: userText, timestamp: new Date() };
-    
+
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsTyping(true);
@@ -85,7 +85,7 @@ export default function ChatbotWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[2000] flex flex-col items-end pointer-events-none">
+    <div className="fixed bottom-6 right-4 sm:right-6 z-[2000] flex flex-col items-end pointer-events-none">
       {/* VENTANA DE CHAT */}
       <div
         className={`pointer-events-auto transition-all duration-500 ease-in-out transform origin-bottom-right mb-4
@@ -115,11 +115,10 @@ export default function ChatbotWidget() {
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#121416]">
           {messages.map((msg, index) => (
             <div key={index} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm ${
-                msg.from === 'user' 
-                ? 'bg-purple-600 text-white rounded-tr-none' 
-                : 'bg-white/10 text-gray-200 border border-white/5 rounded-tl-none'
-              }`}>
+              <div className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm ${msg.from === 'user'
+                  ? 'bg-purple-600 text-white rounded-tr-none'
+                  : 'bg-white/10 text-gray-200 border border-white/5 rounded-tl-none'
+                }`}>
                 {msg.text}
                 <div className="text-[9px] opacity-40 mt-1">
                   {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

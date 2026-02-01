@@ -59,7 +59,7 @@ export default function LoginPage() {
                         <h2 className="mt-4 sm:mt-6 text-3xl sm:text-4xl font-extrabold text-white">
                             Iniciar Sesión
                         </h2>
-                        <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-300 font-medium">
+                        <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-100 font-bold bg-black/20 py-1 px-3 rounded-full inline-block">
                             ✨ Acceso exclusivo para personal autorizado
                         </p>
                     </div>

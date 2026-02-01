@@ -109,6 +109,7 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                         src={mainImage}
                         alt={property.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        loading="lazy"
                     />
 
                     {/* Overlay gradient */}
@@ -169,7 +170,7 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                                     <EyeIcon className="w-4 h-4" />
                                 </div>
                             )}
-                            { hasVideo && (
+                            {hasVideo && (
                                 <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center shadow-lg">
                                     <span className="mr-1">VIDEO</span>
                                     <PlayIcon className="w-4 h-4" />
