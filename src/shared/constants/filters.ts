@@ -1,29 +1,15 @@
 // src/constants/filters.ts
 
-export const PROPERTY_TYPES = [
-    { value: 'lote', label: 'Lote', icon: '🏞️' },
-    { value: 'parcela', label: 'Parcela', icon: '🌾' },
-    { value: 'finca', label: 'Finca', icon: '🏡' }
-];
-
-
+// These will be populated dynamically from the database/admin form
+export const PROPERTY_TYPES: Array<{ value: string; label: string; icon: string }> = [];
 
 // Property use types - conditional based on property type
-export const PROPERTY_USE_TYPES = {
-    // Available for all property types
-    common: [
-        { value: 'agrícola', label: 'Agrícola', icon: '🌾' },
-        { value: 'ganadero', label: 'Ganadero', icon: '🐄' },
-        { value: 'silvopastoril', label: 'Silvopastoril', icon: '🌳' },
-        { value: 'forestal', label: 'Forestal', icon: '🌲' },
-        { value: 'minera', label: 'Minera', icon: '⛏️' },
-        { value: 'mixto', label: 'Mixto', icon: '🔄' }
-    ],
-    // Only for Parcelas and Fincas (NOT for Lotes)
-    parcelaFinca: [
-        { value: 'avícola', label: 'Avícola', icon: '🐔' },
-        { value: 'porcícola', label: 'Porcícola', icon: '🐷' }
-    ]
+export const PROPERTY_USE_TYPES: {
+    common: Array<{ value: string; label: string; icon: string }>;
+    parcelaFinca: Array<{ value: string; label: string; icon: string }>;
+} = {
+    common: [],
+    parcelaFinca: []
 };
 
 // Get use types based on property type
