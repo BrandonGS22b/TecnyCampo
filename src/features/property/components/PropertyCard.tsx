@@ -80,7 +80,7 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
 
         setLoading(true);
         try {
-            const response = await fetch(`https://tecnycampo-backend.onrender.com/${property._id}`, {
+            const response = await fetch(`https://tecnycampo-backend.onrender.com/api/terrains/${property._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
