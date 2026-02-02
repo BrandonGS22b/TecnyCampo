@@ -187,18 +187,18 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                         <MapPinIconSolid className="w-4 h-4 mr-1 text-green-600" />
                         {property.location.municipality}, {property.location.department}
                     </div>
-
+                    {/* contenido del la card en el homepage principal*/}
                     {/* Title */}
                     <h3 className="text-sm md:text-xl font-bold text-gray-900 mb-1 md:mb-2 line-clamp-2 group-hover:text-green-600 transition min-h-[2.5rem] md:min-h-[3.5rem]">
                         {property.title}
                     </h3>
 
-                    {/* Description */}
+                    {/* Description 
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2 h-10 hidden md:block">
                         {property.description}
                     </p>
-
-                    {/* Features */}
+                            */}
+                    {/* Features 
                     <div className="flex flex-wrap gap-1 md:gap-2 mb-2 md:mb-4">
                         {property.soil?.types?.slice(0, 1).map((s: string) => (
                             <div key={s} className="flex items-center bg-green-50 text-green-700 px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-semibold">
@@ -211,7 +211,7 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                             </div>
                         ))}
                     </div>
-
+*/}
                     {/* Price and Area */}
                     <div className="border-t pt-4 flex justify-between items-end">
                         <div>
