@@ -213,7 +213,7 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                     </div>
 */}
                     {/* Price and Area */}
-                    <div className="border-t pt-4 flex items-end h-screen">
+                    <div className="border-t pt-4 flex justify-between items-baseline">
                         <div>
                             <div className="text-lg md:text-2xl font-black text-green-600">
                                 {formatPrice(property.price)}
