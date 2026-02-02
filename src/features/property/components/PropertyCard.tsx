@@ -213,7 +213,7 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                     </div>
 */}
                     {/* Price and Area */}
-                    <div className="border-t pt-4 flex justify-between items-baseline">
+                   <div className="border-t pt-4 flex flex-col gap-2">
                         <div>
                             <div className="text-lg md:text-2xl font-black text-green-600">
                                 {formatPrice(property.price)}
@@ -224,7 +224,8 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                                 </div>
                             )}
                         </div>
-                        <div className="text-right">
+
+                        <div>
                             <div className="text-sm md:text-lg font-bold text-gray-900">
                                 {property.area} ha
                             </div>
@@ -233,6 +234,7 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                             </div>
                         </div>
                     </div>
+
 
                     {/* View Button */}
                     <button
