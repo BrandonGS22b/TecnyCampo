@@ -157,18 +157,22 @@ export default function PropertyDetailPage() {
     };
 
     const handleShare = async () => {
+        const shareUrl = window.location.href;
+        const shareText = `Mira esta propiedad: ${property.title} en LP Negocios\n\n${shareUrl}`;
+
         const shareData = {
             title: property.title,
-            text: `Mira esta propiedad: ${property.title} en LP Negocios`,
-            url: window.location.href
+            text: shareText,
+            url: shareUrl
         };
 
         try {
             if (navigator.share) {
+                // Some browsers (like Chrome on Android) handle 'url' better if it's separate,
+                // but WhatsApp often needs it in the 'text' for the preview to work correctly.
                 await navigator.share(shareData);
             } else {
-                // Fallback for browsers that don't support navigator.share
-                await navigator.clipboard.writeText(window.location.href);
+                await navigator.clipboard.writeText(shareUrl);
                 alert('¡Enlace copiado al portapapeles!');
             }
         } catch (err) {
