@@ -177,7 +177,7 @@ export default function PropertyDetailPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 pt-24 pb-20">
+        <div className="min-h-screen bg-gray-50 pt-16 pb-20">
             {/* Lightbox Modal with Zoom Effect */}
             {lightboxOpen && (
                 <div
@@ -577,7 +577,7 @@ export default function PropertyDetailPage() {
                                     <p className="text-yellow-500 font-black tracking-[0.2em] text-xs uppercase mb-6 drop-shadow-lg">
                                         Precio Negociable
                                     </p>
-                                    <div className="text-3xl lg:text-5xl font-black mb-4 drop-shadow-2xl break-words leading-tight px-2">
+                                    <div className="text-2xl lg:text-4xl font-black mb-4 drop-shadow-2xl whitespace-nowrap px-2 hidden md:block">
                                         {formatPrice(property.price)}
                                     </div>
                                     <div className="bg-white/10 backdrop-blur-md px-6 py-3 rounded-2xl inline-block border border-white/10 mb-10 shadow-inner">
@@ -605,10 +605,10 @@ export default function PropertyDetailPage() {
                                             href={`https://wa.me/573176677911?text=Hola LP Negocios, me interesa la propiedad: ${property.title} (ID: ${property._id}).`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="flex items-center justify-center gap-3 w-full py-5 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-gray-900 font-black rounded-3xl shadow-[0_15px_30px_rgba(234,179,8,0.3)] transition-all transform hover:scale-105 active:scale-95 group/btn"
+                                            className="flex items-center justify-center gap-3 w-full py-6 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-gray-900 font-black rounded-3xl shadow-[0_15px_30px_rgba(234,179,8,0.3)] transition-all transform hover:scale-105 active:scale-95 group/btn"
                                         >
-                                            <span className="text-xl">Contactar WhatsApp</span>
-                                            <ArrowRightIcon className="w-6 h-6 group-hover/btn:translate-x-1 transition-transform" />
+                                            <span className="text-2xl uppercase tracking-tight">Contactar WhatsApp</span>
+                                            <ArrowRightIcon className="w-8 h-8 group-hover/btn:translate-x-1 transition-transform" />
                                         </a>
 
                                         <div className="flex items-center justify-center gap-2 text-gray-500 text-xs font-bold pt-4">
