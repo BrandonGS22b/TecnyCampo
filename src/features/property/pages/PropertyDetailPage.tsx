@@ -13,7 +13,8 @@ import {
     InformationCircleIcon,
     CheckBadgeIcon,
     GlobeAmericasIcon,
-    PlayIcon
+    PlayIcon,
+    ShareIcon
 } from '@heroicons/react/24/solid';
 import PhotoSphere360Viewer from '../../../shared/components/PhotoSphere360Viewer';
 
@@ -155,6 +156,26 @@ export default function PropertyDetailPage() {
         touchStartLB.current = null;
     };
 
+    const handleShare = async () => {
+        const shareData = {
+            title: property.title,
+            text: `Mira esta propiedad: ${property.title} en LP Negocios`,
+            url: window.location.href
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                // Fallback for browsers that don't support navigator.share
+                await navigator.clipboard.writeText(window.location.href);
+                alert('¡Enlace copiado al portapapeles!');
+            }
+        } catch (err) {
+            console.error('Error sharing:', err);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 pt-24 pb-20">
             {/* Lightbox Modal with Zoom Effect */}
@@ -238,10 +259,41 @@ export default function PropertyDetailPage() {
                         <span>Volver al Catálogo</span>
                     </button>
 
-                    <div className="flex items-center gap-4 text-xs font-black text-gray-400 uppercase tracking-widest">
-                        <span>ID: {property._id}</span>
-                        <div className={`px-3 py-1 rounded-lg ${property.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                            {property.status === 'published' ? '✨ Publicado' : '⏳ Pendiente'}
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleShare}
+                            className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all font-bold shadow-sm"
+                        >
+                            <ShareIcon className="w-5 h-5 text-blue-600" />
+                            <span className="hidden sm:inline">Compartir</span>
+                        </button>
+                        <div className="flex items-center gap-4 text-xs font-black text-gray-400 uppercase tracking-widest bg-white px-4 py-2 rounded-xl border border-gray-100">
+                            <span>ID: {property._id}</span>
+                            <div className={`px-2 py-0.5 rounded-lg ${property.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                {property.status === 'published' ? '✨' : '⏳'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mobile Title & Price (New section) */}
+                <div className="md:hidden mb-8 space-y-3">
+                    <div className="flex items-center gap-2">
+                        <div className={`px-3 py-1 rounded-full text-white text-[10px] font-black uppercase tracking-wider ${property.propertyType === 'finca' ? 'bg-yellow-500' : property.propertyType === 'parcela' ? 'bg-green-500' : 'bg-blue-500'
+                            } shadow-sm`}>
+                            {property.propertyType}
+                        </div>
+                    </div>
+                    <h1 className="text-3xl font-black text-gray-900 leading-tight">
+                        {property.title}
+                    </h1>
+                    <div className="flex items-end justify-between gap-2">
+                        <p className="text-green-600 font-black text-2xl tracking-tight">
+                            {formatPrice(property.price)}
+                        </p>
+                        <div className="flex items-center text-gray-500 font-bold text-xs bg-gray-100 px-3 py-1 rounded-full">
+                            <MapPinIcon className="w-3 h-3 mr-1 text-green-600" />
+                            {property.location.municipality}
                         </div>
                     </div>
                 </div>
@@ -319,11 +371,7 @@ export default function PropertyDetailPage() {
                                     ))}
                                 </div>
 
-                                {/* Price and Title Overlay (Mobile only) */}
-                                <div className="absolute bottom-4 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent md:hidden pointer-events-none z-10">
-                                    <h1 className="text-white text-2xl font-black mb-1 leading-tight">{property.title}</h1>
-                                    <p className="text-yellow-400 font-black text-xl">{formatPrice(property.price)}</p>
-                                </div>
+
 
                                 {/* Slide Counter dots */}
                                 {allMedia.length > 1 && (
@@ -381,7 +429,7 @@ export default function PropertyDetailPage() {
                                 </div>
                             </div>
 
-                            <h1 className="text-3xl lg:text-5xl font-black text-gray-900 mb-6 leading-[1.1]">
+                            <h1 className="hidden md:block text-3xl lg:text-5xl font-black text-gray-900 mb-6 leading-[1.1]">
                                 {property.title}
                             </h1>
 
@@ -529,7 +577,7 @@ export default function PropertyDetailPage() {
                                     <p className="text-yellow-500 font-black tracking-[0.2em] text-xs uppercase mb-6 drop-shadow-lg">
                                         Precio Negociable
                                     </p>
-                                    <div className="text-5xl lg:text-6xl font-black mb-4 drop-shadow-2xl">
+                                    <div className="text-3xl lg:text-5xl font-black mb-4 drop-shadow-2xl break-words leading-tight px-2">
                                         {formatPrice(property.price)}
                                     </div>
                                     <div className="bg-white/10 backdrop-blur-md px-6 py-3 rounded-2xl inline-block border border-white/10 mb-10 shadow-inner">
