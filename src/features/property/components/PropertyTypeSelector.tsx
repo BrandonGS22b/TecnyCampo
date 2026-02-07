@@ -1,7 +1,4 @@
-// src/components/PropertyTypeSelector.tsx
-
-//import React from 'react';
-import { PROPERTY_TYPES } from '../../../shared/constants/filters';
+import { LucideHome, LucideLayers, LucideMap } from 'lucide-react';
 
 interface PropertyTypeSelectorProps {
     selectedType: string;
@@ -9,36 +6,47 @@ interface PropertyTypeSelectorProps {
 }
 
 export default function PropertyTypeSelector({ selectedType, onSelectType }: PropertyTypeSelectorProps) {
+    const types = [
+        { value: 'lote', label: 'Lote', icon: <LucideMap size={24} /> },
+        { value: 'parcela', label: 'Parcela', icon: <LucideLayers size={24} /> },
+        { value: 'finca', label: 'Finca', icon: <LucideHome size={24} /> },
+    ];
+
     return (
-        <div className="w-full bg-white shadow-2xl">
-            <div className="max-w-7xl mx-auto p-4 md:p-6">
-                <h2 className="text-xl md:text-2xl font-extrabold text-gray-800 mb-6 border-b-2 border-green-600 pb-2 text-center md:text-left">
-                    <span className="text-yellow-600 mr-2">◼︎</span>
+        <div className="w-full bg-white py-10 px-4">
+            <div className="max-w-4xl mx-auto">
+                <h2 className="text-xl md:text-2xl font-extrabold text-[#1a3a3a] mb-8 flex items-center gap-3">
+                    <span className="w-3 h-3 bg-[#facc15] inline-block"></span>
                     Tipo de Propiedad
                 </h2>
+                <div className="w-full h-[1px] bg-gray-200 mb-10 relative">
+                    <div className="absolute left-0 top-0 h-[2px] bg-green-500 w-1/4"></div>
+                </div>
 
-                <div className="flex justify-center items-end space-x-4">
-                    {PROPERTY_TYPES.map((type) => {
+                <div className="grid grid-cols-3 gap-6">
+                    {types.map((type) => {
                         const isSelected = type.value === selectedType;
 
                         return (
                             <button
                                 key={type.value}
                                 onClick={() => onSelectType(type.value)}
-                                className={`flex flex-col items-center flex-1 p-4 max-w-xs
-                  transition-all duration-300 border-b-4 rounded-t-lg
-                  ${isSelected
-                                        ? 'bg-green-600 text-white shadow-xl scale-105 border-yellow-500'
-                                        : 'bg-white text-gray-700 hover:bg-gray-100 hover:scale-105 border-gray-200'
+                                className={`flex flex-col items-center justify-center py-6 px-4 rounded-xl transition-all duration-300 group relative
+                                    ${isSelected
+                                        ? 'bg-[#10b981] text-white shadow-xl scale-105 z-10'
+                                        : 'bg-white text-gray-500 hover:bg-gray-50 border border-transparent group-hover:border-gray-200'
                                     }`}
                             >
-                                <div className={`text-4xl mb-2 ${isSelected ? 'text-yellow-300' : 'text-green-600'}`}>
+                                <div className={`mb-3 p-3 rounded-lg transition-colors ${isSelected ? 'bg-white/20' : 'bg-gray-100'}`}>
                                     {type.icon}
                                 </div>
-
-                                <div className="text-sm md:text-base font-bold text-center">
+                                <span className={`font-bold text-sm md:text-base ${isSelected ? 'text-white' : 'text-[#1a3a3a]'}`}>
                                     {type.label}
-                                </div>
+                                </span>
+
+                                {isSelected && (
+                                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-[#facc15] rounded-full"></div>
+                                )}
                             </button>
                         );
                     })}

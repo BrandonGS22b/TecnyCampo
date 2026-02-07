@@ -1,17 +1,17 @@
-// src/components/PropertyFilters.tsx
-
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getUseTypesByPropertyType } from '../../../shared/constants/filters';
-import { ALL_CROPS } from '../../../shared/constants/crops';
 import SANTANDER_MUNICIPALITIES from '../../../shared/constants/municipalities';
+import { LucidePlus, LucideX, LucideMapPin, LucideDollarSign, LucideZap, LucideSprout, LucideMountain, LucideListFilter } from 'lucide-react';
 
 interface PropertyFiltersProps {
     propertyType: string;
+    initialFilters?: any;
     onFilterChange: (filters: any) => void;
+    onClose?: () => void;
 }
 
-export default function PropertyFilters({ propertyType, onFilterChange }: PropertyFiltersProps) {
-    const [filters, setFilters] = useState({
+export default function PropertyFilters({ propertyType, initialFilters, onFilterChange, onClose }: PropertyFiltersProps) {
+    const [filters, setFilters] = useState(initialFilters || {
         municipality: '',
         priceMin: '',
         priceMax: '',
@@ -35,6 +35,8 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
         useTypes: [] as any[]
     });
 
+    const [openCategory, setOpenCategory] = useState<string | null>('tipo');
+
     useEffect(() => {
         fetchAllOptions();
     }, []);
@@ -48,9 +50,6 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
                 const response = await fetch(`https://tecnycampo-backend.onrender.com/api/configuration/${ep}`);
                 if (response.ok) {
                     const data = await response.json();
-                    // Assuming data is array of strings. Convert to object for UI consistency if needed, 
-                    // or just use strings. The UI below expects objects with {value, label}.
-                    // Let's normalize:
                     newOptions[ep] = data.map((item: string) => ({ value: item, label: item, icon: '•' }));
                 }
             } catch (error) {
@@ -60,12 +59,8 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
         setDynamicOptions(prev => ({ ...prev, ...newOptions }));
     };
 
-    const [showAdvanced, setShowAdvanced] = useState(false);
-
     const handleChange = (field: string, value: any) => {
-        const newFilters = { ...filters, [field]: value };
-        setFilters(newFilters);
-        onFilterChange(newFilters);
+        setFilters((prev: any) => ({ ...prev, [field]: value }));
     };
 
     const handleMultiSelect = (field: string, value: string) => {
@@ -76,267 +71,202 @@ export default function PropertyFilters({ propertyType, onFilterChange }: Proper
         handleChange(field, newValues);
     };
 
+    const handleApply = () => {
+        onFilterChange(filters);
+    };
+
+    const handleReset = () => {
+        const resetFilters = {
+            municipality: '',
+            priceMin: '',
+            priceMax: '',
+            areaMin: '',
+            areaMax: '',
+            soilTypes: [],
+            waterSources: [],
+            pastureTypes: [],
+            crops: [],
+            topographyTypes: [],
+            useTypes: [],
+            hasElectricity: false
+        };
+        setFilters(resetFilters);
+        onFilterChange(resetFilters);
+    };
+
+    const removeFilter = (field: string, value?: any) => {
+        if (Array.isArray(filters[field])) {
+            handleChange(field, filters[field].filter((v: any) => v !== value));
+        } else {
+            handleChange(field, typeof filters[field] === 'boolean' ? false : '');
+        }
+    };
+
     const useTypes = getUseTypesByPropertyType(propertyType);
 
+    const activeFiltersCount = Object.entries(filters).filter(([key, value]) => {
+        if (Array.isArray(value)) return value.length > 0;
+        if (typeof value === 'boolean') return value === true;
+        return value !== '';
+    }).length;
+
+    const sections = [
+        { id: 'tipo', label: 'Tipo de Finca', icon: <LucideSprout size={18} /> },
+        { id: 'ubicacion', label: 'Ubicación', icon: <LucideMapPin size={18} /> },
+        { id: 'precio', label: 'Precio', icon: <LucideDollarSign size={18} /> },
+        { id: 'caracteristicas', label: 'Características', icon: <LucideMountain size={18} /> },
+    ];
+
     return (
-        <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
-            <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                <span className="text-green-600 mr-2">🔍</span>
-                Filtros de Búsqueda
-            </h3>
+        <div className="bg-[#1a3a3a] text-white p-6 rounded-2xl shadow-2xl max-w-4xl mx-auto border-4 border-[#facc15]">
+            <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                    <LucideListFilter className="text-[#facc15]" />
+                    Filtros de Búsqueda
+                </h3>
+                {onClose && (
+                    <button onClick={onClose} className="text-gray-400 hover:text-white transition">
+                        <LucideX size={24} />
+                    </button>
+                )}
+            </div>
 
-            {/* Basic Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                {/* Municipality */}
-                <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Municipio
-                    </label>
-                    <select
-                        value={filters.municipality}
-                        onChange={(e) => handleChange('municipality', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    >
-                        <option value="">Todos los municipios</option>
-                        {SANTANDER_MUNICIPALITIES.map(mun => (
-                            <option key={mun} value={mun}>{mun}</option>
-                        ))}
-                    </select>
-                </div>
+            {/* Selected Filters Section */}
+            <div className="mb-6 border-b border-gray-700 pb-4">
+                <h4 className="text-[#facc15] text-sm font-bold uppercase tracking-wider mb-3">Filtros seleccionados</h4>
+                <div className="flex flex-wrap gap-2">
+                    {activeFiltersCount === 0 && <p className="text-gray-500 text-sm italic">No hay filtros seleccionados</p>}
 
-                {/* Price Range */}
-                <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Precio Mínimo
-                    </label>
-                    <input
-                        type="number"
-                        value={filters.priceMin}
-                        onChange={(e) => handleChange('priceMin', e.target.value)}
-                        placeholder="$ 0"
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    />
-                </div>
+                    {filters.municipality && (
+                        <span className="bg-transparent border border-[#facc15] text-[#facc15] px-3 py-1 rounded-md text-sm flex items-center gap-2">
+                            {filters.municipality} <LucideX size={14} className="cursor-pointer" onClick={() => removeFilter('municipality')} />
+                        </span>
+                    )}
 
-                <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Precio Máximo
-                    </label>
-                    <input
-                        type="number"
-                        value={filters.priceMax}
-                        onChange={(e) => handleChange('priceMax', e.target.value)}
-                        placeholder="$ Sin límite"
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    />
-                </div>
-
-                {/* Area Range */}
-                <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Área (hectáreas)
-                    </label>
-                    <div className="flex gap-2">
-                        <input
-                            type="number"
-                            value={filters.areaMin}
-                            onChange={(e) => handleChange('areaMin', e.target.value)}
-                            placeholder="Min"
-                            className="w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                        />
-                        <input
-                            type="number"
-                            value={filters.areaMax}
-                            onChange={(e) => handleChange('areaMax', e.target.value)}
-                            placeholder="Max"
-                            className="w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                        />
-                    </div>
+                    {filters.useTypes.map((t: string) => (
+                        <span key={t} className="bg-transparent border border-[#facc15] text-[#facc15] px-3 py-1 rounded-md text-sm flex items-center gap-2">
+                            {t} <LucideX size={14} className="cursor-pointer" onClick={() => removeFilter('useTypes', t)} />
+                        </span>
+                    ))}
+                    {/* Add more chips as needed for other fields */}
                 </div>
             </div>
 
-            {/* Advanced Filters Toggle */}
-            <button
-                onClick={() => setShowAdvanced(!showAdvanced)}
-                className="text-green-600 font-semibold mb-4 hover:text-green-700 transition"
-            >
-                {showAdvanced ? '▼ Ocultar filtros avanzados' : '▶ Mostrar filtros avanzados'}
-            </button>
+            {/* Accordion Categories */}
+            <div className="space-y-3 mb-8">
+                <h4 className="text-[#facc15] text-sm font-bold uppercase tracking-wider mb-3">Lista de filtros</h4>
 
-            {showAdvanced && (
-                <div className="space-y-6 border-t pt-6">
-                    {/* Property Use Types - Conditional */}
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Tipo de Uso {propertyType === 'lote' && <span className="text-xs text-gray-500">(Avícola y Porcícola no disponibles para Lotes)</span>}
-                        </label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {useTypes.map(type => (
-                                <button
-                                    key={type.value}
-                                    onClick={() => handleMultiSelect('useTypes', type.value)}
-                                    className={`p-3 rounded-lg border-2 transition ${filters.useTypes.includes(type.value)
-                                        ? 'bg-green-600 text-white border-green-600'
-                                        : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
-                                        }`}
-                                >
-                                    <span className="mr-2">{type.icon}</span>
-                                    {type.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Soil Types */}
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Tipo de Suelo
-                        </label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {dynamicOptions.soilTypes.map(soil => (
-                                <button
-                                    key={soil.value}
-                                    onClick={() => handleMultiSelect('soilTypes', soil.value)}
-                                    className={`p-3 rounded-lg border-2 transition ${filters.soilTypes.includes(soil.value)
-                                        ? 'bg-green-600 text-white border-green-600'
-                                        : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
-                                        }`}
-                                >
-                                    {soil.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Water Sources */}
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Fuentes de Agua
-                        </label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {dynamicOptions.waterSources.map(water => (
-                                <button
-                                    key={water.value}
-                                    onClick={() => handleMultiSelect('waterSources', water.value)}
-                                    className={`p-3 rounded-lg border-2 transition ${filters.waterSources.includes(water.value)
-                                        ? 'bg-blue-600 text-white border-blue-600'
-                                        : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
-                                        }`}
-                                >
-                                    <span className="mr-2">{water.icon}</span>
-                                    {water.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Pasture Types */}
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Tipos de Pasto
-                        </label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {dynamicOptions.pastureTypes.map(pasture => (
-                                <button
-                                    key={pasture.value}
-                                    onClick={() => handleMultiSelect('pastureTypes', pasture.value)}
-                                    className={`p-3 rounded-lg border-2 transition ${filters.pastureTypes.includes(pasture.value)
-                                        ? 'bg-green-600 text-white border-green-600'
-                                        : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
-                                        }`}
-                                >
-                                    {pasture.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Topography */}
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Topografía
-                        </label>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                            {dynamicOptions.topographyTypes.map(topo => (
-                                <button
-                                    key={topo.value}
-                                    onClick={() => handleMultiSelect('topographyTypes', topo.value)}
-                                    className={`p-3 rounded-lg border-2 transition ${filters.topographyTypes.includes(topo.value)
-                                        ? 'bg-green-600 text-white border-green-600'
-                                        : 'bg-white text-gray-700 border-gray-300 hover:border-green-400'
-                                        }`}
-                                >
-                                    <span className="mr-2">{topo.icon}</span>
-                                    {topo.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Crops - Dropdown */}
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Cultivos Aptos
-                        </label>
-                        <select
-                            multiple
-                            value={filters.crops}
-                            onChange={(e) => {
-                                const selected = Array.from(e.target.selectedOptions, option => option.value);
-                                handleChange('crops', selected);
-                            }}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent h-32"
+                {sections.map((section) => (
+                    <div key={section.id} className="border-b border-gray-700 last:border-0 overflow-hidden">
+                        <button
+                            onClick={() => setOpenCategory(openCategory === section.id ? null : section.id)}
+                            className="w-full flex items-center justify-between py-4 hover:bg-[#2a4a4a] transition-all px-2 rounded-t-lg group"
                         >
-                            {ALL_CROPS.map(crop => (
-                                <option key={crop.value} value={crop.value}>{crop.label}</option>
-                            ))}
-                        </select>
-                        <p className="text-xs text-gray-500 mt-1">Mantén Ctrl/Cmd para seleccionar múltiples</p>
-                    </div>
+                            <div className="flex items-center gap-3">
+                                <span className="text-[#facc15]">{section.icon}</span>
+                                <span className={`font-bold text-lg ${openCategory === section.id ? 'text-[#facc15]' : 'text-white'}`}>
+                                    {section.label}
+                                </span>
+                            </div>
+                            <div className={`p-1 rounded-sm bg-[#facc15] text-[#1a3a3a] transform transition-transform ${openCategory === section.id ? 'rotate-45' : ''}`}>
+                                <LucidePlus size={18} />
+                            </div>
+                        </button>
 
-                    {/* Electricity */}
-                    <div className="flex items-center">
-                        <input
-                            type="checkbox"
-                            id="electricity"
-                            checked={filters.hasElectricity}
-                            onChange={(e) => handleChange('hasElectricity', e.target.checked)}
-                            className="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
-                        />
-                        <label htmlFor="electricity" className="ml-3 text-sm font-semibold text-gray-700">
-                            Con Electricidad
-                        </label>
-                    </div>
-                </div>
-            )}
+                        <div className={`transition-all duration-300 ease-in-out ${openCategory === section.id ? 'max-h-[500px] opacity-100 py-4' : 'max-h-0 opacity-0'} overflow-hidden bg-[#162e2e] rounded-b-lg px-4`}>
+                            {/* Content based on ID */}
+                            {section.id === 'tipo' && (
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                    {useTypes.map(type => (
+                                        <button
+                                            key={type.value}
+                                            onClick={() => handleMultiSelect('useTypes', type.value)}
+                                            className={`p-3 rounded-lg border-2 transition ${filters.useTypes.includes(type.value)
+                                                ? 'bg-[#1a3a3a] text-[#facc15] border-[#facc15]'
+                                                : 'bg-transparent text-gray-300 border-gray-600 hover:border-gray-400'
+                                                }`}
+                                        >
+                                            <div className="text-xl mb-1">{type.icon}</div>
+                                            <div className="text-xs font-bold">{type.label}</div>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
 
-            {/* Filter Count Badge */}
-            <div className="mt-6 flex justify-between items-center">
-                <div className="text-sm text-gray-600">
-                    {Object.values(filters).filter(v => Array.isArray(v) ? v.length > 0 : v !== '' && v !== false).length} filtros activos
-                </div>
+                            {section.id === 'ubicacion' && (
+                                <select
+                                    value={filters.municipality}
+                                    onChange={(e) => handleChange('municipality', e.target.value)}
+                                    className="w-full bg-[#1a3a3a] text-white p-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-[#facc15] focus:border-transparent outline-none"
+                                >
+                                    <option value="">Todos los municipios</option>
+                                    {SANTANDER_MUNICIPALITIES.map(mun => (
+                                        <option key={mun} value={mun}>{mun}</option>
+                                    ))}
+                                </select>
+                            )}
+
+                            {section.id === 'precio' && (
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs text-gray-400 mb-1">Precio Mínimo</label>
+                                        <input
+                                            type="number"
+                                            value={filters.priceMin}
+                                            onChange={(e) => handleChange('priceMin', e.target.value)}
+                                            placeholder="$ 0"
+                                            className="w-full bg-[#1a3a3a] p-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-[#facc15] outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs text-gray-400 mb-1">Precio Máximo</label>
+                                        <input
+                                            type="number"
+                                            value={filters.priceMax}
+                                            onChange={(e) => handleChange('priceMax', e.target.value)}
+                                            placeholder="$ Sin límite"
+                                            className="w-full bg-[#1a3a3a] p-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-[#facc15] outline-none"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            {section.id === 'caracteristicas' && (
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3 p-3 bg-[#1a3a3a] rounded-lg border border-gray-600">
+                                        <input
+                                            type="checkbox"
+                                            id="electricity"
+                                            checked={filters.hasElectricity}
+                                            onChange={(e) => handleChange('hasElectricity', e.target.checked)}
+                                            className="w-5 h-5 accent-[#facc15]"
+                                        />
+                                        <label htmlFor="electricity" className="text-sm font-bold flex items-center gap-2">
+                                            <LucideZap size={16} className="text-yellow-400" />
+                                            Con Electricidad
+                                        </label>
+                                    </div>
+                                    {/* Add other characteristic filters here */}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-4">
                 <button
-                    onClick={() => {
-                        const resetFilters = {
-                            municipality: '',
-                            priceMin: '',
-                            priceMax: '',
-                            areaMin: '',
-                            areaMax: '',
-                            soilTypes: [],
-                            waterSources: [],
-                            pastureTypes: [],
-                            crops: [],
-                            topographyTypes: [],
-                            useTypes: [],
-                            hasElectricity: false
-                        };
-                        setFilters(resetFilters);
-                        onFilterChange(resetFilters);
-                    }}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                    onClick={handleReset}
+                    className="flex-1 py-3 bg-transparent border-2 border-gray-600 text-gray-300 rounded-xl font-bold hover:bg-gray-800 transition"
                 >
-                    Limpiar Filtros
+                    Limpiar
+                </button>
+                <button
+                    onClick={handleApply}
+                    className="flex-1 py-3 bg-[#facc15] text-[#1a3a3a] rounded-xl font-black text-lg hover:bg-yellow-400 transition transform hover:scale-105 active:scale-95 shadow-lg"
+                >
+                    APLICAR FILTROS
                 </button>
             </div>
         </div>
