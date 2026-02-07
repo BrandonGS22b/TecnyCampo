@@ -1,4 +1,4 @@
-import { LucideHome, LucideLayers, LucideMap } from 'lucide-react';
+import { LucideHome, LucideLayers, LucideMap, LucideSparkles } from 'lucide-react';
 
 interface PropertyTypeSelectorProps {
     selectedType: string;
@@ -7,50 +7,68 @@ interface PropertyTypeSelectorProps {
 
 export default function PropertyTypeSelector({ selectedType, onSelectType }: PropertyTypeSelectorProps) {
     const types = [
-        { value: 'lote', label: 'Lote', icon: <LucideMap size={24} /> },
-        { value: 'parcela', label: 'Parcela', icon: <LucideLayers size={24} /> },
-        { value: 'finca', label: 'Finca', icon: <LucideHome size={24} /> },
+        { value: 'lote', label: 'Lotes Rurales', icon: <LucideMap size={28} />, desc: 'Espacios por desarrollar' },
+        { value: 'parcela', label: 'Parcelaciones', icon: <LucideLayers size={28} />, desc: 'Terrenos divididos' },
+        { value: 'finca', label: 'Fincas Raíz', icon: <LucideHome size={28} />, desc: 'Propiedades productivas' },
     ];
 
     return (
-        <div className="w-full bg-white py-10 px-4">
-            <div className="max-w-4xl mx-auto">
-                <h2 className="text-xl md:text-2xl font-extrabold text-[#1a3a3a] mb-8 flex items-center gap-3">
-                    <span className="w-3 h-3 bg-[#facc15] inline-block"></span>
-                    Tipo de Propiedad
-                </h2>
-                <div className="w-full h-[1px] bg-gray-200 mb-10 relative">
-                    <div className="absolute left-0 top-0 h-[2px] bg-green-500 w-1/4"></div>
+        <div className="w-full mb-12">
+            <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                    <div className="w-2 h-8 bg-[#facc15] rounded-full"></div>
+                    <div>
+                        <h2 className="text-2xl font-black text-[#1a3a3a] leading-tight">Expertos en Tierra</h2>
+                        <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Selecciona tu categoría</p>
+                    </div>
                 </div>
+                <div className="hidden md:flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-full border border-green-100 italic text-sm font-bold">
+                    <LucideSparkles size={16} />
+                    Mejores opciones en Santander
+                </div>
+            </div>
 
-                <div className="grid grid-cols-3 gap-6">
-                    {types.map((type) => {
-                        const isSelected = type.value === selectedType;
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {types.map((type) => {
+                    const isSelected = type.value === selectedType;
 
-                        return (
-                            <button
-                                key={type.value}
-                                onClick={() => onSelectType(type.value)}
-                                className={`flex flex-col items-center justify-center py-6 px-4 rounded-xl transition-all duration-300 group relative
-                                    ${isSelected
-                                        ? 'bg-[#10b981] text-white shadow-xl scale-105 z-10'
-                                        : 'bg-white text-gray-500 hover:bg-gray-50 border border-transparent group-hover:border-gray-200'
-                                    }`}
-                            >
-                                <div className={`mb-3 p-3 rounded-lg transition-colors ${isSelected ? 'bg-white/20' : 'bg-gray-100'}`}>
-                                    {type.icon}
+                    return (
+                        <button
+                            key={type.value}
+                            onClick={() => onSelectType(type.value)}
+                            className={`flex flex-col items-start p-8 rounded-[32px] transition-all duration-500 group relative overflow-hidden backdrop-blur-sm
+                                ${isSelected
+                                    ? 'bg-[#1a3a3a] text-white shadow-2xl shadow-[#1a3a3a]/30 scale-[1.02] z-10'
+                                    : 'bg-white text-gray-500 hover:bg-gray-50 border border-gray-100 hover:border-[#facc15]/30'
+                                }`}
+                        >
+                            {/* Decorative element for active state */}
+                            {isSelected && (
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-[#facc15]/10 rounded-full -mr-16 -mt-16 animate-pulse"></div>
+                            )}
+
+                            <div className={`mb-6 p-4 rounded-2xl transition-all duration-300 ${isSelected
+                                    ? 'bg-[#facc15] text-[#1a3a3a] rotate-12'
+                                    : 'bg-gray-100 text-gray-400 group-hover:rotate-12 group-hover:bg-[#facc15]/20 group-hover:text-[#facc15]'
+                                }`}>
+                                {type.icon}
+                            </div>
+
+                            <h3 className={`font-black text-xl mb-2 ${isSelected ? 'text-[#facc15]' : 'text-[#1a3a3a]'}`}>
+                                {type.label}
+                            </h3>
+                            <p className="text-xs font-bold opacity-60 uppercase tracking-tighter">
+                                {type.desc}
+                            </p>
+
+                            {isSelected && (
+                                <div className="mt-6 flex items-center justify-center w-8 h-8 bg-white/10 rounded-full self-end">
+                                    <div className="w-2 h-2 bg-[#facc15] rounded-full animate-ping"></div>
                                 </div>
-                                <span className={`font-bold text-sm md:text-base ${isSelected ? 'text-white' : 'text-[#1a3a3a]'}`}>
-                                    {type.label}
-                                </span>
-
-                                {isSelected && (
-                                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-[#facc15] rounded-full"></div>
-                                )}
-                            </button>
-                        );
-                    })}
-                </div>
+                            )}
+                        </button>
+                    );
+                })}
             </div>
         </div>
     );
