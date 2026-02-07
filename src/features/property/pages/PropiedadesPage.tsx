@@ -41,36 +41,48 @@ export default function PropiedadesPage() {
 
     return (
         <div className="min-h-screen bg-[#f8fafc]">
-            {/* Innovative Hero Banner */}
-            <div className="relative bg-[#1a3a3a] py-12 px-4 overflow-hidden">
+            {/* Innovative Hero Banner - Cleaned up */}
+            <div className="relative bg-[#1a3a3a] py-16 px-4 overflow-hidden">
                 {/* Decorative Elements */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[#facc15] opacity-10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-green-500 opacity-10 rounded-full -ml-10 -mb-10 blur-3xl"></div>
 
                 <div className="max-w-7xl mx-auto relative z-10 flex flex-col items-center">
-                    <div className="text-center mb-8">
-                        <h2 className="text-white text-sm font-bold uppercase tracking-[0.3em] mb-2 opacity-80">TecnyCampo Premium</h2>
-                        <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
-                            Encuentra tu Finca <span className="text-[#facc15]">Perfecta</span>
+                    <div className="text-center">
+                        <h2 className="text-[#facc15] text-sm font-bold uppercase tracking-[0.4em] mb-4 opacity-100">TecnyCampo Premium</h2>
+                        <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight">
+                            Encuentra la Finca <br className="hidden md:block" />
+                            <span className="text-[#facc15] drop-shadow-sm">perfecta para ti</span>
                         </h1>
-                        <p className="text-blue-100/60 max-w-xl mx-auto text-sm md:text-base">
-                            Explora las mejores oportunidades rurales con filtrado inteligente y búsqueda por ID.
+                        <p className="text-white/40 max-w-xl mx-auto text-sm md:text-base font-medium">
+                            Toda la gestión inmobiliaria rural en un solo lugar.
                         </p>
                     </div>
+                </div>
+            </div>
 
-                    {/* Innovative Search/Filter Bar */}
-                    <div className="w-full max-w-4xl bg-white/10 backdrop-blur-md p-2 rounded-2xl border border-white/20 shadow-2xl flex flex-col md:flex-row gap-2">
+            {/* Consolidated Dynamic Toolbar - Sticky */}
+            <div className="bg-[#facc15] sticky top-[70px] z-30 shadow-2xl border-b border-[#eab308]">
+                <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col lg:flex-row items-center gap-4">
+                    {/* Left: Branding/Context */}
+                    <div className="hidden lg:flex items-center gap-3 pr-6 border-r border-[#1a3a3a]/10">
+                        <div className="w-1.5 h-8 bg-[#1a3a3a] rounded-full"></div>
+                        <span className="font-black text-[#1a3a3a] text-lg uppercase tracking-tight">Filtrar</span>
+                    </div>
+
+                    {/* Center: Innovative Integrated search & Filter */}
+                    <div className="flex-1 w-full flex items-center gap-2">
                         <div className="flex-1 relative group">
-                            <LucideSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#facc15] transition-colors" size={20} />
+                            <LucideSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1a3a3a]/40 group-focus-within:text-[#1a3a3a] transition-colors" size={20} />
                             <input
                                 type="text"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                placeholder="Buscar por Nombre o ID de propiedad..."
-                                className="w-full bg-white/5 text-white pl-12 pr-4 py-4 rounded-xl outline-none focus:bg-white/10 transition-all border border-transparent focus:border-white/20 placeholder:text-gray-400"
+                                placeholder="Buscar por Nombre o ID..."
+                                className="w-full bg-[#1a3a3a]/5 hover:bg-[#1a3a3a]/10 text-[#1a3a3a] pl-12 pr-4 py-3.5 rounded-2xl outline-none transition-all placeholder:text-[#1a3a3a]/40 font-bold border border-transparent focus:border-[#1a3a3a]/20"
                             />
                             {searchTerm && (
-                                <button onClick={() => setSearchTerm('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
+                                <button onClick={() => setSearchTerm('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#1a3a3a]/40 hover:text-[#1a3a3a]">
                                     <LucideX size={18} />
                                 </button>
                             )}
@@ -78,40 +90,32 @@ export default function PropiedadesPage() {
 
                         <button
                             onClick={() => setShowFilters(true)}
-                            className="bg-[#facc15] text-[#1a3a3a] px-8 py-4 rounded-xl flex items-center justify-center gap-3 font-black hover:bg-[#ffe066] transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg group"
+                            className="bg-[#1a3a3a] text-[#facc15] px-6 py-3.5 rounded-2xl flex items-center gap-2 font-black shadow-lg hover:scale-[1.02] active:scale-95 transition-all text-sm whitespace-nowrap"
                         >
-                            <span>Filtros Avanzados</span>
-                            <LucideListFilter size={20} className="group-hover:rotate-180 transition-transform duration-500" />
+                            <LucideListFilter size={18} />
+                            <span className="hidden sm:inline">FILTROS</span>
                         </button>
                     </div>
-                </div>
-            </div>
 
-            {/* Quick Stats/Badges Toolbar */}
-            <div className="bg-white border-b sticky top-[70px] z-30 shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                        <div className="bg-violet-100 text-violet-700 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 border border-violet-200 cursor-pointer hover:bg-violet-200 transition-colors">
-                            <LucideRocket size={14} />
-                            <span>Fincas de Oportunidad</span>
+                    {/* Right: Sorting */}
+                    <div className="w-full lg:w-auto flex items-center justify-between lg:justify-end gap-3 lg:pl-6 lg:border-l border-[#1a3a3a]/10">
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black text-[#1a3a3a]/50 uppercase tracking-widest">Ordenar</span>
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                                className="bg-transparent border-none text-sm font-black text-[#1a3a3a] focus:ring-0 outline-none cursor-pointer"
+                            >
+                                <option value="recientes">Más recientes</option>
+                                <option value="precio-asc">Precio: Menor</option>
+                                <option value="precio-desc">Precio: Mayor</option>
+                                <option value="area-asc">Área: Menor</option>
+                            </select>
                         </div>
-                        <div className="text-xs text-gray-500 font-medium hidden md:block">
-                            Mostrando {selectedPropertyType}s en Santander
+                        <div className="bg-[#1a3a3a] text-[#facc15] px-3 py-1.5 rounded-full text-[10px] font-black flex items-center gap-1 shadow-sm">
+                            <LucideRocket size={12} />
+                            <span>PREMIUM</span>
                         </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Ordenar:</span>
-                        <select
-                            value={sortBy}
-                            onChange={(e) => setSortBy(e.target.value)}
-                            className="bg-gray-50 border-none rounded-lg px-4 py-1.5 text-sm font-bold text-[#1a3a3a] focus:ring-2 focus:ring-[#facc15] outline-none cursor-pointer"
-                        >
-                            <option value="recientes">Más recientes</option>
-                            <option value="precio-asc">Precio: Menor a Mayor</option>
-                            <option value="precio-desc">Precio: Mayor a Menor</option>
-                            <option value="area-asc">Área: Menor a Mayor</option>
-                        </select>
                     </div>
                 </div>
             </div>

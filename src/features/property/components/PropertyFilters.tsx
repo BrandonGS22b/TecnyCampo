@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { getUseTypesByPropertyType } from '../../../shared/constants/filters';
 import SANTANDER_MUNICIPALITIES from '../../../shared/constants/municipalities';
 import {
-    LucidePlus, LucideX, LucideMapPin, LucideDollarSign,
+    LucideX, LucideMapPin, LucideDollarSign,
     LucideZap, LucideSprout, LucideMountain, LucideChevronDown,
-    LucideCheck, LucideFilter
+    LucideCheck, LucideFilter, LucideDroplets, LucideMoveUp
 } from 'lucide-react';
 
 interface PropertyFiltersProps {
@@ -25,15 +25,11 @@ export default function PropertyFilters({ propertyType, initialFilters, onFilter
 
     const fetchDynamicOptions = async () => {
         try {
-            const endpoints = ['soilTypes', 'waterSources', 'topographyTypes', 'pastureTypes'];
-            const results: any = {};
-            for (const ep of endpoints) {
-                const response = await fetch(`https://tecnycampo-backend.onrender.com/api/configuration/${ep}`);
-                if (response.ok) {
-                    results[ep] = await response.json();
-                }
+            const response = await fetch(`https://tecnycampo-backend.onrender.com/api/terrains/filters/${propertyType}`);
+            if (response.ok) {
+                const data = await response.json();
+                setDynamicOptions(data.availableFilters);
             }
-            setDynamicOptions(results);
         } catch (error) {
             console.error('Error fetching dynamic options:', error);
         }
@@ -203,7 +199,7 @@ export default function PropertyFilters({ propertyType, initialFilters, onFilter
                     </div>
                 </FilterSection>
 
-                <FilterSection title="Características de Tierra" id="tierra" icon={LucideMountain}>
+                <FilterSection title="Tierra & Recursos" id="tierra" icon={LucideMountain}>
                     {dynamicOptions ? (
                         <div className="space-y-6">
                             <div>
@@ -215,7 +211,7 @@ export default function PropertyFilters({ propertyType, initialFilters, onFilter
                                             onClick={() => toggleFilter('soilTypes', s)}
                                             className={`px-4 py-2 rounded-full text-[10px] font-bold transition-all
                                                 ${filters.soilTypes?.includes(s)
-                                                    ? 'bg-green-500 text-white shadow-lg'
+                                                    ? 'bg-green-600 text-white shadow-lg'
                                                     : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/5'}`}
                                         >
                                             {s}
@@ -223,15 +219,58 @@ export default function PropertyFilters({ propertyType, initialFilters, onFilter
                                     ))}
                                 </div>
                             </div>
+
+                            <div>
+                                <p className="text-gray-500 text-[10px] font-black mb-3 uppercase tracking-widest flex items-center gap-2">
+                                    <LucideDroplets size={12} className="text-blue-400" />
+                                    FUENTES DE AGUA
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    {dynamicOptions.waterSources?.map((s: string) => (
+                                        <button
+                                            key={s}
+                                            onClick={() => toggleFilter('waterSources', s)}
+                                            className={`px-4 py-2 rounded-full text-[10px] font-bold transition-all
+                                                ${filters.waterSources?.includes(s)
+                                                    ? 'bg-blue-600 text-white shadow-lg'
+                                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/5'}`}
+                                        >
+                                            {s}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="text-gray-500 text-[10px] font-black mb-3 uppercase tracking-widest flex items-center gap-2">
+                                    <LucideMoveUp size={12} className="text-orange-400" />
+                                    TOPOGRAFÍA
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    {dynamicOptions.topographyTypes?.map((s: string) => (
+                                        <button
+                                            key={s}
+                                            onClick={() => toggleFilter('topographyTypes', s)}
+                                            className={`px-4 py-2 rounded-full text-[10px] font-bold transition-all
+                                                ${filters.topographyTypes?.includes(s)
+                                                    ? 'bg-orange-600 text-white shadow-lg'
+                                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/5'}`}
+                                        >
+                                            {s}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
                             <button
                                 onClick={() => setFilters({ ...filters, hasElectricity: !filters.hasElectricity })}
                                 className={`w-full p-4 rounded-2xl flex items-center justify-between transition-all
                                     ${filters.hasElectricity
-                                        ? 'bg-blue-500 text-white shadow-lg'
+                                        ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30'
                                         : 'bg-white/5 text-gray-400 border border-white/5'}`}
                             >
                                 <div className="flex items-center gap-3">
-                                    <LucideZap size={18} className={filters.hasElectricity ? 'text-white' : 'text-gray-500'} />
+                                    <LucideZap size={18} className={filters.hasElectricity ? 'text-yellow-500' : 'text-gray-500'} />
                                     <span className="font-bold text-sm">Energía Eléctrica</span>
                                 </div>
                                 {filters.hasElectricity && <LucideCheck size={18} />}
