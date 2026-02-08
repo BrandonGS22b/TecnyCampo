@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getUseTypesByPropertyType } from '../../../shared/constants/filters';
-import SANTANDER_MUNICIPALITIES from '../../../shared/constants/municipalities';
+import { DEPARTMENTS, getMunicipalities } from '../../../shared/constants/colombia';
 import {
     LucideX, LucideMapPin, LucideDollarSign,
     LucideZap, LucideSprout, LucideMountain, LucideChevronDown,
@@ -58,6 +58,7 @@ export default function PropertyFilters({ propertyType, initialFilters, onFilter
             pastureTypes: [],
             topographyTypes: [],
             crops: [],
+            department: '',
             municipality: '',
             priceMin: '',
             priceMax: '',
@@ -122,6 +123,12 @@ export default function PropertyFilters({ propertyType, initialFilters, onFilter
                         <button onClick={handleReset} className="text-[#facc15] text-[10px] font-bold hover:underline">REINICIAR</button>
                     </div>
                     <div className="flex flex-wrap gap-2">
+                        {filters.department && (
+                            <div className="bg-[#facc15]/20 text-[#facc15] px-3 py-1.5 rounded-full text-xs font-black flex items-center gap-2 border border-[#facc15]/30">
+                                <LucideMapPin size={12} />
+                                <span>{filters.department}</span>
+                            </div>
+                        )}
                         {filters.municipality && (
                             <div className="bg-[#facc15] text-[#1a3a3a] px-3 py-1.5 rounded-full text-xs font-black flex items-center gap-2">
                                 <LucideMapPin size={12} />
@@ -162,19 +169,43 @@ export default function PropertyFilters({ propertyType, initialFilters, onFilter
                 </FilterSection>
 
                 <FilterSection title="Ubicación" id="ubicacion" icon={LucideMapPin}>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        {SANTANDER_MUNICIPALITIES.map(m => (
-                            <button
-                                key={m}
-                                onClick={() => setFilters({ ...filters, municipality: m === filters.municipality ? undefined : m })}
-                                className={`p-3 rounded-xl text-[10px] font-bold transition-all
-                                    ${filters.municipality === m
-                                        ? 'bg-[#facc15] text-[#1a3a3a]'
-                                        : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-transparent hover:border-white/10'}`}
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Departamento</label>
+                            <select
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-[#facc15] transition-colors text-sm appearance-none"
+                                value={filters.department || ''}
+                                onChange={(e) => {
+                                    const dept = e.target.value;
+                                    setFilters({ ...filters, department: dept, municipality: '' });
+                                }}
                             >
-                                {m}
-                            </button>
-                        ))}
+                                <option value="" className="bg-[#1a3a3a]">Todos los departamentos</option>
+                                {DEPARTMENTS.map(d => (
+                                    <option key={d} value={d} className="bg-[#1a3a3a]">{d}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {filters.department && (
+                            <div className="space-y-3 animate-in fade-in slide-in-from-top-1 duration-300">
+                                <label className="text-[10px] font-bold text-gray-500 uppercase ml-1">Municipio</label>
+                                <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
+                                    {getMunicipalities(filters.department).map(m => (
+                                        <button
+                                            key={m}
+                                            onClick={() => setFilters({ ...filters, municipality: m === filters.municipality ? '' : m })}
+                                            className={`p-3 rounded-xl text-[10px] font-bold transition-all text-left
+                                                ${filters.municipality === m
+                                                    ? 'bg-[#facc15] text-[#1a3a3a]'
+                                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-transparent hover:border-white/10'}`}
+                                        >
+                                            {m}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </FilterSection>
 

@@ -28,7 +28,7 @@ export default function PropertyTypeSelector({ selectedType, onSelectType }: Pro
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-2 md:gap-6">
                 {types.map((type) => {
                     const isSelected = type.value === selectedType;
 
@@ -36,7 +36,7 @@ export default function PropertyTypeSelector({ selectedType, onSelectType }: Pro
                         <button
                             key={type.value}
                             onClick={() => onSelectType(type.value)}
-                            className={`flex flex-col items-start p-8 rounded-[32px] transition-all duration-500 group relative overflow-hidden backdrop-blur-sm
+                            className={`flex flex-col items-start p-4 md:p-8 rounded-[24px] md:rounded-[32px] transition-all duration-500 group relative overflow-hidden backdrop-blur-sm
                                 ${isSelected
                                     ? 'bg-[#1a3a3a] text-white shadow-2xl shadow-[#1a3a3a]/30 scale-[1.02] z-10'
                                     : 'bg-white text-gray-500 hover:bg-gray-50 border border-gray-100 hover:border-[#facc15]/30'
@@ -48,16 +48,16 @@ export default function PropertyTypeSelector({ selectedType, onSelectType }: Pro
                             )}
 
                             <div className={`mb-6 p-4 rounded-2xl transition-all duration-300 ${isSelected
-                                    ? 'bg-[#facc15] text-[#1a3a3a] rotate-12'
-                                    : 'bg-gray-100 text-gray-400 group-hover:rotate-12 group-hover:bg-[#facc15]/20 group-hover:text-[#facc15]'
+                                ? 'bg-[#facc15] text-[#1a3a3a] rotate-12'
+                                : 'bg-gray-100 text-gray-400 group-hover:rotate-12 group-hover:bg-[#facc15]/20 group-hover:text-[#facc15]'
                                 }`}>
                                 {type.icon}
                             </div>
 
-                            <h3 className={`font-black text-xl mb-2 ${isSelected ? 'text-[#facc15]' : 'text-[#1a3a3a]'}`}>
+                            <h3 className={`font-black text-xs md:text-xl mb-1 md:mb-2 ${isSelected ? 'text-[#facc15]' : 'text-[#1a3a3a]'}`}>
                                 {type.label}
                             </h3>
-                            <p className="text-xs font-bold opacity-60 uppercase tracking-tighter">
+                            <p className="text-[8px] md:text-xs font-bold opacity-60 uppercase tracking-tighter line-clamp-1">
                                 {type.desc}
                             </p>
 

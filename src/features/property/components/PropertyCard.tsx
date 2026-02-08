@@ -183,13 +183,13 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                 {/* Content */}
                 <div className="p-3 md:p-6">
                     {/* Location */}
-                    <div className="flex items-center text-xs md:text-sm text-gray-600 mb-1 md:mb-2">
-                        <MapPinIconSolid className="w-4 h-4 mr-1 text-green-600" />
-                        {property.location.municipality}, {property.location.department}
+                    <div className="flex items-center text-[10px] md:text-sm text-gray-600 mb-1 md:mb-2">
+                        <MapPinIconSolid className="w-3 h-3 md:w-4 md:h-4 mr-1 text-green-600 shrink-0" />
+                        <span className="truncate">{property.location.municipality}, {property.location.department}</span>
                     </div>
                     {/* contenido del la card en el homepage principal*/}
                     {/* Title */}
-                    <h3 className="text-sm md:text-xl font-bold text-gray-900 mb-1 md:mb-2 line-clamp-2 group-hover:text-green-600 transition min-h-[2.5rem] md:min-h-[3.5rem]">
+                    <h3 className="text-xs md:text-xl font-bold text-gray-900 mb-1 md:mb-2 line-clamp-2 group-hover:text-green-600 transition min-h-[2rem] md:min-h-[3.5rem]">
                         {property.title}
                     </h3>
 
@@ -213,23 +213,23 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                     </div>
 */}
                     {/* Price and Area */}
-                   <div className="border-t pt-4 flex flex-col gap-2">
+                    <div className="border-t pt-2 md:pt-4 flex flex-col gap-1 md:gap-2">
                         <div>
-                            <div className="text-lg md:text-2xl font-black text-green-600">
+                            <div className="text-sm md:text-2xl font-black text-green-600">
                                 {formatPrice(property.price)}
                             </div>
                             {property.pricePerHectare && (
-                                <div className="text-xs text-gray-500 font-medium font-serif">
+                                <div className="text-[8px] md:text-xs text-gray-500 font-medium font-serif">
                                     {formatPrice(property.pricePerHectare)}/ha
                                 </div>
                             )}
                         </div>
 
-                        <div>
-                            <div className="text-sm md:text-lg font-bold text-gray-900">
+                        <div className="flex items-center justify-between">
+                            <div className="text-xs md:text-lg font-bold text-gray-900">
                                 {property.area} ha
                             </div>
-                            <div className="text-xs text-gray-500 font-medium">
+                            <div className="text-[8px] md:text-xs text-gray-500 font-medium uppercase tracking-tighter shrink-0">
                                 Área total
                             </div>
                         </div>
@@ -239,10 +239,10 @@ export default function PropertyCard({ property, onUpdate, onEdit }: PropertyCar
                     {/* View Button */}
                     <button
                         onClick={() => navigate(`/propiedades/${property._id}`)}
-                        className="mt-2 md:mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 md:py-3 text-sm md:text-base rounded-lg transition transform hover:scale-[1.02] active:scale-95 shadow-md flex justify-center items-center gap-2"
+                        className="mt-2 md:mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-black py-2 md:py-3 text-[10px] md:text-base rounded-lg transition transform hover:scale-[1.02] active:scale-95 shadow-md flex justify-center items-center gap-1 md:gap-2"
                     >
-                        Ver Detalles
-                        <EyeIcon className="w-5 h-5" />
+                        Detalles
+                        <EyeIcon className="w-3 h-3 md:w-5 md:h-5" />
                     </button>
                 </div>
             </div>
