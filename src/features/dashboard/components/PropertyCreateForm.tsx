@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/auth.context';
 import { PROPERTY_TYPES } from '../../../shared/constants/filters';
 import { uploadMedia } from '../../../shared/services/upload.service';
@@ -266,42 +266,50 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                     </label>
                     <div className="border rounded-lg p-3 max-h-48 overflow-y-auto bg-gray-50">
                         {/* List */}
-                        {dynamicOptions.useTypes.map((use: string) => (
-                            <div key={use} className="flex items-center justify-between gap-2 p-1 hover:bg-gray-100 rounded group">
-                                <label className="flex items-center gap-2 cursor-pointer flex-1">
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.useTypes.includes(use)}
-                                        onChange={() => {
-                                            const current = formData.useTypes;
-                                            const newTypes = current.includes(use)
-                                                ? current.filter((t: string) => t !== use)
-                                                : [...current, use];
-                                            setFormData(prev => ({ ...prev, useTypes: newTypes }));
-                                        }}
-                                        className="rounded text-green-600 focus:ring-green-500"
-                                    />
-                                    <span className="text-sm">{use}</span>
-                                </label>
-                                <div className="hidden group-hover:flex gap-1">
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            const newName = prompt('Editar nombre:', use);
-                                            if (newName && newName !== use) handleManageOption('useTypes', 'update', { old: use, new: newName });
-                                        }}
-                                        className="text-blue-500 hover:text-blue-700 p-1"
-                                    >✎</button>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            if (confirm('¿Eliminar?')) handleManageOption('useTypes', 'delete', use);
-                                        }}
-                                        className="text-red-500 hover:text-red-700 p-1"
-                                    >×</button>
+                        {dynamicOptions.useTypes
+                            .filter((use: string) => {
+                                if (formData.propertyType === 'lote') {
+                                    const lower = use.toLowerCase();
+                                    return !lower.includes('avícola') && !lower.includes('porcícola');
+                                }
+                                return true;
+                            })
+                            .map((use: string) => (
+                                <div key={use} className="flex items-center justify-between gap-2 p-1 hover:bg-gray-100 rounded group">
+                                    <label className="flex items-center gap-2 cursor-pointer flex-1">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.useTypes.includes(use)}
+                                            onChange={() => {
+                                                const current = formData.useTypes;
+                                                const newTypes = current.includes(use)
+                                                    ? current.filter((t: string) => t !== use)
+                                                    : [...current, use];
+                                                setFormData(prev => ({ ...prev, useTypes: newTypes }));
+                                            }}
+                                            className="rounded text-green-600 focus:ring-green-500"
+                                        />
+                                        <span className="text-sm">{use}</span>
+                                    </label>
+                                    <div className="hidden group-hover:flex gap-1">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const newName = prompt('Editar nombre:', use);
+                                                if (newName && newName !== use) handleManageOption('useTypes', 'update', { old: use, new: newName });
+                                            }}
+                                            className="text-blue-500 hover:text-blue-700 p-1"
+                                        >✎</button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                if (confirm('¿Eliminar?')) handleManageOption('useTypes', 'delete', use);
+                                            }}
+                                            className="text-red-500 hover:text-red-700 p-1"
+                                        >×</button>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
                         {/* Add New */}
                         <div className="flex gap-2 mt-2 pt-2 border-t">
                             {/* @ts-ignore */}

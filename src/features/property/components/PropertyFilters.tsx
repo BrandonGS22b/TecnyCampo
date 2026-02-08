@@ -57,6 +57,7 @@ export default function PropertyFilters({ propertyType, initialFilters, onFilter
             waterSources: [],
             pastureTypes: [],
             topographyTypes: [],
+            crops: [],
             municipality: '',
             priceMin: '',
             priceMax: '',
@@ -140,20 +141,23 @@ export default function PropertyFilters({ propertyType, initialFilters, onFilter
 
                 <FilterSection title="Tipología & Uso" id="tipo" icon={LucideSprout}>
                     <div className="grid grid-cols-2 gap-2">
-                        {getUseTypesByPropertyType(propertyType).map(use => (
+                        {dynamicOptions?.useTypes?.map((use: string) => (
                             <button
-                                key={use.value}
-                                onClick={() => toggleFilter('useTypes', use.value)}
+                                key={use}
+                                onClick={() => toggleFilter('useTypes', use)}
                                 className={`p-4 rounded-2xl text-xs font-bold transition-all text-left flex flex-col gap-2
-                                    ${filters.useTypes?.includes(use.value)
+                                    ${filters.useTypes?.includes(use)
                                         ? 'bg-[#facc15] text-[#1a3a3a] shadow-lg scale-[1.02]'
                                         : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
                             >
-                                <span className="text-xl opacity-70">{use.icon}</span>
-                                <span>{use.label}</span>
-                                {filters.useTypes?.includes(use.value) && <LucideCheck size={14} className="self-end mt-auto" />}
+                                <span className="text-xl opacity-70">🌱</span>
+                                <span className="capitalize">{use}</span>
+                                {filters.useTypes?.includes(use) && <LucideCheck size={14} className="self-end mt-auto" />}
                             </button>
                         ))}
+                        {(!dynamicOptions || !dynamicOptions.useTypes || dynamicOptions.useTypes.length === 0) && (
+                            <p className="col-span-2 text-center text-gray-500 text-xs py-4">Cargando tipos de uso...</p>
+                        )}
                     </div>
                 </FilterSection>
 
@@ -254,6 +258,48 @@ export default function PropertyFilters({ propertyType, initialFilters, onFilter
                                             className={`px-4 py-2 rounded-full text-[10px] font-bold transition-all
                                                 ${filters.topographyTypes?.includes(s)
                                                     ? 'bg-orange-600 text-white shadow-lg'
+                                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/5'}`}
+                                        >
+                                            {s}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="text-gray-500 text-[10px] font-black mb-3 uppercase tracking-widest flex items-center gap-2">
+                                    <LucideFilter size={12} className="text-green-400" />
+                                    TIPOS DE PASTO
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    {dynamicOptions.pastureTypes?.map((s: string) => (
+                                        <button
+                                            key={s}
+                                            onClick={() => toggleFilter('pastureTypes', s)}
+                                            className={`px-4 py-2 rounded-full text-[10px] font-bold transition-all
+                                                ${filters.pastureTypes?.includes(s)
+                                                    ? 'bg-green-700 text-white shadow-lg'
+                                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/5'}`}
+                                        >
+                                            {s}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="text-gray-500 text-[10px] font-black mb-3 uppercase tracking-widest flex items-center gap-2">
+                                    <LucideSprout size={12} className="text-emerald-400" />
+                                    CULTIVOS APTOS
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    {dynamicOptions.crops?.map((s: string) => (
+                                        <button
+                                            key={s}
+                                            onClick={() => toggleFilter('crops', s)}
+                                            className={`px-4 py-2 rounded-full text-[10px] font-bold transition-all
+                                                ${filters.crops?.includes(s)
+                                                    ? 'bg-emerald-700 text-white shadow-lg'
                                                     : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/5'}`}
                                         >
                                             {s}
