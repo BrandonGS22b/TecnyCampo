@@ -122,7 +122,7 @@ export default function PropiedadesPage() {
 
             {/* Filter Drawer - Innovative Slide-over */}
             {showFilters && (
-                <div className="fixed inset-0 z-[60] flex justify-end">
+                <div className="fixed inset-0 z-[1300] flex justify-end">
                     <div className="absolute inset-0 bg-[#0f172a]/60 backdrop-blur-sm transition-opacity" onClick={() => setShowFilters(false)}></div>
                     <div className="relative w-full max-w-md bg-[#1a3a3a] h-full shadow-2xl flex flex-col border-l-4 border-[#facc15]">
                         <PropertyFilters

@@ -36,7 +36,7 @@ export default function PropertyTypeSelector({ selectedType, onSelectType }: Pro
                         <button
                             key={type.value}
                             onClick={() => onSelectType(type.value)}
-                            className={`flex flex-col items-start p-4 md:p-8 rounded-[24px] md:rounded-[32px] transition-all duration-500 group relative overflow-hidden backdrop-blur-sm
+                            className={`flex flex-col items-start p-3 md:p-8 rounded-[24px] md:rounded-[32px] transition-all duration-500 group relative overflow-hidden backdrop-blur-sm
                                 ${isSelected
                                     ? 'bg-[#1a3a3a] text-white shadow-2xl shadow-[#1a3a3a]/30 scale-[1.02] z-10'
                                     : 'bg-white text-gray-500 hover:bg-gray-50 border border-gray-100 hover:border-[#facc15]/30'
@@ -47,7 +47,7 @@ export default function PropertyTypeSelector({ selectedType, onSelectType }: Pro
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#facc15]/10 rounded-full -mr-16 -mt-16 animate-pulse"></div>
                             )}
 
-                            <div className={`mb-6 p-4 rounded-2xl transition-all duration-300 ${isSelected
+                            <div className={`mb-2 md:mb-6 p-2 md:p-4 rounded-2xl transition-all duration-300 ${isSelected
                                 ? 'bg-[#facc15] text-[#1a3a3a] rotate-12'
                                 : 'bg-gray-100 text-gray-400 group-hover:rotate-12 group-hover:bg-[#facc15]/20 group-hover:text-[#facc15]'
                                 }`}>
@@ -62,7 +62,7 @@ export default function PropertyTypeSelector({ selectedType, onSelectType }: Pro
                             </p>
 
                             {isSelected && (
-                                <div className="mt-6 flex items-center justify-center w-8 h-8 bg-white/10 rounded-full self-end">
+                                <div className="mt-2 md:mt-6 flex items-center justify-center w-8 h-8 bg-white/10 rounded-full self-end">
                                     <div className="w-2 h-2 bg-[#facc15] rounded-full animate-ping"></div>
                                 </div>
                             )}
