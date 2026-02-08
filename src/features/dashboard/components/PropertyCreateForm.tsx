@@ -46,6 +46,9 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
         },
         legal: {
             documentation: 'completa',
+            tradition: '',
+            taxesStatus: '',
+            owners: '',
             permits: [] as string[],
             restrictions: [] as string[]
         },
@@ -59,8 +62,12 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
             currentUse: '',
             production: '',
             potential: '',
-            animalCapacity: ''
+            animalCapacity: '',
+            animalCapacityDetails: [] as { animalType: string; count: string }[]
         },
+        potrerosCount: '',
+        temperature: '',
+        precipitation: '',
         forestPercentage: '',
         reservePercentage: '',
         rastrojoBajoPercentage: '',
@@ -74,7 +81,10 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
             topographyTypes: '',
             soilTypes: '',
             useTypes: '',
-            crops: ''
+            crops: '',
+            buildings: '',
+            fences: '',
+            infrastructure: ''
         }
     });
 
@@ -85,13 +95,16 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
         topographyTypes: [] as string[],
         soilTypes: [] as string[],
         useTypes: [] as string[],
-        crops: [] as string[]
+        crops: [] as string[],
+        buildings: [] as string[],
+        fences: [] as string[],
+        infrastructure: [] as string[]
     });
 
     // Load initial options
     useEffect(() => {
         const loadAllOptions = async () => {
-            const endpoints = ['pastureTypes', 'waterSources', 'topographyTypes', 'soilTypes', 'useTypes', 'crops'];
+            const endpoints = ['pastureTypes', 'waterSources', 'topographyTypes', 'soilTypes', 'useTypes', 'crops', 'buildings', 'fences', 'infrastructure'];
             const newOptions: any = {};
 
             for (const ep of endpoints) {
@@ -173,7 +186,10 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                     topographyTypes: '',
                     soilTypes: '',
                     useTypes: '',
-                    crops: ''
+                    crops: '',
+                    buildings: '',
+                    fences: '',
+                    infrastructure: ''
                 }
             });
         }
@@ -345,6 +361,39 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                 </div>
 
                 <div>
+                    <label className="block text-sm font-semibold text-gray-700">Tradición (Escritura, etc.)</label>
+                    <input
+                        type="text"
+                        placeholder="Ej: Escritura al día"
+                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+                        value={formData.legal.tradition}
+                        onChange={(e) => handleNestedChange('legal', 'tradition', e.target.value)}
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">Estado de Impuestos</label>
+                    <input
+                        type="text"
+                        placeholder="Ej: Libre de gravamen, Al día"
+                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+                        value={formData.legal.taxesStatus}
+                        onChange={(e) => handleNestedChange('legal', 'taxesStatus', e.target.value)}
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">Propietarios</label>
+                    <input
+                        type="text"
+                        placeholder="Ej: Único dueño"
+                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+                        value={formData.legal.owners}
+                        onChange={(e) => handleNestedChange('legal', 'owners', e.target.value)}
+                    />
+                </div>
+
+                <div>
                     <label className="block text-sm font-semibold text-gray-700">
                         Estado de la Publicación
                     </label>
@@ -448,7 +497,7 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
             </h3>
 
             {/* Dynamic Managers Helper */}
-            {['pastureTypes', 'waterSources', 'topographyTypes', 'soilTypes', 'crops'].map((listKey) => {
+            {['pastureTypes', 'waterSources', 'topographyTypes', 'soilTypes', 'crops', 'buildings', 'fences', 'infrastructure'].map((listKey) => {
                 let label = '';
                 let formFieldParent = '';
                 let formFieldKey = '';
@@ -477,6 +526,21 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                     formFieldParent = null as any; // Special case, root level array
                     formFieldKey = 'crops';
                 }
+                if (listKey === 'buildings') {
+                    label = 'Edificaciones';
+                    formFieldParent = 'installations';
+                    formFieldKey = 'buildings';
+                }
+                if (listKey === 'fences') {
+                    label = 'Cercas';
+                    formFieldParent = 'installations';
+                    formFieldKey = 'fences';
+                }
+                if (listKey === 'infrastructure') {
+                    label = 'Otras Infraestructuras';
+                    formFieldParent = 'installations';
+                    formFieldKey = 'infrastructure';
+                }
 
                 // Helper to get current selected array
                 const currentSelected = listKey === 'crops'
@@ -502,97 +566,107 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                 const allOptions = dynamicList;
 
                 return (
-                    <div key={listKey} className="border p-4 rounded-lg bg-green-50 mb-4">
-                        <label className="block text-sm font-bold text-gray-700 mb-2">{label}</label>
+                    <div key={listKey} className="animate-fadeIn">
+                        {/* Group Title for Installations */}
+                        {listKey === 'buildings' && (
+                            <h4 className="text-xl font-black text-gray-900 mb-6 mt-8 flex items-center gap-2 border-b-2 border-green-500 pb-2">
+                                <span className="text-2xl">🏗️</span> Instalaciones y Estructuras
+                            </h4>
+                        )}
+                        <div className="border-2 border-green-100 p-6 rounded-[2rem] bg-green-50/30 mb-6 hover:bg-green-50/50 transition-colors shadow-sm">
+                            <label className="block text-sm font-black text-green-800 mb-3 uppercase tracking-wider">{label}</label>
 
-                        {/* Selected Chips */}
-                        <div className="flex flex-wrap gap-2 mb-3">
-                            {currentSelected.map((opt: string) => (
-                                <div key={opt} className="relative group">
-                                    <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-600 text-white flex items-center gap-2 shadow-sm">
-                                        {opt}
-                                        <button
-                                            type="button"
-                                            onClick={() => toggleOption(opt)}
-                                            className="hover:text-red-200 transition-colors bg-green-700 rounded-full w-4 h-4 flex items-center justify-center font-bold"
-                                        >
-                                            ×
-                                        </button>
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Suggestions / Options to Add */}
-                        <div className="mb-3">
-                            <p className="text-xs text-gray-500 mb-2 font-semibold">Opciones disponibles (Click para agregar):</p>
-                            <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                                {allOptions.filter((opt: string) => !currentSelected.includes(opt)).map((opt: string) => {
-                                    return (
-                                        <div key={opt} className="relative group inline-block">
+                            {/* Selected Chips */}
+                            <div className="flex flex-wrap gap-2 mb-4">
+                                {currentSelected.length === 0 && <p className="text-xs text-gray-400 italic">Ninguno seleccionado aún</p>}
+                                {currentSelected.map((opt: string) => (
+                                    <div key={opt} className="relative group">
+                                        <span className="px-4 py-2 rounded-2xl text-sm font-bold bg-green-600 text-white flex items-center gap-2 shadow-md">
+                                            {opt}
                                             <button
                                                 type="button"
                                                 onClick={() => toggleOption(opt)}
-                                                className="px-3 py-1 rounded-full text-xs border border-green-300 bg-white text-green-700 hover:bg-green-100 transition-all shadow-sm flex items-center gap-1"
+                                                className="hover:text-red-200 transition-colors bg-green-700/50 rounded-full w-5 h-5 flex items-center justify-center font-bold"
                                             >
-                                                <span>+ {opt}</span>
+                                                ×
                                             </button>
-
-                                            <div className="absolute -top-2 -right-4 hidden group-hover:flex gap-0.5 bg-white shadow-md rounded-lg p-0.5 z-10 border border-gray-100">
-                                                <button
-                                                    type="button"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        const n = prompt('Editar nombre:', opt);
-                                                        if (n && n !== opt) handleManageOption(listKey, 'update', { old: opt, new: n });
-                                                    }}
-                                                    className="text-blue-500 hover:text-blue-700 p-1 hover:bg-blue-50 rounded"
-                                                    title="Editar"
-                                                >
-                                                    ✎
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        if (confirm(`¿Eliminar "${opt}" de la lista global?`)) handleManageOption(listKey, 'delete', opt);
-                                                    }}
-                                                    className="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded"
-                                                    title="Eliminar"
-                                                >
-                                                    ×
-                                                </button>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                                        </span>
+                                    </div>
+                                ))}
                             </div>
-                        </div>
 
-                        {/* Add Custom */}
-                        <div className="flex gap-2 border-t pt-3 mt-2 border-green-200">
-                            {/* @ts-ignore */}
-                            <input
-                                type="text"
-                                placeholder={`Otro ${label} (Escribir y agregar)...`}
-                                className="flex-1 p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
-                                value={(formData.newOption as any)[listKey]}
+                            {/* Suggestions / Options to Add */}
+                            <div className="mb-4">
+                                <p className="text-xs text-green-700/60 mb-3 font-bold uppercase tracking-tight">Opciones disponibles (Click para agregar):</p>
+                                <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
+                                    {allOptions.filter((opt: string) => !currentSelected.includes(opt)).map((opt: string) => {
+                                        return (
+                                            <div key={opt} className="relative group inline-block">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => toggleOption(opt)}
+                                                    className="px-4 py-2 rounded-2xl text-xs font-bold border-2 border-green-200 bg-white text-green-700 hover:border-green-400 hover:bg-green-50 transition-all shadow-sm flex items-center gap-1"
+                                                >
+                                                    <span>+ {opt}</span>
+                                                </button>
 
-                                onChange={(e) => setFormData(p => ({ ...p, newOption: { ...p.newOption, [listKey]: e.target.value } }))}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        e.preventDefault();
-                                        handleManageOption(listKey, 'add', (formData.newOption as any)[listKey]);
-                                    }
-                                }}
-                            />
-                            <button
-                                type="button"
-                                onClick={() => handleManageOption(listKey, 'add', (formData.newOption as any)[listKey])}
-                                className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-900 shadow-md transition-transform active:scale-95"
-                            >
-                                Agregar Personalizado
-                            </button>
+                                                <div className="absolute -top-3 -right-6 hidden group-hover:flex gap-1 bg-white shadow-xl rounded-xl p-1 z-20 border-2 border-gray-100">
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            const n = prompt('Editar nombre:', opt);
+                                                            if (n && n !== opt) handleManageOption(listKey, 'update', { old: opt, new: n });
+                                                        }}
+                                                        className="text-blue-500 hover:text-blue-700 p-1.5 hover:bg-blue-50 rounded-lg transition-colors"
+                                                        title="Editar"
+                                                    >
+                                                        ✎
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            if (confirm(`¿Eliminar "${opt}" de la lista global?`)) handleManageOption(listKey, 'delete', opt);
+                                                        }}
+                                                        className="text-red-500 hover:text-red-700 p-1.5 hover:bg-red-50 rounded-lg transition-colors"
+                                                        title="Eliminar"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Add Custom */}
+                            <div className="flex gap-2 border-t-2 border-green-100/50 pt-4 mt-2">
+                                <input
+                                    type="text"
+                                    placeholder={`Otro ${label} (Escribir y agregar)...`}
+                                    className="flex-1 px-4 py-2.5 bg-white border-2 border-green-100 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-green-500/10 focus:border-green-500 focus:outline-none transition-all"
+                                    //@ts-ignore
+                                    value={formData.newOption[listKey]}
+                                    onChange={(e) => setFormData(p => ({ ...p, newOption: { ...p.newOption, [listKey]: e.target.value } }))}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            //@ts-ignore
+                                            handleManageOption(listKey, 'add', formData.newOption[listKey]);
+                                        }
+                                    }}
+                                />
+                                <button
+                                    type="button"
+                                    //@ts-ignore
+                                    onClick={() => handleManageOption(listKey, 'add', formData.newOption[listKey])}
+                                    className="bg-gray-900 text-white px-6 py-2.5 rounded-2xl text-sm font-black hover:bg-black shadow-lg hover:shadow-gray-400 transition-all active:scale-95 whitespace-nowrap"
+                                >
+                                    Agregar Personalizado
+                                </button>
+                            </div>
                         </div>
                     </div>
                 );
@@ -631,46 +705,88 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                     <input type="number" className="w-full p-2 border rounded" value={formData.rastrojoAltoPercentage} onChange={(e) => handleChange('rastrojoAltoPercentage', e.target.value)} />
                 </div>
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700">Carga Animal (Unidades)</label>
-                    <input type="number" className="w-full p-2 border rounded" value={formData.productivity.animalCapacity} onChange={(e) => handleNestedChange('productivity', 'animalCapacity', e.target.value)} />
+                    <label className="block text-sm font-semibold text-gray-700">Carga Animal General (Unidades)</label>
+                    <input type="number" className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500" value={formData.productivity.animalCapacity} onChange={(e) => handleNestedChange('productivity', 'animalCapacity', e.target.value)} />
+                </div>
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">Cantidad de Potreros</label>
+                    <input type="number" className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500" value={formData.potrerosCount} onChange={(e) => handleChange('potrerosCount', e.target.value)} />
+                </div>
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">Temperatura Promedio</label>
+                    <input type="text" placeholder="Ej: 27°C a 32°C" className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500" value={formData.temperature} onChange={(e) => handleChange('temperature', e.target.value)} />
+                </div>
+                <div>
+                    <label className="block text-sm font-semibold text-gray-700">Precipitación Aproximada</label>
+                    <input type="text" placeholder="Ej: 400mm" className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500" value={formData.precipitation} onChange={(e) => handleChange('precipitation', e.target.value)} />
                 </div>
             </div>
 
-            {/* Installations */}
+            {/* Detailed Animal Capacity */}
             <div className="mt-6 border-t pt-4">
-                <h4 className="text-lg font-bold text-gray-800 mb-3">Instalaciones y Estructuras</h4>
+                <h4 className="text-lg font-bold text-gray-800 mb-3">Detalle de Carga Animal (AgroGo Style)</h4>
+                <div className="space-y-4">
+                    {formData.productivity.animalCapacityDetails.map((detail, index) => (
+                        <div key={index} className="flex gap-4 items-end">
+                            <div className="flex-1">
+                                <label className="block text-xs font-bold text-gray-500 mb-1">Tipo de Animal</label>
+                                <input
+                                    type="text"
+                                    placeholder="Ej: Ganadera, Equinos"
+                                    className="w-full p-2 border rounded-lg"
+                                    value={detail.animalType}
+                                    onChange={(e) => {
+                                        const newDetails = [...formData.productivity.animalCapacityDetails];
+                                        newDetails[index].animalType = e.target.value;
+                                        handleNestedChange('productivity', 'animalCapacityDetails', newDetails);
+                                    }}
+                                />
+                            </div>
+                            <div className="flex-1">
+                                <label className="block text-xs font-bold text-gray-500 mb-1">Cantidad (Unidades)</label>
+                                <input
+                                    type="number"
+                                    className="w-full p-2 border rounded-lg"
+                                    value={detail.count}
+                                    onChange={(e) => {
+                                        const newDetails = [...formData.productivity.animalCapacityDetails];
+                                        newDetails[index].count = e.target.value;
+                                        handleNestedChange('productivity', 'animalCapacityDetails', newDetails);
+                                    }}
+                                />
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const newDetails = formData.productivity.animalCapacityDetails.filter((_, i) => i !== index);
+                                    handleNestedChange('productivity', 'animalCapacityDetails', newDetails);
+                                }}
+                                className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 mb-0.5"
+                            >
+                                ×
+                            </button>
+                        </div>
+                    ))}
+                    <button
+                        type="button"
+                        onClick={() => {
+                            handleNestedChange('productivity', 'animalCapacityDetails', [
+                                ...formData.productivity.animalCapacityDetails,
+                                { animalType: '', count: '' }
+                            ]);
+                        }}
+                        className="text-green-600 font-bold hover:text-green-700 text-sm flex items-center gap-1"
+                    >
+                        + Agregar detalle de carga animal
+                    </button>
+                </div>
+            </div>
+
+            {/* Installations - Electricity only as it's boolean */}
+            <div className="mt-6 border-t pt-4">
+                <h4 className="text-lg font-bold text-gray-800 mb-3">Servicios Básicos</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">Edificaciones (Separar por comas)</label>
-                        <input
-                            type="text"
-                            placeholder="Ej: Casa principal, Casa encargado, Bodega"
-                            className="w-full p-2 border rounded"
-                            value={formData.installations?.buildings?.join(', ') || ''}
-                            onChange={(e) => handleNestedChange('installations', 'buildings', e.target.value.split(',').map(s => s.trim()))}
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">Cercas (Separar por comas)</label>
-                        <input
-                            type="text"
-                            placeholder="Ej: Eléctrica, Púas, Viva"
-                            className="w-full p-2 border rounded"
-                            value={formData.installations?.fences?.join(', ') || ''}
-                            onChange={(e) => handleNestedChange('installations', 'fences', e.target.value.split(',').map(s => s.trim()))}
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">Otras Infraestructuras</label>
-                        <input
-                            type="text"
-                            placeholder="Ej: Corral, Ordeño mecánico, Báscula"
-                            className="w-full p-2 border rounded"
-                            value={formData.installations?.infrastructure?.join(', ') || ''}
-                            onChange={(e) => handleNestedChange('installations', 'infrastructure', e.target.value.split(',').map(s => s.trim()))}
-                        />
-                    </div>
-                    <div className="flex items-center mt-6">
+                    <div className="flex items-center">
                         <label className="flex items-center cursor-pointer">
                             <input
                                 type="checkbox"
@@ -789,7 +905,7 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                     }}
                 />
                 <div className="space-y-2 mt-3">
-                    {formData.media.videos.map((vid, i) => (
+                    {formData.media.videos.map((_, i) => (
                         <div key={i} className="flex items-center justify-between bg-white p-2 rounded border">
                             <span className="text-sm truncate flex-1">🎥 Video {i + 1}</span>
                             <button
@@ -904,8 +1020,15 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
                 rastrojoAltoPercentage: formData.rastrojoAltoPercentage ? parseFloat(formData.rastrojoAltoPercentage) : undefined,
                 productivity: {
                     ...formData.productivity,
-                    animalCapacity: formData.productivity.animalCapacity ? parseFloat(formData.productivity.animalCapacity) : undefined
-                }
+                    animalCapacity: formData.productivity.animalCapacity ? parseFloat(formData.productivity.animalCapacity) : undefined,
+                    animalCapacityDetails: formData.productivity.animalCapacityDetails.map(d => ({
+                        animalType: d.animalType,
+                        count: parseFloat(d.count) || 0
+                    }))
+                },
+                potrerosCount: formData.potrerosCount ? parseInt(formData.potrerosCount) : undefined,
+                temperature: formData.temperature,
+                precipitation: formData.precipitation
             };
 
             const response = await fetch(url, {

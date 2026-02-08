@@ -451,8 +451,11 @@ export default function PropertyDetailPage() {
                                 <TechItem label="Distancia al Pueblo" value={property.location.distanceToTown ? `${property.location.distanceToTown} km` : 'Muy cerca'} />
                                 <TechItem label="Tipo de Acceso" value={property.location.roadAccess} capitalize />
                                 <TechItem label="Vía Principal" value={property.location.roadAccess?.toLowerCase().includes('paviment') ? 'Pavimentada' : 'Destapada'} />
-                                <TechItem label="Bosques / Reservas" value={property.forestPercentage ? `${property.forestPercentage}%` : 'N/A'} />
-                                <TechItem label="Rastrojos" value={property.reservePercentage ? `${property.reservePercentage}%` : 'N/A'} />
+                                <TechItem label="Bosques" value={property.forestPercentage ? `${property.forestPercentage}%` : null} />
+                                <TechItem label="Reserva Natural" value={property.reservePercentage ? `${property.reservePercentage}%` : null} />
+                                <TechItem label="Rastrojo Bajo" value={property.rastrojoBajoPercentage ? `${property.rastrojoBajoPercentage}%` : null} />
+                                <TechItem label="Rastrojo Alto" value={property.rastrojoAltoPercentage ? `${property.rastrojoAltoPercentage}%` : null} />
+                                <TechItem label="Potreros" value={property.potrerosCount} />
                             </TechnicalCard>
 
                             {/* Soil and Land Section */}
@@ -460,8 +463,8 @@ export default function PropertyDetailPage() {
                                 <TechItem label="Tipo de Suelo" value={property.soil?.types?.join(', ')} capitalize />
                                 <TechItem label="Topografía" value={property.topography?.types?.join(', ')} capitalize />
                                 <TechItem label="Uso de Suelos" value={property.useTypes?.join(', ')} capitalize />
-                                <TechItem label="Calidad Pastos" value={property.pasture?.quality} capitalize />
-                                <TechItem label="Tipos Pastos" value={property.pasture?.types?.join(', ')} capitalize />
+                                <TechItem label="Clima / Temp" value={property.temperature} />
+                                <TechItem label="Precipitación" value={property.precipitation} />
                                 <TechItem label="Altura (msnm)" value={property.topography?.elevation?.min ? `${property.topography.elevation.min}m - ${property.topography.elevation.max}m` : 'Consultar'} />
                             </TechnicalCard>
 
@@ -470,18 +473,48 @@ export default function PropertyDetailPage() {
                                 <TechItem label="Fuentes Hídricas" value={property.water?.sources?.join(', ')} capitalize />
                                 <TechItem label="Agua Permanente" value={property.water?.yearRound ? 'Sí (Todo el año)' : 'Por temporadas'} />
                                 <TechItem label="Electricidad" value={property.installations?.electricity ? 'Ya instalada' : 'Proyecto cercano'} />
-                                <TechItem label="Infraestructura" value={property.installations?.infrastructure?.join(', ')} />
+                                <TechItem label="Edificaciones" value={property.installations?.buildings?.join(', ')} capitalize />
+                                <TechItem label="Cercas" value={property.installations?.fences?.join(', ')} capitalize />
+                                <TechItem label="Infraestructura" value={property.installations?.infrastructure?.join(', ')} capitalize />
                             </TechnicalCard>
 
                             {/* Legal and Extras Section */}
                             <TechnicalCard title="Estado Legal" icon="📄" color="bg-indigo-100/50 text-indigo-700">
                                 <TechItem label="Documentación" value={property.legal?.documentation?.replace('_', ' ')} capitalize />
-                                <TechItem label="Tradición" value="Escritura al día" />
-                                <TechItem label="Impuestos" value="Libre de gravamen" />
-                                <TechItem label="Propietarios" value="Único dueño" />
+                                <TechItem label="Tradición" value={property.legal?.tradition} />
+                                <TechItem label="Impuestos" value={property.legal?.taxesStatus} />
+                                <TechItem label="Propietarios" value={property.legal?.owners} />
+                                <TechItem label="Carga Animal" value={property.productivity?.animalCapacity ? `${property.productivity.animalCapacity} Unidades` : null} />
                             </TechnicalCard>
 
                         </div>
+
+                        {/* Detailed Animal Capacity Table (AgroGo Style) */}
+                        {property.productivity?.animalCapacityDetails?.length > 0 && (
+                            <div className="bg-white rounded-[2rem] shadow-lg p-8 border border-gray-100 mb-8">
+                                <h3 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-3 underline decoration-yellow-500 underline-offset-8">
+                                    🐂 Detalle de Carga Animal
+                                </h3>
+                                <div className="overflow-hidden rounded-2xl border border-gray-100">
+                                    <table className="w-full text-left">
+                                        <thead className="bg-gray-50 text-gray-600 text-sm font-black uppercase tracking-wider">
+                                            <tr>
+                                                <th className="px-6 py-4">Tipo de Animal</th>
+                                                <th className="px-6 py-4">Cantidad (Unidades)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-100">
+                                            {property.productivity.animalCapacityDetails.map((detail: any, i: number) => (
+                                                <tr key={i} className="hover:bg-gray-50 transition-colors">
+                                                    <td className="px-6 py-4 font-bold text-gray-700 capitalize">{detail.animalType}</td>
+                                                    <td className="px-6 py-4 font-black text-green-600">{detail.count}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Crops Section (Tags Style) */}
                         {property.crops?.length > 0 && (
