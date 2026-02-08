@@ -1,8 +1,6 @@
 // src/pages/HomePage.tsx
 
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Newsletter from '../shared/components/Newsletter';
 
 export default function HomePage() {
     const navigate = useNavigate();
@@ -69,7 +67,7 @@ export default function HomePage() {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
                     {services.map((service) => (
                         <div
                             key={service.id}
@@ -77,7 +75,7 @@ export default function HomePage() {
                             onClick={service.action}
                         >
                             {/* Image with Gradient Overlay */}
-                            <div className="relative h-64 overflow-hidden">
+                            <div className="relative h-40 md:h-64 overflow-hidden">
                                 <img
                                     src={service.image}
                                     alt={service.title}
@@ -86,41 +84,41 @@ export default function HomePage() {
                                 <div className={`absolute inset-0 bg-gradient-to-t ${service.color} opacity-80`}></div>
 
                                 {/* Icon */}
-                                <div className="absolute top-6 left-6">
-                                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-4xl shadow-lg">
+                                <div className="absolute top-3 md:top-6 left-3 md:left-6">
+                                    <div className="w-10 h-10 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center text-xl md:text-4xl shadow-lg">
                                         {service.icon}
                                     </div>
                                 </div>
 
                                 {/* Title */}
-                                <div className="absolute bottom-6 left-6 right-6">
-                                    <h3 className="text-3xl font-black text-white mb-2">
+                                <div className="absolute bottom-3 md:bottom-6 left-3 md:left-6 right-3 md:right-6">
+                                    <h3 className="text-xl md:text-3xl font-black text-white mb-1 md:mb-2">
                                         {service.title}
                                     </h3>
                                 </div>
                             </div>
 
                             {/* Content */}
-                            <div className="p-8">
-                                <p className="text-gray-700 mb-6 leading-relaxed">
+                            <div className="p-4 md:p-8">
+                                <p className="text-gray-700 mb-4 md:mb-6 leading-tight md:leading-relaxed text-xs md:text-base line-clamp-2 md:line-clamp-none">
                                     {service.description}
                                 </p>
 
-                                {/* Features */}
-                                <ul className="space-y-3 mb-6">
+                                {/* Features - Hidden on extra small screens to save space */}
+                                <ul className="hidden sm:block space-y-2 md:space-y-3 mb-4 md:mb-6">
                                     {service.features.map((feature, idx) => (
                                         <li key={idx} className="flex items-start">
-                                            <svg className="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <svg className="w-4 h-4 md:w-5 md:h-5 text-green-600 mr-2 md:mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                             </svg>
-                                            <span className="text-sm text-gray-600">{feature}</span>
+                                            <span className="text-[10px] md:text-sm text-gray-600">{feature}</span>
                                         </li>
                                     ))}
                                 </ul>
 
                                 {/* CTA Button */}
                                 <button
-                                    className={`w-full py-3 px-6 bg-gradient-to-r ${service.color} text-white font-bold rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105`}
+                                    className={`w-full py-2 md:py-3 px-4 md:px-6 bg-gradient-to-r ${service.color} text-white font-bold rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-[10px] md:text-base`}
                                     onClick={service.action}
                                 >
                                     {service.id === 'propiedades' ? 'Ver Propiedades' : 'Más Información'}
@@ -143,7 +141,7 @@ export default function HomePage() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                         {[
                             { icon: '🎯', title: 'Precisión', desc: 'Datos exactos con tecnología de punta' },
                             { icon: '⚡', title: 'Rapidez', desc: 'Resultados en tiempo récord' },
@@ -151,9 +149,9 @@ export default function HomePage() {
                             { icon: '💡', title: 'Innovación', desc: 'Soluciones tecnológicas avanzadas' }
                         ].map((item, idx) => (
                             <div key={idx} className="text-center">
-                                <div className="text-6xl mb-4">{item.icon}</div>
-                                <h3 className="text-2xl font-bold text-white mb-2">{item.title}</h3>
-                                <p className="text-green-100">{item.desc}</p>
+                                <div className="text-4xl md:text-6xl mb-2 md:mb-4">{item.icon}</div>
+                                <h3 className="text-lg md:text-2xl font-bold text-white mb-1 md:mb-2">{item.title}</h3>
+                                <p className="text-green-100 text-[10px] md:text-base leading-tight md:leading-normal">{item.desc}</p>
                             </div>
                         ))}
                     </div>
