@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { getUseTypesByPropertyType } from '../../../shared/constants/filters';
 import { DEPARTMENTS, getMunicipalities } from '../../../shared/constants/colombia';
 import {
     LucideX, LucideMapPin, LucideDollarSign,
@@ -362,7 +361,7 @@ export default function PropertyFilters({ propertyType, initialFilters, onFilter
             </div>
 
             {/* Sticky Actions */}
-            <div className="p-6 border-t border-white/10 bg-[#1a3a3a]/90 backdrop-blur-xl">
+            <div className="p-6 pb-10 border-t border-white/10 bg-[#1a3a3a]/90 backdrop-blur-xl">
                 <button
                     onClick={handleApply}
                     className="w-full bg-[#facc15] text-[#1a3a3a] py-5 rounded-2xl font-black text-lg shadow-2xl hover:bg-[#ffe066] transition-all transform active:scale-95 flex items-center justify-center gap-3"

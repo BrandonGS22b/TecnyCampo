@@ -7,9 +7,9 @@ interface PropertyTypeSelectorProps {
 
 export default function PropertyTypeSelector({ selectedType, onSelectType }: PropertyTypeSelectorProps) {
     const types = [
-        { value: 'lote', label: 'Lotes Rurales', icon: <LucideMap size={28} />, desc: 'Espacios por desarrollar' },
-        { value: 'parcela', label: 'Parcelaciones', icon: <LucideLayers size={28} />, desc: 'Terrenos divididos' },
-        { value: 'finca', label: 'Fincas Raíz', icon: <LucideHome size={28} />, desc: 'Propiedades productivas' },
+        { value: 'lote', label: 'Lotes', icon: <LucideMap size={28} />, desc: 'Rurales' },
+        { value: 'parcela', label: 'Parcelas', icon: <LucideLayers size={28} />, desc: 'Divididas' },
+        { value: 'finca', label: 'Fincas', icon: <LucideHome size={28} />, desc: 'Raíz' },
     ];
 
     return (
