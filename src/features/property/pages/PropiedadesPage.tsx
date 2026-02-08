@@ -49,13 +49,13 @@ export default function PropiedadesPage() {
 
                 <div className="max-w-7xl mx-auto relative z-10 flex flex-col items-center">
                     <div className="text-center">
-                        <h2 className="text-[#facc15] text-sm font-bold uppercase tracking-[0.4em] mb-4 opacity-100">TecnyCampo Premium</h2>
+                        <h2 className="text-[#facc15] text-sm font-bold uppercase tracking-[0.4em] mb-4 opacity-100">Lp Negocios</h2>
                         <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight">
-                            Encuentra la Finca <br className="hidden md:block" />
+                            Encuentra la propiedad <br className="hidden md:block" />
                             <span className="text-[#facc15] drop-shadow-sm">perfecta para ti</span>
                         </h1>
                         <p className="text-white/40 max-w-xl mx-auto text-sm md:text-base font-medium">
-                            Toda la gestión inmobiliaria rural en un solo lugar.
+                            Toda la gestión inmobiliaria en un solo lugar.
                         </p>
                     </div>
                 </div>
