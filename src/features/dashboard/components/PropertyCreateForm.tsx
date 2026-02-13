@@ -996,6 +996,33 @@ export default function PropertyCreateForm({ editMode = false, initialData = nul
     );
 
     const handleSubmit = async () => {
+        // Form Validation
+        if (!formData.title.trim()) {
+            setMsg({ text: '⚠️ El título es obligatorio', type: 'error' });
+            setStep(1);
+            return;
+        }
+        if (!formData.price || parseFloat(formData.price) <= 0) {
+            setMsg({ text: '⚠️ El precio debe ser mayor a 0', type: 'error' });
+            setStep(1);
+            return;
+        }
+        if (!formData.area || parseFloat(formData.area) <= 0) {
+            setMsg({ text: '⚠️ El área debe ser mayor a 0', type: 'error' });
+            setStep(1);
+            return;
+        }
+        if (!formData.location.department) {
+            setMsg({ text: '⚠️ Selecciona un departamento', type: 'error' });
+            setStep(2);
+            return;
+        }
+        if (!formData.location.municipality) {
+            setMsg({ text: '⚠️ Selecciona un municipio', type: 'error' });
+            setStep(2);
+            return;
+        }
+
         setLoading(true);
         try {
             const url = editMode

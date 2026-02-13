@@ -14,6 +14,7 @@ import {
     CheckBadgeIcon,
     GlobeAmericasIcon,
     PlayIcon,
+    ArrowRightIcon,
     ShareIcon
 } from '@heroicons/react/24/solid';
 import PhotoSphere360Viewer from '../../../shared/components/PhotoSphere360Viewer';
@@ -280,24 +281,34 @@ export default function PropertyDetailPage() {
                     </div>
                 </div>
 
-                {/* Mobile Title & Price (New section) */}
-                <div className="md:hidden mb-8 space-y-3">
-                    <div className="flex items-center gap-2">
-                        <div className={`px-3 py-1 rounded-full text-white text-[10px] font-black uppercase tracking-wider ${property.propertyType === 'finca' ? 'bg-yellow-500' : property.propertyType === 'parcela' ? 'bg-green-500' : 'bg-blue-500'
-                            } shadow-sm`}>
+                {/* Mobile Title & Price (Professional Structure) */}
+                <div className="md:hidden mb-8 bg-white p-6 rounded-[2.5rem] shadow-xl border border-gray-100 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div className={`px-4 py-1.5 rounded-full text-white text-[10px] font-black uppercase tracking-widest ${property.propertyType === 'finca' ? 'bg-yellow-500' : property.propertyType === 'parcela' ? 'bg-green-500' : 'bg-blue-500'
+                            } shadow-md`}>
                             {property.propertyType}
+                        </div>
+                        <div className="flex items-center text-gray-400 font-black text-[10px] uppercase tracking-widest">
+                            ID: {property._id.slice(-6)}
                         </div>
                     </div>
                     <h1 className="text-3xl font-black text-gray-900 leading-tight">
                         {property.title}
                     </h1>
-                    <div className="flex items-end justify-between gap-2">
-                        <p className="text-green-600 font-black text-2xl tracking-tight">
-                            {formatPrice(property.price)}
-                        </p>
-                        <div className="flex items-center text-gray-500 font-bold text-xs bg-gray-100 px-3 py-1 rounded-full">
-                            <MapPinIcon className="w-3 h-3 mr-1 text-green-600" />
-                            {property.location.municipality}
+                    <div className="flex items-center text-gray-500 font-bold text-sm">
+                        <MapPinIcon className="w-4 h-4 mr-2 text-green-600" />
+                        {property.location.municipality}, {property.location.department}
+                    </div>
+                    <div className="pt-4 border-t border-gray-50 flex items-end justify-between">
+                        <div>
+                            <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-1">Precio Inversión</p>
+                            <p className="text-green-600 font-black text-3xl tracking-tight">
+                                {formatPrice(property.price)}
+                            </p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-1">Área</p>
+                            <p className="text-gray-900 font-black text-xl">{property.area} ha</p>
                         </div>
                     </div>
                 </div>
@@ -450,6 +461,7 @@ export default function PropertyDetailPage() {
                                 <TechItem label="Vereda / Sector" value={property.location.vereda} />
                                 <TechItem label="Distancia al Pueblo" value={property.location.distanceToTown ? `${property.location.distanceToTown} km` : 'Muy cerca'} />
                                 <TechItem label="Tipo de Acceso" value={property.location.roadAccess} capitalize />
+                                <TechItem label="Vía Pavimentada más cercana" value={property.location.closestPavedRoad} />
                                 <TechItem label="Vía Principal" value={property.location.roadAccess?.toLowerCase().includes('paviment') ? 'Pavimentada' : 'Destapada'} />
                                 <TechItem label="Bosques" value={property.forestPercentage ? `${property.forestPercentage}%` : null} />
                                 <TechItem label="Reserva Natural" value={property.reservePercentage ? `${property.reservePercentage}%` : null} />
@@ -460,6 +472,7 @@ export default function PropertyDetailPage() {
 
                             {/* Soil and Land Section */}
                             <TechnicalCard title="Calidad del Terreno" icon="🌱" color="bg-green-100/50 text-green-700">
+                                <TechItem label="Tipos de Pasto" value={property.pasture?.types?.join(', ')} capitalize />
                                 <TechItem label="Tipo de Suelo" value={property.soil?.types?.join(', ')} capitalize />
                                 <TechItem label="Topografía" value={property.topography?.types?.join(', ')} capitalize />
                                 <TechItem label="Uso de Suelos" value={property.useTypes?.join(', ')} capitalize />
@@ -644,11 +657,11 @@ export default function PropertyDetailPage() {
                                             rel="noopener noreferrer"
                                             className="flex items-center justify-center gap-3 w-full py-6 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-gray-900 font-black rounded-3xl shadow-[0_15px_30px_rgba(234,179,8,0.3)] transition-all transform hover:scale-105 active:scale-95 group/btn"
                                         >
-                                            <span className="text-2xl uppercase tracking-tight">Contactar WhatsApp</span>
+                                            <span className="text-xl uppercase tracking-tight">Contactar WhatsApp</span>
                                             <ArrowRightIcon className="w-8 h-8 group-hover/btn:translate-x-1 transition-transform" />
                                         </a>
 
-                                        <div className="flex items-center justify-center gap-2 text-gray-500 text-xs font-bold pt-4">
+                                        <div className="flex items-center justify-center gap-2 text-gray-500 text-[10px] font-black tracking-widest uppercase py-4">
                                             <CheckBadgeIcon className="w-4 h-4 text-green-500" />
                                             GARANTÍA LP NEGOCIOS S.A.S
                                         </div>
@@ -735,8 +748,3 @@ function TechItem({ label, value, capitalize }: any) {
     );
 }
 
-const ArrowRightIcon = ({ className }: { className?: string }) => (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-    </svg>
-);
