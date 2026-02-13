@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../auth/auth.context';
 import {
     Squares2X2Icon,
     UsersIcon,
     BuildingOffice2Icon,
-    ChartBarIcon,
     ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
@@ -15,11 +14,16 @@ import AdminPropertyManagement from '../components/AdminPropertyManagement';
 export default function DashboardPage() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState('overview');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const activeTab = searchParams.get('tab') || 'overview';
 
     const handleLogout = () => {
         logout();
         navigate('/');
+    };
+
+    const setActiveTab = (tab: string) => {
+        setSearchParams({ tab });
     };
 
     const renderContent = () => {

@@ -154,80 +154,118 @@ export default function Navbar() {
 
             {/* Mobile Sidebar */}
             <div
-                className={`fixed top-[70px] left-0 h-full w-64 glass-dark backdrop-blur-xl p-6 overflow-y-auto 
+                className={`fixed top-[70px] left-0 h-[calc(100vh-70px)] w-64 glass-dark backdrop-blur-xl p-6 overflow-y-auto 
                     transition-transform duration-500 ${isMenuOpen ? 'translate-x-0 animate-slide-in-left' : '-translate-x-full'
-                    } z-[1100] lg:hidden border-r border-white/10`}
+                    } z-[1100] lg:hidden border-r border-white/10 flex flex-col`}
             >
-                <h3 className="text-xl font-bold mb-6 text-yellow-400 border-b border-white/20 pb-2">
-                    Menú
-                </h3>
-                <div className="space-y-2">
-                    {isAuthenticated && (
-                        <div className="mb-4 pb-4 border-b border-white/20">
-                            <div className="text-gray-300 text-sm mb-2">Hola, {user?.name}</div>
-                            <Link
-                                to="/dashboard"
-                                className="flex items-center p-3 rounded-lg bg-white/5 hover:bg-white/10 transition mb-2"
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                <Squares2X2Icon className="w-5 h-5 mr-3 text-yellow-500" />
-                                <span className="text-white font-medium">Dashboard</span>
-                            </Link>
-                            <button
-                                onClick={handleLogout}
-                                className="flex items-center w-full p-3 rounded-lg hover:bg-white/5 transition text-red-400"
-                            >
-                                <ArrowRightOnRectangleIcon className="w-5 h-5 mr-3" />
-                                <span className="font-medium">Cerrar Sesión</span>
-                            </button>
-                        </div>
-                    )}
+                <div className="flex-1">
+                    <h3 className="text-xl font-bold mb-6 text-yellow-400 border-b border-white/20 pb-2">
+                        Menú
+                    </h3>
+                    <div className="space-y-2">
+                        {isAuthenticated && (
+                            <div className="mb-4 pb-4 border-b border-white/20">
+                                <div className="text-gray-300 text-sm mb-2 px-1">Hola, {user?.name}</div>
 
-                    <Link
-                        to="/"
-                        className="flex items-center p-3 rounded-lg hover:bg-white/10 transition"
-                        onClick={() => setIsMenuOpen(false)}
-                    >
-                        <HomeIcon className="w-5 h-5 mr-3 text-yellow-400" />
-                        <span className="text-white font-medium">Inicio</span>
-                    </Link>
-                    <Link
-                        to="/propiedades"
-                        className="flex items-center p-3 rounded-lg hover:bg-white/10 transition"
-                        onClick={() => setIsMenuOpen(false)}
-                    >
-                        <BuildingOffice2Icon className="w-5 h-5 mr-3 text-green-400" />
-                        <span className="text-white font-medium">Propiedades</span>
-                    </Link>
-                    <a
-                        href="#servicios"
-                        className="flex items-center p-3 rounded-lg hover:bg-white/10 transition"
-                        onClick={() => setIsMenuOpen(false)}
-                    >
-                        <PlusCircleIcon className="w-5 h-5 mr-3 text-blue-400" />
-                        <span className="text-white font-medium">Servicios</span>
-                    </a>
-                    <a
-                        href="https://wa.me/573176677911"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center p-3 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 
-                       hover:from-yellow-600 hover:to-yellow-700 transition mt-4 transform hover:scale-105"
-                        onClick={() => setIsMenuOpen(false)}
-                    >
-                        <span className="text-gray-900 font-bold">Contactar</span>
-                    </a>
+                                {/* Dashboard Specific Links (Only visible if on dashboard) */}
+                                {window.location.pathname === '/dashboard' && (
+                                    <div className="bg-yellow-500/10 rounded-xl p-2 mb-3 space-y-1">
+                                        <div className="text-[10px] uppercase tracking-wider text-yellow-500 font-bold px-2 mb-1">
+                                            Admin Panel
+                                        </div>
+                                        <Link
+                                            to="/dashboard?tab=overview"
+                                            className="flex items-center p-2.5 rounded-lg hover:bg-yellow-500/20 transition"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            <Squares2X2Icon className="w-5 h-5 mr-3 text-yellow-500" />
+                                            <span className="text-white text-sm font-medium">Resumen</span>
+                                        </Link>
+                                        {user?.role === 'admin' && (
+                                            <Link
+                                                to="/dashboard?tab=users"
+                                                className="flex items-center p-2.5 rounded-lg hover:bg-yellow-500/20 transition"
+                                                onClick={() => setIsMenuOpen(false)}
+                                            >
+                                                <HeroIcons.UsersIcon className="w-5 h-5 mr-3 text-yellow-500" />
+                                                <span className="text-white text-sm font-medium">Usuarios</span>
+                                            </Link>
+                                        )}
+                                        <Link
+                                            to="/dashboard?tab=properties"
+                                            className="flex items-center p-2.5 rounded-lg hover:bg-yellow-500/20 transition"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            <BuildingOffice2Icon className="w-5 h-5 mr-3 text-yellow-500" />
+                                            <span className="text-white text-sm font-medium">Propiedades</span>
+                                        </Link>
+                                    </div>
+                                )}
 
-                    {!isAuthenticated && (
+                                <Link
+                                    to="/dashboard"
+                                    className="flex items-center p-3 rounded-lg bg-white/5 hover:bg-white/10 transition mb-2"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <Squares2X2Icon className="w-5 h-5 mr-3 text-yellow-500" />
+                                    <span className="text-white font-medium">Dashboard Principal</span>
+                                </Link>
+                                <button
+                                    onClick={handleLogout}
+                                    className="flex items-center w-full p-3 rounded-lg hover:bg-white/5 transition text-red-400"
+                                >
+                                    <ArrowRightOnRectangleIcon className="w-5 h-5 mr-3" />
+                                    <span className="font-medium">Cerrar Sesión</span>
+                                </button>
+                            </div>
+                        )}
+
                         <Link
-                            to="/login"
-                            className="flex items-center p-3 rounded-lg border border-white/20 hover:bg-white/10 transition mt-4"
+                            to="/"
+                            className="flex items-center p-3 rounded-lg hover:bg-white/10 transition"
                             onClick={() => setIsMenuOpen(false)}
                         >
-                            <UserCircleIcon className="w-5 h-5 mr-3 text-gray-400" />
-                            <span className="text-gray-300 font-medium">Iniciar Sesión</span>
+                            <HomeIcon className="w-5 h-5 mr-3 text-yellow-400" />
+                            <span className="text-white font-medium">Inicio</span>
                         </Link>
-                    )}
+                        <Link
+                            to="/propiedades"
+                            className="flex items-center p-3 rounded-lg hover:bg-white/10 transition"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            <BuildingOffice2Icon className="w-5 h-5 mr-3 text-green-400" />
+                            <span className="text-white font-medium">Propiedades</span>
+                        </Link>
+                        <a
+                            href="#servicios"
+                            className="flex items-center p-3 rounded-lg hover:bg-white/10 transition"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            <PlusCircleIcon className="w-5 h-5 mr-3 text-blue-400" />
+                            <span className="text-white font-medium">Servicios</span>
+                        </a>
+                        <a
+                            href="https://wa.me/573176677911"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center p-3 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 
+                       hover:from-yellow-600 hover:to-yellow-700 transition mt-4 transform hover:scale-105"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            <span className="text-gray-900 font-bold">Contactar</span>
+                        </a>
+
+                        {!isAuthenticated && (
+                            <Link
+                                to="/login"
+                                className="flex items-center p-3 rounded-lg border border-white/20 hover:bg-white/10 transition mt-4"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                <UserCircleIcon className="w-5 h-5 mr-3 text-gray-400" />
+                                <span className="text-gray-300 font-medium">Iniciar Sesión</span>
+                            </Link>
+                        )}
+                    </div>
                 </div>
             </div>
 
