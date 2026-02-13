@@ -313,7 +313,7 @@ export default function PropertyDetailPage() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
                     {/* Left Column - Gallery, Header, Technical Sections */}
                     <div className="lg:col-span-2 space-y-10">
 
@@ -453,53 +453,52 @@ export default function PropertyDetailPage() {
                             </p>
                         </div>
 
-                        {/* 3. Technical Sections Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* 3. Structured Technical Sections (Table Style) */}
+                        <div className="space-y-6">
+                            <TechnicalTableSection title="Ubicación" icon="MapPinIcon">
+                                <TableRow label="Departamento" value={property.location.department} />
+                                <TableRow label="Municipio" value={property.location.municipality} />
+                                <TableRow label="Vereda / Sector" value={property.location.vereda} />
+                                <TableRow label="Distancia a la vía pavimentada más cercana (Km)" value={property.location.distanceToTown} />
+                                <TableRow label="Vía pavimentada más cercana" value={property.location.closestPavedRoad} />
+                                <TableRow label="Tipo de Acceso" value={property.location.roadAccess} capitalize />
+                            </TechnicalTableSection>
 
-                            {/* Terrain Characteristics Section */}
-                            <TechnicalCard title="Ubicación y Entorno" icon="🚩" color="bg-orange-100/50 text-orange-700">
-                                <TechItem label="Vereda / Sector" value={property.location.vereda} />
-                                <TechItem label="Distancia al Pueblo" value={property.location.distanceToTown ? `${property.location.distanceToTown} km` : 'Muy cerca'} />
-                                <TechItem label="Tipo de Acceso" value={property.location.roadAccess} capitalize />
-                                <TechItem label="Vía Pavimentada más cercana" value={property.location.closestPavedRoad} />
-                                <TechItem label="Vía Principal" value={property.location.roadAccess?.toLowerCase().includes('paviment') ? 'Pavimentada' : 'Destapada'} />
-                                <TechItem label="Bosques" value={property.forestPercentage ? `${property.forestPercentage}%` : null} />
-                                <TechItem label="Reserva Natural" value={property.reservePercentage ? `${property.reservePercentage}%` : null} />
-                                <TechItem label="Rastrojo Bajo" value={property.rastrojoBajoPercentage ? `${property.rastrojoBajoPercentage}%` : null} />
-                                <TechItem label="Rastrojo Alto" value={property.rastrojoAltoPercentage ? `${property.rastrojoAltoPercentage}%` : null} />
-                                <TechItem label="Potreros" value={property.potrerosCount} />
-                            </TechnicalCard>
+                            <TechnicalTableSection title="Precio" icon="CurrencyDollarIcon" color="bg-green-700">
+                                <TableRow label="Precio total (Pesos Colombianos)" value={formatPrice(property.price)} />
+                                <TableRow label="Precio por hectárea (Pesos Colombianos)" value={formatPrice(property.pricePerHectare || 0)} />
+                            </TechnicalTableSection>
 
-                            {/* Soil and Land Section */}
-                            <TechnicalCard title="Calidad del Terreno" icon="🌱" color="bg-green-100/50 text-green-700">
-                                <TechItem label="Tipos de Pasto" value={property.pasture?.types?.join(', ')} capitalize />
-                                <TechItem label="Tipo de Suelo" value={property.soil?.types?.join(', ')} capitalize />
-                                <TechItem label="Topografía" value={property.topography?.types?.join(', ')} capitalize />
-                                <TechItem label="Uso de Suelos" value={property.useTypes?.join(', ')} capitalize />
-                                <TechItem label="Clima / Temp" value={property.temperature} />
-                                <TechItem label="Precipitación" value={property.precipitation} />
-                                <TechItem label="Altura (msnm)" value={property.topography?.elevation?.min ? `${property.topography.elevation.min}m - ${property.topography.elevation.max}m` : 'Consultar'} />
-                            </TechnicalCard>
+                            <TechnicalTableSection title="Características" icon="TableCellsIcon">
+                                <TableRow label="Área (hectáreas)" value={property.area} />
+                                <TableRow label="Uso de suelos" value={property.useTypes?.join(', ')} capitalize />
+                                <TableRow label="Topografía" value={property.topography?.types?.join(', ')} capitalize />
+                                <TableRow label="Altura (msnm)" value={property.topography?.elevation?.min ? `Min. ${property.topography.elevation.min} - Max. ${property.topography.elevation.max}` : 'Consultar'} />
+                                <TableRow label="Clima / Temp" value={property.temperature} />
+                                <TableRow label="Precipitación" value={property.precipitation} />
+                                <TableRow label="Bosques" value={property.forestPercentage ? `${property.forestPercentage}%` : null} />
+                                <TableRow label="Reserva Natural" value={property.reservePercentage ? `${property.reservePercentage}%` : null} />
+                                <TableRow label="Rastrojo Bajo" value={property.rastrojoBajoPercentage ? `${property.rastrojoBajoPercentage}%` : null} />
+                                <TableRow label="Rastrojo Alto" value={property.rastrojoAltoPercentage ? `${property.rastrojoAltoPercentage}%` : null} />
+                                <TableRow label="Potreros" value={property.potrerosCount} />
+                            </TechnicalTableSection>
 
-                            {/* Water and Utilities Section */}
-                            <TechnicalCard title="Agua y Servicios" icon="💧" color="bg-blue-100/50 text-blue-700">
-                                <TechItem label="Fuentes Hídricas" value={property.water?.sources?.join(', ')} capitalize />
-                                <TechItem label="Agua Permanente" value={property.water?.yearRound ? 'Sí (Todo el año)' : 'Por temporadas'} />
-                                <TechItem label="Electricidad" value={property.installations?.electricity ? 'Ya instalada' : 'Proyecto cercano'} />
-                                <TechItem label="Edificaciones" value={property.installations?.buildings?.join(', ')} capitalize />
-                                <TechItem label="Cercas" value={property.installations?.fences?.join(', ')} capitalize />
-                                <TechItem label="Infraestructura" value={property.installations?.infrastructure?.join(', ')} capitalize />
-                            </TechnicalCard>
+                            <TechnicalTableSection title="Agua y Servicios" icon="BeakerIcon">
+                                <TableRow label="Fuentes Hídricas" value={property.water?.sources?.join(', ')} capitalize />
+                                <TableRow label="Agua Permanente" value={property.water?.yearRound ? 'Sí (Todo el año)' : 'Por temporadas'} />
+                                <TableRow label="Electricidad" value={property.installations?.electricity ? 'Ya instalada' : 'Proyecto cercano'} />
+                                <TableRow label="Edificaciones" value={property.installations?.buildings?.join(', ')} capitalize />
+                                <TableRow label="Cercas" value={property.installations?.fences?.join(', ')} capitalize />
+                                <TableRow label="Infraestructura" value={property.installations?.infrastructure?.join(', ')} capitalize />
+                            </TechnicalTableSection>
 
-                            {/* Legal and Extras Section */}
-                            <TechnicalCard title="Estado Legal" icon="📄" color="bg-indigo-100/50 text-indigo-700">
-                                <TechItem label="Documentación" value={property.legal?.documentation?.replace('_', ' ')} capitalize />
-                                <TechItem label="Tradición" value={property.legal?.tradition} />
-                                <TechItem label="Impuestos" value={property.legal?.taxesStatus} />
-                                <TechItem label="Propietarios" value={property.legal?.owners} />
-                                <TechItem label="Carga Animal" value={property.productivity?.animalCapacity ? `${property.productivity.animalCapacity} Unidades` : null} />
-                            </TechnicalCard>
-
+                            <TechnicalTableSection title="Estado Legal" icon="DocumentCheckIcon">
+                                <TableRow label="Documentación" value={property.legal?.documentation?.replace('_', ' ')} capitalize />
+                                <TableRow label="Tradición" value={property.legal?.tradition} />
+                                <TableRow label="Impuestos" value={property.legal?.taxesStatus} />
+                                <TableRow label="Propietarios" value={property.legal?.owners} />
+                                <TableRow label="Carga Animal" value={property.productivity?.animalCapacity ? `${property.productivity.animalCapacity} Unidades` : null} />
+                            </TechnicalTableSection>
                         </div>
 
                         {/* Detailed Animal Capacity Table (AgroGo Style) */}
@@ -718,33 +717,39 @@ export default function PropertyDetailPage() {
 }
 
 // Technical Sub-Components
-function TechnicalCard({ title, icon, color, children }: any) {
+function TechnicalTableSection({ title, icon, color = 'bg-[#16a34a]', children }: any) {
+    const iconsMap: any = {
+        MapPinIcon,
+        CurrencyDollarIcon: ({ className }: any) => <span className={className}>💰</span>,
+        TableCellsIcon: ({ className }: any) => <span className={className}>🚜</span>,
+        BeakerIcon: ({ className }: any) => <span className={className}>💧</span>,
+        DocumentCheckIcon: ({ className }: any) => <span className={className}>📄</span>
+    };
+    const Icon = iconsMap[icon];
+
     return (
-        <div className="bg-white rounded-[2rem] shadow-lg p-8 border border-gray-100 hover:shadow-2xl transition-all group overflow-hidden relative">
-            <div className={`absolute top-0 right-0 w-24 h-24 ${color.split(' ')[0]} rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity`}></div>
-            <h3 className="text-xl font-black text-gray-900 mb-8 flex items-center gap-3">
-                <span className={`w-12 h-12 flex items-center justify-center rounded-2xl ${color} shadow-sm group-hover:rotate-6 transition-transform`}>
-                    {icon}
-                </span>
-                {title}
-            </h3>
-            <div className="space-y-4">
+        <div className="overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+            <div className={`${color} px-6 py-3 flex items-center gap-3`}>
+                {Icon && <Icon className="w-5 h-5 text-white" />}
+                <h3 className="text-white font-black uppercase tracking-widest text-sm">{title}</h3>
+            </div>
+            <div className="bg-white divide-y divide-gray-100">
                 {children}
             </div>
         </div>
     );
 }
 
-function TechItem({ label, value, capitalize }: any) {
+function TableRow({ label, value, capitalize }: any) {
+    if (value === null || value === undefined || value === '') value = 'No especificado';
     return (
-        <div className="flex flex-col border-b border-gray-50 pb-2 group/item last:border-0">
-            <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1 group-hover/item:text-green-600 transition-colors">
-                {label}
-            </span>
-            <span className={`text-gray-900 font-bold ${capitalize ? 'capitalize' : ''}`}>
-                {value || 'No especificado'}
+        <div className="grid grid-cols-2 px-6 py-3 hover:bg-gray-50 transition-colors odd:bg-white even:bg-gray-50/50">
+            <span className="text-sm text-gray-500 font-bold">{label}</span>
+            <span className={`text-sm text-gray-800 font-black text-right ${capitalize ? 'capitalize' : ''}`}>
+                {value}
             </span>
         </div>
     );
 }
+
 
